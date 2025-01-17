@@ -133,7 +133,7 @@ class Hospital():
         
         raise ValueError('Doctor not found')
     
-    def schedule_appointment(self, patient, doctor, date, timeframe):
+    def schedule_appointment(self, patient, doctor, date, timeframe): # faltaría añadir el espacio
         if doctor in self.doctors:
             if patient in self.patients:
                 if date in doctor.availabilities:

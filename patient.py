@@ -9,8 +9,9 @@ class Patient(Person):
         self.assigned_doctor = assigned_doctor
         self.status = status # CAMBIAR
         self.appointments = {}
-        self.medication = []
+        self.medications = []
         self.allergies = []
+        self.diagnostics = []
         
     def __str__(self):
         return f'Patient {self.name} {self.surname}'
