@@ -1,7 +1,7 @@
-import patient as Patient
-import doctor as Doctor
-import appointment as Appointment
-import space as Space
+from patient import Patient
+from doctor import Doctor
+from appointment import Appointment
+from space import Space
 
 class Hospital():
     """
@@ -9,18 +9,18 @@ class Hospital():
     """
     
     def __init__(self, name, location):
-        self.name = name
-        self.location = location
-        self.patients = []
-        self.doctors = []
-        self.appointments = []
-        self.spaces = []
+        self.name = name # Name of the hospital
+        self.location = location # Location of the hospital
+        self.patients = [] # List of patients
+        self.doctors = [] # List of doctors
+        self.appointments = [] # List of appointments
+        self.spaces = [] # List of spaces
         
     def add_patient(self, patient_id, patient_name, patient_surname, patient_age, patient_sex, patient_weight, patient_height, patient_assigned_doctor, patient_status):
         """
         Adds a new patient to the hospital system.
         Args:
-            patient_id (int): ID for the patient.
+            patient_id (int or str): ID for the patient.
             patient_name (str): Name of the patient.
             patient_surname (str): Surname of the patient.
             patient_age (int): Age of the patient.
@@ -53,7 +53,7 @@ class Hospital():
         """
         Removes a patient from the hospital's records by their unique identifier.
         Args:
-            patient_id (int): The ID for the patient to be removed.
+            patient_id (int or str): The ID for the patient to be removed.
         Returns:
             str: A message indicating the removal success.
         Raises:
@@ -76,7 +76,7 @@ class Hospital():
         """
         Adds a new doctor to the hospital's list of doctors.
         Args:
-            doctor_id (int): Unique identifier for the doctor.
+            doctor_id (int or str): Unique identifier for the doctor.
             doctor_name (str): First name of the doctor.
             doctor_surname (str): Surname of the doctor.
             doctor_age (int): Age of the doctor.
@@ -105,24 +105,55 @@ class Hospital():
         return f'Doctor {new_doctor.name} {new_doctor.surname} added'
 
     def remove_doctor(self, doctor_id):
+        """
+        Removes a doctor from the list by the provided ID.
+        Args:
+            doctor_id (int or str): The numeric identifier of the doctor
+                to be removed. If given as a string, an attempt will be
+                made to convert it to an integer.
+        Returns:
+            str: A confirmation message indicating that the doctor has
+                been successfully removed.
+        Raises:
+            ValueError: If doctor_id is not an integer or 
+                        if no matching doctor is found.
+        """
+        
         try:
-            for doctor in self.doctors:
-                if doctor.id == int(doctor_id):
-                    del doctor
-                    print(f'Doctor {doctor_id.name} {doctor_id.surname} with ID {doctor_id.id} removed')
-            else:
-                print('Doctor not found')
+            doctor_id = int(doctor_id)
         except ValueError:
-            print('The ID must be a number')
+            raise ValueError('The ID must be a number')
+        
+        for doctor in self.doctors:
+            if doctor.id == doctor_id:
+                self.doctors.remove(doctor)
+                return f'Doctor {doctor.name} {doctor.surname} with ID {doctor.id} removed'
+        
+        raise ValueError('Doctor not found')
     
     def schedule_appointment(patient, doctor, date):
         pass
+    # activado por paciente
+    # comprobar si el doctor tiene espacio
+    # si no tiene espacio, enviar notificación al paciente (para cambiar de doctor) --> crear instancia de notificación
+        # paciente selecciona otro doctor
+    # si hay espacio, notificar al doctor
+        # doctor selecciona el espacio (fecha, hora y lugar)
+        # paciente recibe notificación de confirmación de la cita
     
     def cancel_appointment(patient, doctor, date):
         pass
+    # activada por paciente o doctor
+    # comprobar si la cita existe
+    # si existe, eliminarla
+    # notificar al paciente/doctor de la cancelación (diferentes mensajes, dependiendo de quién haya cancelado)
     
     def add_space(space):
         pass
+    # comprobar si el espacio ya existe
+    # si no existe, añadirlo
     
     def remove_space(space):
         pass
+    # comprobar si el espacio existe
+    # si existe, eliminarlo
