@@ -8,8 +8,7 @@ class Patient(Person):
         self.height = height
         self.assigned_doctor = assigned_doctor
         self.status = status # CAMBIAR
-        self.previous_consults = []
-        self.previous_diagnostics = []
+        self.appointments = {}
         self.medication = []
         self.allergies = []
         

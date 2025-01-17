@@ -133,16 +133,32 @@ class Hospital():
         
         raise ValueError('Doctor not found')
     
-    def schedule_appointment(patient, doctor, date):
-        pass
-    # activado por paciente
-    # comprobar si el doctor tiene espacio
-    # si no tiene espacio, enviar notificación al paciente (para cambiar de doctor) --> crear instancia de notificación
-        # paciente selecciona otro doctor
-    # si hay espacio, notificar al doctor
-        # doctor selecciona el espacio (fecha, hora y lugar)
-        # creamos una instancia de appointment y lo añadimos a doctor y paciente
-        # paciente recibe notificación de confirmación de la cita
+    def schedule_appointment(self, patient, doctor, date, timeframe):
+        if doctor in self.doctors:
+            if patient in self.patients:
+                if date in doctor.availabilities:
+                    if doctor.availabilities[date[timeframe]]:
+                        # Create new appointment
+                        new_appointment = Appointment(patient, doctor, date)
+                        self.appointments.append(new_appointment)
+                        doctor.availabilities[date[timeframe]] = False
+                        doctor.add_appointment(new_appointment)
+                        patient.new_appointment(new_appointment)
+                        
+                        # Notifications
+                        doctor_notification = Notification(f'Appointment scheduled for {date} at {timeframe(0)} for patient {patient.name} {patient.surname}')
+                        doctor.add_notification(doctor_notification)
+                        patient_notification = Notification(f'Appointment scheduled for {date} at {timeframe(0)} by Dr. {doctor.name} {doctor.surname}')
+                        patient.add_notification(patient_notification)
+                        return f'Appointment scheduled for {date}'
+                    else:
+                        return 'Doctor is not available on at that time'
+                else:
+                    return 'Doctor is not available on that date'
+            else:
+                return 'Patient not found'
+        else:
+            return 'Doctor not found'
     
     def cancel_appointment(patient, doctor, date):
         pass
@@ -154,9 +170,9 @@ class Hospital():
     def add_space(space):
         pass
     # comprobar si el espacio ya existe
-    # si no existe, añadirlo
+    # si no existe, crear instancia y añadirlo a la lista
     
     def remove_space(space):
         pass
     # comprobar si el espacio existe
-    # si existe, eliminarlo
+    # si existe, crear instancia y añadirlo a la lista
