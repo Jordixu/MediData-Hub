@@ -2,6 +2,8 @@ from patient import Patient
 from doctor import Doctor
 from appointment import Appointment
 from space import Space
+from notification import Notification
+import datetime as dt
 
 class Hospital():
     """
@@ -139,6 +141,7 @@ class Hospital():
         # paciente selecciona otro doctor
     # si hay espacio, notificar al doctor
         # doctor selecciona el espacio (fecha, hora y lugar)
+        # creamos una instancia de appointment y lo añadimos a doctor y paciente
         # paciente recibe notificación de confirmación de la cita
     
     def cancel_appointment(patient, doctor, date):

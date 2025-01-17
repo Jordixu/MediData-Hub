@@ -6,7 +6,7 @@ class Doctor(Person):
         super().__init__(id, name, surname, age, sex, notifications = [])
         self.speciality = speciality
         self.department = department
-        self.schedule = [] # from, to date
+        self.availability = {}
         self.socialsecurity = socialsecurity
         self.salary = salary
         self.assigned_patients = []
@@ -47,3 +47,12 @@ class Doctor(Person):
             for pat in self.assigned_patients:
                 if pat == patient:
                     self.assigned_patients.remove(pat)
+                    
+    def create_schedule(self, date, timeframes):
+        if date not in self.availabilities:
+            self.availabilities[date] = {}
+        for timeframe in timeframes:
+            self.availabilities[date][timeframe] = True
+    
+    def display_schedule(self):
+        return self.availabilities
