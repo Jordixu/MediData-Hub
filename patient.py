@@ -2,30 +2,31 @@ from person import Person
 from notification import Notification
 
 class Patient(Person):
-    def __init__(self, id, name, surname, age, sex, weight, height, assigned_doctor, status):
-        super().__init__(id, name, surname, age, sex, notifications = [])
+    def __init__(self, id, name, surname, age, gender, weight, height, assigned_doctor, status):
+        super().__init__(id, name, surname, age, gender)
         self.weight = weight
         self.height = height
         self.assigned_doctor = assigned_doctor
-        self.status = status # CAMBIAR
+        self.status = status # Inpatient, Outpatient, Emergency
         self.appointments = {}
         self.medications = []
         self.allergies = []
         self.diagnostics = []
+        self.notifications = []
         
     def __str__(self):
         return f'Patient {self.name} {self.surname}'
         
-    def add_consult(self, consult):
-        self.previous_consults.append(consult)
+    # def add_consult(self, consult):
+    #     self.previous_consults.append(consult)
         
-    def remove_consult(self, date, last_consult):
-        if last_consult:
-            self.previous_consults.pop()
-        elif not last_consult:    
-            for consult in self.previous_consults:
-                if consult.date == date:
-                    self.previous_consults.remove(consult)
+    # def remove_consult(self, date, last_consult):
+    #     if last_consult:
+    #         self.previous_consults.pop()
+    #     elif not last_consult:    
+    #         for consult in self.previous_consults:
+    #             if consult.date == date:
+    #                 self.previous_consults.remove(consult)
         
     def add_diagnostic(self, diagnostic):
         self.previous_diagnostics.append(diagnostic)
@@ -70,5 +71,4 @@ class Patient(Person):
         self.assigned_doctor = doctor
         
     def change_status(self, status):
-        # CAMBIAR ESTO
         self.status = status
