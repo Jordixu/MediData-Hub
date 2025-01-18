@@ -1,4 +1,4 @@
-from hospital import Hospital
+from hospital import hospital
 def main():
     pass
 
