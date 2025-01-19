@@ -24,14 +24,13 @@ class Hospital():
             rooms (list): A list of hospital rooms or spaces.
             drugs (list): A list of medicines.
         """
-        
-        self.name = name # Name of the hospital
-        self.location = location # Location of the hospital
-        self.patients = [] # List of patients
-        self.doctors = [] # List of doctors
-        self.appointments = [] # List of appointments
-        self.rooms = [] # List of spaces
-        self.drugs = [] # List of medicines
+        self.name = name
+        self.location = location 
+        self.patients = [] 
+        self.doctors = []
+        self.appointments = []
+        self.rooms = []
+        self.drugs = []
         
     def add_patient(self, patient_id: str, patient_name: str, patient_surname: str, patient_age: str, patient_gender: str, patient_weight: str, patient_height: str, patient_assigned_doctor: str, patient_status: str) -> str:
         """
@@ -92,7 +91,6 @@ class Hospital():
         new_patient = Patient(patient_id, patient_name, patient_surname, patient_age, patient_gender, patient_weight, patient_height, patient_assigned_doctor, patient_status) # Create a new patient
         self.patients.append(new_patient) # Add the new patient to the list of patients
         return f'Patient {new_patient.name} {new_patient.surname} added' # Return a message confirming the addition of the new patient
-
             
     def remove_patient(self, patient_id: str) -> str: 
         """
@@ -163,7 +161,7 @@ class Hospital():
             raise ValueError('The salary must be a number')
         
         if doctor_salary < 0:
-            raise ValueError('Are really paying to work?') # easteregg
+            raise ValueError('Are really paying to work? Who are you, a student?') # easteregg
         
         for doctor in self.doctors:
             if doctor.id == doctor_id:
@@ -173,11 +171,11 @@ class Hospital():
         self.doctors.append(new_doctor)
         return f'Doctor {new_doctor.name} {new_doctor.surname} added'
 
-    def remove_doctor(self, doctor_id):
+    def remove_doctor(self, doctor_id: str) -> str:
         """
         Removes a doctor from the list by the provided ID.
         Args:
-            doctor_id (int or str): The numeric identifier of the doctor to be removed.
+            doctor_id (str): The numeric identifier of the doctor to be removed.
         Returns:
             str: A confirmation message indicating that the doctor has been successfully removed.
         Raises:
@@ -198,19 +196,18 @@ class Hospital():
             
         raise ValueError('Doctor not found')
     
-    def schedule_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple):
+    def schedule_appointment(self, patient: Patient, doctor: Doctor, date: date, timeframe: tuple) -> str:
         """
         Schedules an appointment for a patient with a specified doctor at a given date and timeframe.
         This method checks if the doctor is part of the hospital’s staff and ensures the requested date and timeframe are available. If availability is confirmed, it assigns an available room, creates a new appointment, and notifies both the doctor and patient.
         Args:
             patient (Patient): The patient requesting the appointment.
             doctor (Doctor): The doctor who will attend the appointment.
-            date (date or str): The date of the requested appointment.
+            date (date): The date of the requested appointment.
             timeframe (tuple): A specific time period within the given date.
         Returns:
             str: A message indicating the success or failure of the appointment scheduling process.
         """
-        date = str(date)
         if doctor in self.doctors:
             if date in doctor.availabilities:
                 if doctor.availabilities[date][timeframe]:
@@ -238,15 +235,15 @@ class Hospital():
             else:
                 return f'Dr. {doctor.surname} is not available on that date, please choose another date'
         else:
-            return 'Doctor not found, please introduce the correct ID'
+            return 'Doctor not found, please introduce the correct ID' # We may take this out
     
-    def cancel_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple): # We will not use try and except because this function is called within a the program, no user input
+    def cancel_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple) -> str:
         """
         Cancels an existing appointment for a given patient with a specified doctor, date, and timeframe.
         Parameters:
             patient (Patient): The patient for whom the appointment will be cancelled.
             doctor (Doctor): The doctor with whom the appointment was scheduled.
-            date (str or date): The date of the appointment to be cancelled.
+            date (str): The date of the appointment to be cancelled.
             timeframe (str): The specific timeframe (e.g., morning, afternoon) of the appointment to be cancelled.
         Returns:
             str: A message indicating whether the appointment was successfully cancelled or not.
