@@ -1,8 +1,9 @@
 from person import Person
 from notification import Notification
+from doctor import Doctor
 
 class Patient(Person):
-    def __init__(self, personal_id, password, name, surname, age, gender, weight, height, assigned_doctor = None, status = 'Outpatient', hospital_id = None):
+    def __init__(self, personal_id: int, password: str, name: str, surname: str, age: int, gender: str, weight: float, height: float, assigned_doctor: Doctor = None, status: str = 'Outpatient', hospital_id: int = None) -> None:
         super().__init__(personal_id, hospital_id, password, name, surname, age, gender)
         self.weight = weight
         self.height = height
@@ -60,12 +61,6 @@ class Patient(Person):
             for al in self.allergies:
                 if al == allergy:
                     self.allergies.remove(al)
-                    
-    def change_weight(self, weight):
-        self.weight = weight
-    
-    def change_height(self, height):
-        self.height = height
         
     def change_assigned_doctor(self, doctor):
         self.assigned_doctor = doctor
