@@ -14,6 +14,8 @@ class Person():
             return getattr(self, attribute)
         except AttributeError:
             print('Attribute not found')
+        except TypeError:
+            print('Invalid value')
         except:
             print('An error occurred')
         
