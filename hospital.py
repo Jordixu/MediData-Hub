@@ -14,8 +14,8 @@ class Hospital:
             location (str): The location of the hospital.
         """
         
-        self.name = name
-        self.location = location 
+        self._name = name
+        self._location = location 
         self.patients = []
         self.doctors = []
         self.appointments = []
@@ -168,23 +168,6 @@ class Hospital:
 
     def _check_availability(self, doctor, date, timeframe):
         return doctor.availabilities.get(date, {}).get(timeframe, False)
-
-    def _schedule_appointment(self, patient, doctor, date, timeframe, room):
-        new_appointment = Appointment(date, timeframe, doctor, patient, room, status=True)
-        self.appointments.append(new_appointment)
-        doctor.availabilities[date][timeframe] = False
-        room.availability[date][timeframe] = False
-        doctor.add_appointment(new_appointment)
-        patient.new_appointment(new_appointment)
-
-        # Notifications
-        self._send_notification(doctor, f'Appointment scheduled for {date} at {timeframe[0]} for patient {patient.name} {patient.surname}')
-        self._send_notification(patient, f'Appointment scheduled for {date} at {timeframe[0]} by Dr. {doctor.name} {doctor.surname}')
-        return f'Appointment scheduled for {date}'
-
-    def _send_notification(self, recipient, message):
-        notification = Notification(message)
-        recipient.add_notification(notification)
 
     def schedule_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple) -> str:
         if doctor not in self.doctors:
