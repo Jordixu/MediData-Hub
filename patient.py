@@ -2,8 +2,8 @@ from person import Person
 from notification import Notification
 
 class Patient(Person):
-    def __init__(self, id, name, surname, age, gender, weight, height, assigned_doctor, status):
-        super().__init__(id, name, surname, age, gender)
+    def __init__(self, personal_id, password, name, surname, age, gender, weight, height, assigned_doctor = None, status = 'Outpatient', hospital_id = None):
+        super().__init__(personal_id, hospital_id, password, name, surname, age, gender)
         self.weight = weight
         self.height = height
         self.assigned_doctor = assigned_doctor
@@ -11,7 +11,7 @@ class Patient(Person):
         self.appointments = {}
         self.medications = []
         self.allergies = []
-        self.diagnostics = []
+        self.diagnoses = []
         self.notifications = []
         
     def __str__(self):
@@ -28,16 +28,16 @@ class Patient(Person):
     #             if consult.date == date:
     #                 self.previous_consults.remove(consult)
         
-    def add_diagnostic(self, diagnostic):
-        self.previous_diagnostics.append(diagnostic)
+    def add_diagnosis(self, diagnostic):
+        self.previous_diagnoses.append(diagnostic)
         
-    def remove_diagnostic(self, date, last_diagnostic):
-        if last_diagnostic:
-            self.previous_diagnostics.pop()
-        elif not last_diagnostic:
-            for diagnostic in self.previous_diagnostics:
-                if diagnostic.date == date:
-                    self.previous_diagnostics.remove(diagnostic)
+    def remove_diagnosis(self, date, last_diagnosis):
+        if last_diagnosis:
+            self.diagnoses.pop()
+        elif not last_diagnosis:
+            for diagnosis in self.diagnoses:
+                if diagnosis.date == date:
+                    self.diagnoses.remove(diagnosis)
         
     def add_medication(self, medication):
         self.medication.append(medication)
