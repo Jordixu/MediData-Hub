@@ -360,7 +360,7 @@ class PatientMainScreen(ttk.Frame):
         button_frame = ttk.Frame(self)
         button_frame.pack(pady=10)
         ttk.Button(button_frame, text="Personal Data", width=15,
-                   command=lambda: controller.show_frame("PersonalData")).grid(row=0, column=0, padx=10, pady=10)
+                   command=lambda: controller.show_frame("PatientInformation")).grid(row=0, column=0, padx=10, pady=10)
         ttk.Button(button_frame, text="Prescriptions", width=15,
                    command=lambda: controller.show_frame("Prescriptions")).grid(row=0, column=1, padx=10, pady=10)
         ttk.Button(button_frame, text="Appointments", width=15,
@@ -414,7 +414,7 @@ class Prescriptions(ttk.Frame):
     def not_implemented(self):
         messagebox.showinfo("Info", "Not implemented yet.")
 
-class PersonalData(ttk.Frame):
+class PatientInformation(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -490,7 +490,7 @@ class PersonalData(ttk.Frame):
                     patient.set_info("gender", self.gender_var.get(), 'str')
                     patient.set_info("age", self.controller.hospital.validate_value(self.age_entry.get(), int, 0, 150, custom_message_incorrect_type="The age is a number...", custom_message_lower="The age must be a positive number.", custom_message_upper="I don't think you are that old."),'int')
                     patient.set_info("weight", self.controller.hospital.validate_value(self.weight_entry.get(), float, 0, 1000, custom_message_incorrect_type="The weight must be a number...", custom_message_lower="The weight must be a positive number.", custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?, either you are lying or you are a record breaker."), 'float')
-                    patient.set_info("height", self.controller.hospital.validate_value(self.height_entry.get(), float, 0, 300, custom_message_incorrect_type="The height must be a number...", custom_message_lower="The height must be a positive number.", custom_message_upper="Hello, Mr. giant, how can I help you?"), 'float')
+                    patient.set_info("height", self.controller.hospital.validate_value(self.height_entry.get(), float, 0, 300, custom_message_incorrect_type="The height must be a number...", custom_message_lower="The height must be a positive number.", custom_message_upper="Are you human or giraffe?"), 'float')
                 
                     self.controller.current_user_data = patient
                 
@@ -530,7 +530,7 @@ class MedidataHubUI(tk.Tk):
         
         self.frames = {}
         for F in (
-            RoleSelectionScreen, LoginScreenPatient, LoginScreenDoctor, RegisterScreenPatient, RegisterScreenDoctor, PatientMainScreen, DoctorMainScreen, Prescriptions, PersonalData
+            RoleSelectionScreen, LoginScreenPatient, LoginScreenDoctor, RegisterScreenPatient, RegisterScreenDoctor, PatientMainScreen, DoctorMainScreen, Prescriptions, PatientInformation
         ):
             frame = F(container, self)
             self.frames[F.__name__] = frame
