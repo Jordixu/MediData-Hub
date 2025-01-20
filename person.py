@@ -9,24 +9,34 @@ class Person():
         self.gender = gender
         self.notifications = []
         
-    def get_info(self, attribute):
-        getattr(self, attribute, 'Attribute not found')
+    def get(self, attribute):
+        try:
+            return getattr(self, attribute)
+        except AttributeError:
+            print('Attribute not found')
+        except:
+            print('An error occurred')
         
     def __name__(self):
         return self.name + ' ' + self.surname
     
-    def set_info(self, attribute, value):
+    def set_info(self, attribute, value, type):
         try:
-            if type(self.attribute) is str or type(self.attribute) is bool or type(self.attribute) is float or type(self.attribute) is int:
-                setattr(self, attribute, value)
-            elif type(self.attribute) is list or type(self.attribute) is set or type(self.attribute) is dict:
-                self.attribute.append(value)
+            if type == 'int':
+                setattr(self, attribute, int(value))
+            elif type == 'str':
+                setattr(self, attribute, str(value))
+            elif type == 'float':
+                setattr(self, attribute, float(value))
+            elif type == 'bool':
+                setattr(self, attribute, bool(value))
         except AttributeError:
             print('Attribute not found')
         except TypeError:
             print('Invalid value')
         except:
             print('An error occurred')
+        
             
     def add_notification(self, notification):
         self.notifications.append(notification)
