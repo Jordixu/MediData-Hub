@@ -1,7 +1,14 @@
-from hospital import hospital
+from hospital import Hospital
+from ui import MedidataHubUI
+
+
 def main():
-    pass
+    hospital = Hospital("Medidata Hospital", "Barcelona")
+    ui = MedidataHubUI(hospital)
+    ui.mainloop()
 
 
 if __name__ == "__main__":
     main()
+    
+
