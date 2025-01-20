@@ -2,8 +2,8 @@ from person import Person
 from notification import Notification
 
 class Doctor(Person):
-    def __init__(self, id, name, surname, age, gender, speciality, department, socialsecurity, salary):
-        super().__init__(id, name, surname, age, gender, notifications = [])
+    def __init__(self, personal_id, password, name, surname, age, gender, speciality, department, socialsecurity, salary, hospital_id = None):
+        super().__init__(personal_id, hospital_id, password, name, surname, age, gender, notifications = [])
         self.speciality = speciality
         self.department = department
         self.availability = {}

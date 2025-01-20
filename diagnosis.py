@@ -1,4 +1,4 @@
-class Diagnostic():
+class Diagnosis():
     def __init__(self, id, title, date, doctor, patient, description, treatment):
         self.id = id
         self.title = title

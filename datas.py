@@ -3,8 +3,7 @@ from hospital import Hospital
 import datetime as dt
 
 """
-This file is used to save the data from the hospital object to csv files.
-We are not really
+Esto es solo para hacer pruebas, hay que modificarlo porque cambiar de lista a diccionario no es lo mejor, se podría optimizar.
 """
 
 def patients_list_to_dict(patients):
