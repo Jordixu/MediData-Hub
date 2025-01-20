@@ -7,6 +7,13 @@ import datetime as dt
 
 class Hospital:
     def __init__(self, name: str, location: str) -> None:
+        """
+        Initializes the Hospital object.
+        Args:
+            name (str): The name of the hospital.
+            location (str): The location of the hospital.
+        """
+        
         self.name = name
         self.location = location 
         self.patients = []
@@ -52,7 +59,7 @@ class Hospital:
         Adds a new patient to the system after validating the provided attributes.
         
         Parameters:
-            id (int): Unique identifier for the patient. Must be a positive integer.
+            personal_id (int): Unique identifier for the patient. Must be a positive integer.
             name (str): The patient's first name.
             surname (str): The patient's last name.
             age (int): Age of the patient. Must be a positive integer within a plausible range.
@@ -68,19 +75,21 @@ class Hospital:
             str: A confirmation message indicating the newly added patient's name and surname.
         """
         
-        kwargs['patient_id'] = self.validate_value(kwargs['patient_id'], int, 0, custom_message_incorrect_type="The ID must be a number, without decimals.", custom_message_lower="The ID must be a positive number.")
-        kwargs['patient_age'] = self.validate_value(kwargs['patient_age'], int, 0, 150, custom_message_incorrect_type="The age is a number...", custom_message_lower="The age must be a positive number.", custom_message_upper="I don't think you are that old.")
-        kwargs['patient_weight'] = self.validate_value(kwargs['patient_weight'], float, 0, 1000, custom_message_incorrect_type="The weight must be a number...", custom_message_lower="The weight must be a positive number.", custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?, either you are lying or you are a record breaker.")
-        kwargs['patient_height'] = self.validate_value(kwargs['patient_height'], float, 0, 300, custom_message_incorrect_type="The height must be a number...", custom_message_lower="The height must be a positive number.", custom_message_upper="Hello, Mr. giant, how can I help you?")
+        kwargs['personal_id'] = self.validate_value(kwargs['personal_id'], int, 0, custom_message_incorrect_type="The ID must be a number, without decimals.", custom_message_lower="The ID must be a positive number.")
+        kwargs['age'] = self.validate_value(kwargs['age'], int, 0, 150, custom_message_incorrect_type="The age is a number...", custom_message_lower="The age must be a positive number.", custom_message_upper="I don't think you are that old.")
+        kwargs['weight'] = self.validate_value(kwargs['weight'], float, 0, 1000, custom_message_incorrect_type="The weight must be a number...", custom_message_lower="The weight must be a positive number.", custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?, either you are lying or you are a record breaker.")
+        kwargs['height'] = self.validate_value(kwargs['height'], float, 0, 300, custom_message_incorrect_type="The height must be a number...", custom_message_lower="The height must be a positive number.", custom_message_upper="Hello, Mr. giant, how can I help you?")
         
-        if any(p.id == kwargs['patient_id'] for p in self.patients):
+        kwargs['hospital_id'] = self.patients[-1].hospital_id + 1 if self.patients else 1
+        
+        if any(p.personal_id == kwargs['personal_id'] for p in self.patients):
             raise ValueError("The ID is already in our system, perhaps there is a typo?")
         
         new_patient = Patient(**kwargs)
         self.patients.append(new_patient) 
         return f'Patient {new_patient.name} {new_patient.surname} added.'
 
-    def remove_patient(self, patient_id: str) -> str:
+    def remove_patient(self, patient_personal_id: str) -> str:
         """
         Removes a patient from the system based on their ID.
 
@@ -93,10 +102,10 @@ class Hospital:
         Returns:
             str: A confirmation message indicating the removed patient's name and surname.
         """
-        patient_id = self.validate_value(patient_id, int, custom_message_incorrect_type="The ID must be a number.")
+        patient_id = self.validate_value(patient_personal_id, int, custom_message_incorrect_type="The ID must be a number.")
         
         for patient in self.patients:
-            if patient.id == patient_id:
+            if patient.personal_id == patient_personal_id:
                 self.patients.remove(patient)
                 return f'Patient {patient.name} {patient.surname} with ID {patient.id} removed.'
     
@@ -177,7 +186,7 @@ class Hospital:
         notification = Notification(message)
         recipient.add_notification(notification)
 
-    def schedule_appointment(self, patient: Patient, doctor: Doctor, date: date, timeframe: tuple) -> str:
+    def schedule_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple) -> str:
         if doctor not in self.doctors:
             return 'Doctor not found, please introduce the correct ID'
         if not self._check_availability(doctor, date, timeframe):
