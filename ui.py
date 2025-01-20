@@ -1,12 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-USER_DATABASE = {
-    "patient": {},
-    "doctor": {},
-    "admin": {}
-}
-
 class RoleSelectionScreen(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -22,31 +16,32 @@ class RoleSelectionScreen(ttk.Frame):
 
     def select_role(self, role):
         self.controller.selected_role = role
-        self.controller.show_frame("LoginScreen")
+        if role == "patient":
+            self.controller.show_frame("LoginScreenPatient")
+        elif role == "doctor":
+            self.controller.show_frame("LoginScreenDoctor")
 
     def not_implemented(self):
         messagebox.showinfo("Info", "Not implemented yet.")
 
-class LoginScreen(ttk.Frame):
+class LoginScreenPatient(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
         self.controller.title("Login Screen")
         
+        ## TEST ONLY
+        
         bypass_label = ttk.Label(self, text="Direct Navigation (Test Only)", font=("Helvetica", 14, "bold"))
         bypass_label.pack(pady=10)
-
+        
         ttk.Button(
             self,
             text="Go to Patient Main Screen",
             command=lambda: self.controller.show_frame("PatientMainScreen")
         ).pack(pady=5)
-
-        ttk.Button(
-            self,
-            text="Go to Doctor Main Screen",
-            command=lambda: self.controller.show_frame("DoctorMainScreen")
-        ).pack(pady=5)
+        
+        ## END TEST ONLY
 
         ttk.Label(self, text="User (ID):", font=("Helvetica", 12)).pack(pady=5)
         self.user_entry = ttk.Entry(self)
@@ -57,12 +52,76 @@ class LoginScreen(ttk.Frame):
         self.pass_entry.pack(pady=5)
 
         ttk.Button(self, text="Login", command=self.login_action).pack(pady=5)
-        ttk.Button(self, text="Register", command=lambda: self.controller.show_frame("RegisterScreen")).pack(pady=5)
+        ttk.Button(self, text="Register", command=lambda: self.controller.show_frame("RegisterScreenPatient")).pack(pady=5)
         ttk.Button(self, text="Go Back", command=lambda: self.controller.show_frame("RoleSelectionScreen")).pack(pady=5)
         
     def clear_entries(self):
         """Clear all input fields."""
         self.user_entry.delete(0, tk.END)
+        self.pass_entry.delete(0, tk.END)
+
+    def login_action(self):
+        role = getattr(self.controller, "selected_role", None)
+        personal_id = self.user_entry.get()
+        password = self.pass_entry.get()
+        roles = role + 's' 
+        if role == "patient":
+            for patient in self.controller.hospital.patients:
+                if int(patient.personal_id) == int(personal_id):
+                    if patient.password == password:
+                        self.controller.current_user = int(personal_id)
+                        self.controller.current_user_data = patient
+                        self.controller.show_frame("PatientMainScreen")
+                        self.clear_entries()
+                    return
+            messagebox.showerror("Error", "Invalid user or password")
+        elif role == "doctor":
+            for doctor in self.controller.hospital.doctors:
+                if int(doctor.personal_id) == int(personal_id):
+                    if doctor.password == password:
+                        self.controller.current_user = int(personal_id)
+                        self.controller.current_user_data = doctor
+                        self.controller.show_frame("DoctorMainScreen")
+                        self.clear_entries()
+                    return
+            messagebox.showerror("Error", "Invalid user or password")
+        else:
+            messagebox.showerror("Error", "Role not supported")
+
+class LoginScreenDoctor(ttk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.controller = controller
+        self.controller.title("Login Screen")
+        
+        ## TEST ONLY
+        
+        bypass_label = ttk.Label(self, text="Direct Navigation (Test Only)", font=("Helvetica", 14, "bold"))
+        bypass_label.pack(pady=10)
+        
+        ttk.Button(
+            self,
+            text="Go to Doctor Main Screen",
+            command=lambda: self.controller.show_frame("DoctorMainScreen")
+        ).pack(pady=5)
+        
+        ## END TEST ONLY
+
+        ttk.Label(self, text="User (ID):", font=("Helvetica", 12)).pack(pady=5)
+        self.user_entry = ttk.Entry(self)
+        self.user_entry.pack(pady=5)
+
+        ttk.Label(self, text="Password:", font=("Helvetica", 12)).pack(pady=5)
+        self.pass_entry = ttk.Entry(self, show="*")
+        self.pass_entry.pack(pady=5)
+
+        ttk.Button(self, text="Login", command=self.login_action).pack(pady=5)
+        ttk.Button(self, text="Go Back", command=lambda: self.controller.show_frame("RoleSelectionScreen")).pack(pady=5)
+        
+    def clear_entries(self):
+        """Clear all input fields."""
+        self.user_entry.delete(0, tk.END)
+        self.pass_entry.delete(0, tk.END)
 
     def login_action(self):
         role = getattr(self.controller, "selected_role", None)
@@ -76,6 +135,7 @@ class LoginScreen(ttk.Frame):
                         self.controller.current_user = personal_id
                         self.controller.current_user_data = patient
                         self.controller.show_frame("PatientMainScreen")
+                        self.clear_entries()
                     return
             messagebox.showerror("Error", "Invalid user or password")
         elif role == "doctor":
@@ -85,12 +145,13 @@ class LoginScreen(ttk.Frame):
                         self.controller.current_user = personal_id
                         self.controller.current_user_data = doctor
                         self.controller.show_frame("DoctorMainScreen")
+                        self.clear_entries()
                     return
             messagebox.showerror("Error", "Invalid user or password")
         else:
             messagebox.showerror("Error", "Role not supported")
 
-class RegisterScreen(ttk.Frame):
+class RegisterScreenPatient(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -138,6 +199,109 @@ class RegisterScreen(ttk.Frame):
         self.height_entry.pack(padx=5, pady=2)
 
         ttk.Button(self, text="Submit", command=self.submit_data).pack(pady=5)
+        ttk.Button(self, text="Go Back", command=lambda: controller.show_frame("LoginScreenPatient")).pack(pady=5)
+        
+    def clear_entries(self):
+        """Clear all input fields."""
+        self.user_entry.delete(0, tk.END)
+        self.name_entry.delete(0, tk.END)
+        self.surname_entry.delete(0, tk.END)
+        self.gender_var.set("")
+        self.age_entry.delete(0, tk.END)
+        self.weight_entry.delete(0, tk.END)
+        self.height_entry.delete(0, tk.END)
+        self.pass_entry.delete(0, tk.END)
+
+    def submit_data(self):
+        role = getattr(self.controller, "selected_role", "patient")
+        personal_id = self.user_entry.get()
+        name = self.name_entry.get()
+        surname = self.surname_entry.get()
+        gender = self.gender_var.get()
+        age = self.age_entry.get()
+        weight = self.weight_entry.get()
+        height = self.height_entry.get()
+        password = self.pass_entry.get()
+
+        fields = [name, surname, gender, age, weight, height, personal_id, password]
+        if all(fields):
+            try:
+                self.controller.hospital.add_patient(
+                    personal_id=personal_id,
+                    password=password,
+                    name=name,
+                    surname=surname,
+                    age=age,
+                    gender=gender,
+                    weight=weight,
+                    height=height
+                )
+                messagebox.showinfo("Info", "Registration completed!")
+                self.clear_entries()
+                self.controller.show_frame("LoginScreenPatient")
+            except ValueError as e:
+                messagebox.showerror("Error", e)
+            except Exception as e:
+                messagebox.showerror("Error", e)
+        else:
+            messagebox.showerror("Error", "Please fill out all fields")
+
+class RegisterScreenDoctor(ttk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.controller = controller
+        self.controller.title("Register")
+        
+        ttk.Label(self, text="Register", font=("Helvetica", 16)).pack(pady=10)
+        
+        ttk.Label(self, text="User (ID)").pack(padx=5, pady=2)
+        self.user_entry = ttk.Entry(self)
+        self.user_entry.pack(padx=5, pady=2)
+
+        ttk.Label(self, text="Password").pack(padx=5, pady=2)
+        self.pass_entry = ttk.Entry(self, show='*')
+        self.pass_entry.pack(padx=5, pady=2)
+        
+        ttk.Separator(self, orient="horizontal").pack(fill="x", padx=5, pady=5)
+        
+        ttk.Label(self, text="Personal Information", font=("Helvetica", 12)).pack(pady=5)
+
+        ttk.Label(self, text="Name").pack(padx=5, pady=2)
+        self.name_entry = ttk.Entry(self)
+        self.name_entry.pack(padx=5, pady=2)
+
+        ttk.Label(self, text="Surname").pack(padx=5, pady=2)
+        self.surname_entry = ttk.Entry(self)
+        self.surname_entry.pack(padx=5, pady=2)
+
+        ttk.Label(self, text="Gender").pack(padx=5, pady=2)
+        self.gender_var = tk.StringVar()
+        self.male_check = ttk.Checkbutton(self, text="Male", variable=self.gender_var, onvalue="Male", offvalue="")
+        self.female_check = ttk.Checkbutton(self, text="Female", variable=self.gender_var, onvalue="Female", offvalue="")
+        self.male_check.pack(padx=5, pady=2)
+        self.female_check.pack(padx=5, pady=2)
+
+        ttk.Label(self, text="Age").pack(padx=5, pady=2)
+        self.age_entry = ttk.Entry(self)
+        self.age_entry.pack(padx=5, pady=2)
+
+        ttk.Label(self, text="Speciality").pack(padx=5, pady=2)
+        self.speciality_entry = ttk.Entry(self)
+        self.speciality_entry.pack(padx=5, pady=2)
+
+        ttk.Label(self, text="Department").pack(padx=5, pady=2)
+        self.department_entry = ttk.Entry(self)
+        self.department_entry.pack(padx=5, pady=2)
+        
+        ttk.Label(self, text="Social Security Number").pack(padx=5, pady=2)
+        self.social_security_entry = ttk.Entry(self)
+        self.social_security_entry.pack(padx=5, pady=2)
+        
+        ttk.Label(self, text="Salary").pack(padx=5, pady=2)
+        self.salary_entry = ttk.Entry(self)
+        self.salary_entry.pack(padx=5, pady=2)
+
+        ttk.Button(self, text="Submit", command=self.submit_data).pack(pady=5)
         ttk.Button(self, text="Go Back", command=lambda: controller.show_frame("LoginScreen")).pack(pady=5)
         
     def clear_entries(self):
@@ -176,7 +340,7 @@ class RegisterScreen(ttk.Frame):
                     height=height
                 )
                 messagebox.showinfo("Info", "Registration completed!")
-                self.clear_entries
+                self.clear_entries()
                 self.controller.show_frame("LoginScreen")
             except ValueError as e:
                 messagebox.showerror("Error", e)
@@ -184,7 +348,6 @@ class RegisterScreen(ttk.Frame):
                 messagebox.showerror("Error", e)
         else:
             messagebox.showerror("Error", "Please fill out all fields")
-
 
 class PatientMainScreen(ttk.Frame):
     def __init__(self, parent, controller):
@@ -266,8 +429,11 @@ class PersonalData(ttk.Frame):
         self.surname_entry.pack(pady=2)
 
         ttk.Label(self, text="Gender").pack(pady=2)
-        self.gender_entry = ttk.Entry(self)
-        self.gender_entry.pack(pady=2)
+        self.gender_var = tk.StringVar()
+        self.male_check = ttk.Radiobutton(self, text="Male", variable=self.gender_var, value="Male")
+        self.female_check = ttk.Radiobutton(self, text="Female", variable=self.gender_var, value="Female")
+        self.male_check.pack(pady=2)
+        self.female_check.pack(pady=2)
 
         ttk.Label(self, text="Age").pack(pady=2)
         self.age_entry = ttk.Entry(self)
@@ -281,40 +447,70 @@ class PersonalData(ttk.Frame):
         self.height_entry = ttk.Entry(self)
         self.height_entry.pack(pady=2)
 
-        ttk.Button(self, text="Load Current Data", command=self.load_data).pack(pady=5)
         ttk.Button(self, text="Modify", command=self.modify_data).pack(pady=5)
         ttk.Button(self, text="Go Back", command=lambda: controller.show_frame("PatientMainScreen")).pack(pady=10)
+        
+        # Delete button
+        delete_button = ttk.Button(self, text="Delete User", command=self.delete_patient)
+        delete_button.pack(pady=5)
+        delete_button.config(style="Red.TButton")
+
+        style = ttk.Style()
+        style.configure("Red.TButton", foreground="#8B0000", font=("Helvetica", 10, "bold"))
 
     def load_data(self):
         data = getattr(self.controller, "current_user_data", {})
         self.name_entry.delete(0, tk.END)
         self.surname_entry.delete(0, tk.END)
-        self.gender_entry.delete(0, tk.END)
+        self.gender_var.set("")
         self.age_entry.delete(0, tk.END)
         self.weight_entry.delete(0, tk.END)
         self.height_entry.delete(0, tk.END)
-
-        self.name_entry.insert(0, data.get("name", ""))
-        self.surname_entry.insert(0, data.get("surname", ""))
-        self.gender_entry.insert(0, data.get("gender", ""))
-        self.age_entry.insert(0, data.get("age", ""))
-        self.weight_entry.insert(0, data.get("weight", ""))
-        self.height_entry.insert(0, data.get("height", ""))
+        
+        try:
+            self.name_entry.insert(0, self.controller.current_user_data.get("name"))
+            self.surname_entry.insert(0, self.controller.current_user_data.get("surname"))
+            self.gender_var.set(self.controller.current_user_data.get("gender"))
+            self.age_entry.insert(0, self.controller.current_user_data.get("age"))
+            self.weight_entry.insert(0, self.controller.current_user_data.get("weight"))
+            self.height_entry.insert(0, self.controller.current_user_data.get("height"))
+        except AttributeError:
+            messagebox.showerror("Error", "Data not found. You are using a test account. Please login with a valid account.")
 
     def modify_data(self):
-        role = getattr(self.controller, "selected_role", "patient")
-        user = getattr(self.controller, "current_user", None)
-        if user and user in USER_DATABASE[role]:
-            USER_DATABASE[role][user]["name"] = self.name_entry.get()
-            USER_DATABASE[role][user]["surname"] = self.surname_entry.get()
-            USER_DATABASE[role][user]["gender"] = self.gender_entry.get()
-            USER_DATABASE[role][user]["age"] = self.age_entry.get()
-            USER_DATABASE[role][user]["weight"] = self.weight_entry.get()
-            USER_DATABASE[role][user]["height"] = self.height_entry.get()
-            self.controller.current_user_data = USER_DATABASE[role][user]
-            messagebox.showinfo("Info", "Data modified")
-        else:
-            messagebox.showerror("Error", "No user data to modify")
+        if self.controller.current_user_data is None:
+            messagebox.showerror("Error", "Data not found. You are using a test account. Please login with a valid account.")
+            return
+        try:
+            for patient in self.controller.hospital.patients:
+                if patient.personal_id == self.controller.current_user:
+                    
+                    patient.set_info("name", self.name_entry.get(), 'str')
+                    patient.set_info("surname", self.surname_entry.get(), 'str')
+                    patient.set_info("gender", self.gender_var.get(), 'str')
+                    patient.set_info("age", self.controller.hospital.validate_value(self.age_entry.get(), int, 0, 150, custom_message_incorrect_type="The age is a number...", custom_message_lower="The age must be a positive number.", custom_message_upper="I don't think you are that old."),'int')
+                    patient.set_info("weight", self.controller.hospital.validate_value(self.weight_entry.get(), float, 0, 1000, custom_message_incorrect_type="The weight must be a number...", custom_message_lower="The weight must be a positive number.", custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?, either you are lying or you are a record breaker."), 'float')
+                    patient.set_info("height", self.controller.hospital.validate_value(self.height_entry.get(), float, 0, 300, custom_message_incorrect_type="The height must be a number...", custom_message_lower="The height must be a positive number.", custom_message_upper="Hello, Mr. giant, how can I help you?"), 'float')
+                
+                    self.controller.current_user_data = patient
+                
+                    messagebox.showinfo("Info", "Data updated successfully")
+            self.controller.show_frame("PatientMainScreen")
+        except ValueError as e:
+            messagebox.showerror("Error", e)
+        
+    def delete_patient(self):
+        message = "Are you sure you want to delete your account?"
+        if messagebox.askyesno("Warning", message):
+            try:
+                self.controller.hospital.remove_patient(self.controller.current_user)
+                messagebox.showinfo("Info", "Account deleted successfully")
+            except TypeError:
+                messagebox.showerror("Error", "There is no data to delete since you are using a test account.")
+            
+    def tkraise(self, *args, **kwargs):
+        super().tkraise(*args, **kwargs)
+        self.load_data()
 
 class MedidataHubUI(tk.Tk):
     def __init__(self, hospital = None, *args, **kwargs):
@@ -331,11 +527,10 @@ class MedidataHubUI(tk.Tk):
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-
+        
         self.frames = {}
         for F in (
-            RoleSelectionScreen, LoginScreen, RegisterScreen, 
-            PatientMainScreen, DoctorMainScreen, Prescriptions, PersonalData
+            RoleSelectionScreen, LoginScreenPatient, LoginScreenDoctor, RegisterScreenPatient, RegisterScreenDoctor, PatientMainScreen, DoctorMainScreen, Prescriptions, PersonalData
         ):
             frame = F(container, self)
             self.frames[F.__name__] = frame
