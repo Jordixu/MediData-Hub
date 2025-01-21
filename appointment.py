@@ -3,7 +3,7 @@ from doctor import Doctor
 from patient import Patient
 from room import Room
 class Appointment():
-    def __init__(self, date: date, timeframe: tuple, doctor: Doctor, patient: Patient, room: Room, status:str) -> None:
+    def __init__(self, id: int, date: date, timeframe: tuple, doctor: Doctor, patient: Patient, room: Room, status:str) -> None:
         """
         Initialize an Appointment instance.
         Args:
@@ -15,6 +15,7 @@ class Appointment():
             status (str): The current status of the appointment.
         """
 
+        self.id = id
         self.date = date
         self.time = timeframe
         self.doctor = doctor
