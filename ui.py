@@ -68,7 +68,7 @@ class LoginScreenPatient(ttk.Frame):
         if role == "patient":
             for patient in self.controller.hospital.patients:
                 if int(patient.personal_id) == int(personal_id):
-                    if patient.password == password:
+                    if patient.check_password(password):
                         self.controller.current_user = int(personal_id)
                         self.controller.current_user_data = patient
                         self.controller.show_frame("PatientMainScreen")
