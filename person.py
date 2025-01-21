@@ -2,12 +2,12 @@ class Person():
     def __init__(self, personal_id, hospital_id, password, name, surname, age, gender):
         self.personal_id = personal_id
         self.hospital_id = hospital_id
-        self.password = password
+        self._password = password
         self.name = name
         self.surname = surname
         self.age = age
         self.gender = gender
-        self.notifications = []
+        self._notifications = []
         
     def get(self, attribute):
         try:
@@ -21,6 +21,9 @@ class Person():
         
     def __name__(self):
         return self.name + ' ' + self.surname
+    
+    def check_password(self, password):
+        return self._password == password
     
     def set_info(self, attribute, value, type):
         try:
@@ -41,7 +44,7 @@ class Person():
         
             
     def add_notification(self, notification):
-        self.notifications.append(notification)
+        self._notifications.append(notification)
         
     def display_last_notification(self):
-        return self.notifications[-1]
+        return self._notifications[-1]
