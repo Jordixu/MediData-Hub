@@ -3,16 +3,26 @@ class Room():
         self.number = number # int
         self.floor = floor # int
         self.department = department # string
-        self.availability = {} # dictionary
+        self._availability = {} # dictionary
     
     def create_schedule(self, date, timeframes):
-        if date not in self.availabilities:
-            self.availabilities[date] = {}
+        if date not in self._availability:
+            self._availability[date] = {}
         for timeframe in timeframes:
-            self.availabilities[date][timeframe] = True
+            self._availability[date][timeframe] = True
     
     def display_schedule(self):
-        return self.availabilities
+        return self._availability
+    
+    def check_availability(self, date, timeframe):
+        if date in self._availability:
+            if timeframe in self._availability[date]:
+                return self._availability[date][timeframe]
+        return False
+
+    def change_availability(self, date, timeframe):
+        if date in self._availability and timeframe in self._availability[date]:
+            self._availability[date][timeframe] = not self._availability[date][timeframe]
 
     def change_department(self, department):
         if self.department == department:
