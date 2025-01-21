@@ -9,7 +9,7 @@ class Patient(Person):
         self.height = height
         self.assigned_doctor = assigned_doctor
         self.status = status # Inpatient, Outpatient, Emergency
-        self.appointments = {}
+        self._appointments = {}
         self.medications = []
         self.allergies = []
         self.diagnoses = []
@@ -18,16 +18,16 @@ class Patient(Person):
     def __str__(self):
         return f'Patient {self.name} {self.surname}'
         
-    # def add_consult(self, consult):
-    #     self.previous_consults.append(consult)
+    def add_appointment(self, appointment):
+        self._appointments.append(appointment)
         
-    # def remove_consult(self, date, last_consult):
-    #     if last_consult:
-    #         self.previous_consults.pop()
-    #     elif not last_consult:    
-    #         for consult in self.previous_consults:
-    #             if consult.date == date:
-    #                 self.previous_consults.remove(consult)
+    def remove_last_appointment(self, appointment, last_appointment):
+        if last_appointment:
+            self._appointments.pop()
+        elif not last_appointment:
+            for app in self._appointments:
+                if app == appointment:
+                    self._appointments.remove(app)
         
     def add_diagnosis(self, diagnostic):
         self.previous_diagnoses.append(diagnostic)
