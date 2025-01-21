@@ -80,14 +80,13 @@ class Hospital:
         kwargs['weight'] = self.validate_value(kwargs['weight'], float, 0, 1000, custom_message_incorrect_type="The weight must be a number...", custom_message_lower="The weight must be a positive number.", custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?, either you are lying or you are a record breaker.")
         kwargs['height'] = self.validate_value(kwargs['height'], float, 0, 300, custom_message_incorrect_type="The height must be a number...", custom_message_lower="The height must be a positive number.", custom_message_upper="Hello, Mr. giant, how can I help you?")
         
-        kwargs['hospital_id'] = self.patients[-1].hospital_id + 1 if self.patients else 1
-        
         if any(p.personal_id == kwargs['personal_id'] for p in self.patients):
             raise ValueError("The ID is already in our system, perhaps there is a typo?")
         
+        kwargs['hospital_id'] = self.patients[-1].hospital_id + 1 if self.patients else 1
+        
         new_patient = Patient(**kwargs)
         self.patients.append(new_patient) 
-        return f'Patient {new_patient.name} {new_patient.surname} added.'
 
     def remove_patient(self, patient_personal_id: str) -> str:
         """
@@ -107,7 +106,6 @@ class Hospital:
         for patient in self.patients:
             if patient.personal_id == patient_personal_id:
                 self.patients.remove(patient)
-                return f'Patient {patient.name} {patient.surname} with ID {patient.id} removed.'
     
         raise ValueError('Patient not found.')
 
@@ -116,7 +114,8 @@ class Hospital:
         Adds a new doctor to the system after validating the provided attributes.
         
         Args:
-            id (int): Unique identifier for the doctor. Must be a positive integer.
+            personal_id (int): Unique identifier for the doctor. Must be a positive integer.
+            hospital_id (int): Unique hospital identifier for the doctor. Generated automatically.
             name (str): The doctor's first name.
             surname (str): The doctor's last name.
             age (int): Age of the doctor. Must be a positive integer within a plausible
@@ -132,17 +131,20 @@ class Hospital:
         Returns:
             str: A confirmation message indicating the newly added doctor's name and surname.
         """
-        kwargs['doctor_id'] = self.validate_value(kwargs['doctor_id'], int, 0)
-        kwargs['doctor_age'] = self.validate_value(kwargs['doctor_age'], int, 0, 150)
-        kwargs['doctor_socialsecurity'] = self.validate_value(kwargs['doctor_socialsecurity'], int)
-        kwargs['doctor_salary'] = self.validate_value(kwargs['doctor_salary'], float, 0)
+        kwargs['personal_id'] = self.validate_value(kwargs['personal_id'], int, 0)
+        kwargs['hospital_id'] = self.validate_value(kwargs['hospital_id'], int, 0)
+        kwargs['age'] = self.validate_value(kwargs['age'], int, 0, 150)
+        kwargs['socialsecurity'] = self.validate_value(kwargs['socialsecurity'], int)
+        kwargs['salary'] = self.validate_value(kwargs['salary'], float, 0)
         
-        if any(p.id == kwargs['doctor_id'] for d in self.doctors):
+        if any(p.id == kwargs['personal_id'] for d in self.doctors):
             raise ValueError('Doctor already exists.')
+        
+        # Hospital_id for doctors will start at 1000
+        kwargs['hospital_id'] = self.doctor[-1].hospital_id + 1 if self.doctors else 1000
         
         new_doctor = Doctor(**kwargs)
         self.doctors.append(new_doctor)
-        return f'Doctor {new_doctor.name} {new_doctor.surname} added.'
 
     def remove_doctor(self, doctor_id: str) -> str:
         """
@@ -162,22 +164,26 @@ class Hospital:
         for doctor in self.doctors:
             if doctor.id == doctor_id:
                 self.doctors.remove(doctor)
-                return f'Doctor {doctor.name} {doctor.surname} with ID {doctor.id} removed.'
 
         raise ValueError('Doctor not found.')
 
-    def _check_availability(self, doctor, date, timeframe):
-        return doctor.availabilities.get(date, {}).get(timeframe, False)
+        return doctor.check_availability(date, timeframe)
 
     def schedule_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple) -> str:
         if doctor not in self.doctors:
             return 'Doctor not found, please introduce the correct ID'
-        if not self._check_availability(doctor, date, timeframe):
+        if not doctor.check_availability(doctor, date, timeframe):
             return f'Dr. {doctor.surname} is not available at that time, please choose another date or timeframe'
 
         for room in self.spaces:
-            if room.availability.get(date, {}).get(timeframe, False):
-                return self._schedule_appointment(patient, doctor, date, timeframe, room)
+            if room.check_availability(date, timeframe):
+                doctor.change_availability(date, timeframe)
+                room.change_availability(date, timeframe)
+                appointment_id = self.appointments[-1].id + 1 if self.appointments else 1
+                appointment = Appointment(appointment_id, date, timeframe, doctor, patient, room, 'scheduled')
+                self.appointments.append(appointment)
+                doctor.add_appointment(appointment)
+                patient.add_appointment(appointment)
         return 'No available rooms, please choose another date or timeframe'
 
     def cancel_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple) -> str:
