@@ -26,7 +26,7 @@ class MedidataHubUI(ctk.CTk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         
-        ctk.set_appearance_mode("dark")
+        ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("ui/theme.json")
         
         self.frames = {}
