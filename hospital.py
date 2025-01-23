@@ -104,8 +104,9 @@ class Hospital:
         patient_id = self.validate_value(patient_personal_id, int, custom_message_incorrect_type="The ID must be a number.")
         
         for patient in self.patients:
-            if patient.personal_id == patient_personal_id:
+            if patient.personal_id == int(patient_personal_id):
                 self.patients.remove(patient)
+                return
     
         raise ValueError('Patient not found.')
 

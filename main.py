@@ -1,5 +1,5 @@
 from hospital import Hospital
-from ui import MedidataHubUI
+from ui.medidataHubUI import MedidataHubUI
 
 
 def main():
