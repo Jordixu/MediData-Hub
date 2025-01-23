@@ -19,13 +19,13 @@ class Doctor(Person):
     def add_appointment(self, appointment):
         self._appointments.append(appointment)
         
-    def remove_last_appointment(self, appointment, last_appointment):
-        if last_appointment:
-            self._appointments.pop()
-        elif not last_appointment:
-            for app in self._appointments:
-                if app == appointment:
-                    self._appointments.remove(app)
+    # def remove_last_appointment(self, appointment, last_appointment):
+    #     if last_appointment:
+    #         self._appointments.pop()
+    #     elif not last_appointment:
+    #         for app in self._appointments:
+    #             if app == appointment:
+    #                 self._appointments.remove(app)
                     
     def change_speciality(self, speciality):
         self._speciality = speciality
