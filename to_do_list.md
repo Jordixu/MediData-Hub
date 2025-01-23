@@ -56,6 +56,8 @@
 - Change password
 - Forget your password? Security question? ??
 
+### Assigned Doctor
+
 ## Error handling
 
 - Check if name and surname is isalpha()
