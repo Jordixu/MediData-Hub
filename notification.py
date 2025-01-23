@@ -20,3 +20,7 @@ class Notification():
     def __str__(self):
         # for debugging purposes
         return self.__message + " " + self.__date + " " + self.__time + " " + self.__sender + " " + self.__receiver
+    
+    def get_all_attributes(self):
+        return self.__dict__
+    
