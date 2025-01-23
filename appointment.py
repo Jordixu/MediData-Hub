@@ -62,3 +62,6 @@ class Appointment():
     
     def change_room(self, room: Room) -> str:
         self.room = room
+        
+    def get_all_attributes(self) -> dict:
+        return self.__dict__
