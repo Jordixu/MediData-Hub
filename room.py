@@ -36,3 +36,6 @@ class Room():
             return f'The room number is already {self.number}'
         self.number = number
         return f'The room {previous_number} number is now {self.number}'
+    
+    def get_all_attributes(self):
+        return self.__dict__
