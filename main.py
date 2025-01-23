@@ -4,6 +4,7 @@ from ui.medidataHubUI import MedidataHubUI
 
 def main():
     hospital = Hospital("Medidata Hospital", "Barcelona")
+    hospital.load_data()
     ui = MedidataHubUI(hospital)
     ui.mainloop()
 
