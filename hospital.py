@@ -192,8 +192,8 @@ class Hospital:
                 self.appointments.remove(appointment)
                 doctor.availabilities[date][timeframe] = True
                 self.spaces[appointment.room].availability[date][timeframe] = True
-                doctor.remove_appointment(appointment)
-                patient.remove_appointment(appointment)
+                doctor.appointment(appointment).change_status('cancelled')
+                patient.appointment(appointment).change_status('cancelled')
 
                 self._send_notification(doctor, f'Appointment cancelled for {date} at {timeframe[0]} for patient {patient.name} {patient.surname}')
                 self._send_notification(patient, f'Appointment cancelled for {date} at {timeframe[0]} by Dr. {doctor.name} {doctor.surname}')
