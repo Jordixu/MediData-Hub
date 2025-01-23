@@ -48,3 +48,6 @@ class Person():
         
     def display_last_notification(self):
         return self._notifications[-1]
+    
+    def get_all_attributes(self):
+        return self.__dict__
