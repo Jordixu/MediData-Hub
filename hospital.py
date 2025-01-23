@@ -4,6 +4,7 @@ from appointment import Appointment
 from room import Room
 from notification import Notification
 import datetime as dt
+from utilities import Data
 
 class Hospital:
     def __init__(self, name: str, location: str) -> None:
@@ -21,6 +22,43 @@ class Hospital:
         self.appointments = []
         self.rooms = []
         self.drugs = []
+        
+    def load_data(self):
+        try:
+            patients = Data.load_from_csv('./database/patients.csv')
+            for patient in patients:
+                self.patients.append(Patient(**patient))
+        except FileNotFoundError:
+            pass
+            # raise FileNotFoundError('No patients found in the database')
+        
+        try:
+            doctors = Data.load_from_csv('./database/doctors.csv')
+            for doctor in doctors:
+                self.doctors.append(Doctor(**doctor))
+        except FileNotFoundError:
+            pass
+            # raise FileNotFoundError('No doctors found in the database')
+        
+        try:
+            for appointment in Data.load_from_csv('./database/appointments.csv'):
+                self.appointments.append(Appointment(**appointment))
+        except FileNotFoundError:
+            pass
+            # raise FileNotFoundError('No appointments found in the database')
+        
+        try:
+            for room in Data.load_from_csv('./database/rooms.csv'):
+                self.rooms.append(Room(**room))
+        except FileNotFoundError:
+            pass
+            # raise FileNotFoundError('No rooms found in the database')
+        
+        # try:
+        #     for drug in Data.load_from_csv('./database/drugs.csv'):
+        #         self.drugs.append(Drug(**drug))
+        # except FileNotFoundError:
+        #     raise FileNotFoundError('No drugs found in the database')
         
     #@staticmethod
     def validate_value(self, value: any,value_type: object, lower: int|float = None, upper: int|float = None, custom_message_incorrect_type: str = None, custom_message_lower: str = None, custom_message_upper: str = None) -> object: # quizás integremos esto fuera de la clase Hospital o lo definimos como staticmethod para usarlo fuera
@@ -200,3 +238,4 @@ class Hospital:
                 self._send_notification(patient, f'Appointment cancelled for {date} at {timeframe[0]} by Dr. {doctor.name} {doctor.surname}')
                 return f'Appointment cancelled for {date}'
         return 'Appointment not found'
+    
