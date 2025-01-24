@@ -6,9 +6,11 @@ from ui.patientMainScreen import PatientMainScreen
 from ui.doctorMainScreen import DoctorMainScreen
 from ui.prescriptions import Prescriptions
 from ui.patientInformation import PatientInformation
+from utilities import Data
 
 from tkinter import messagebox
 import customtkinter as ctk
+from CTkMenuBar import *
 
 class MedidataHubUI(ctk.CTk):
     def __init__(self, hospital=None, *args, **kwargs):
@@ -18,10 +20,20 @@ class MedidataHubUI(ctk.CTk):
         self.current_user = None
         self.current_user_data = None
         self.hospital = hospital
-        self.geometry("800x600")
+        self.geometry("800x700")
+
+        menu_container = ctk.CTkFrame(self)
+        menu_container.pack(side="top", fill="x")
+        
+        try:
+            save_button = ctk.CTkButton(menu_container, text="Save Data", fg_color="#006622", text_color="white", command=lambda: self.save(), width=30).pack(side="left", padx=10)
+            exit_button = ctk.CTkButton(menu_container, text="Exit", command=lambda: self.quit(), width=30, fg_color="#8B0000").pack(side="right", padx=10)
+            exit_and_save_button = ctk.CTkButton(menu_container, text="Exit and Save Data", fg_color="#006622", text_color="white", command=lambda: [self.save(), self.destroy()], width=30).pack(side="right", padx=10)
+        except:
+            pass
 
         container = ctk.CTkFrame(self)
-        container.pack(side="top", fill="both", expand=True)
+        container.pack(side="bottom", fill="both", expand=True)
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -38,6 +50,14 @@ class MedidataHubUI(ctk.CTk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("RoleSelectionScreen")
+        
+    def save(self):
+        Data.update_database(self.hospital)
+        messagebox.showinfo("Info", "Data saved successfully.")
+    
+    def quit(self):
+        if messagebox.askyesno("Exit", "Are you sure you want to exit? Make sure you saved all the important data", icon="warning", default="no"):
+            self.destroy()
 
     def show_frame(self, name):
         frame = self.frames[name]
