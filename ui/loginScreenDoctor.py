@@ -52,13 +52,13 @@ class LoginScreenDoctor(ctk.CTkFrame):
 
     def login_action(self):
         role = getattr(self.controller, "selected_role", None)
-        personal_id = self.user_entry.get()
+        id = self.user_entry.get()
         password = self.pass_entry.get()
         if role == "doctor":
             for doctor in self.controller.hospital.doctors:
-                if int(doctor.personal_id) == int(personal_id):
-                    if doctor.password == password:
-                        self.controller.current_user = int(personal_id)
+                if int(doctor.personal_id) == int(id) or int(doctor.hospital_id) == int(id):
+                    if doctor.check_password(password):
+                        self.controller.current_user = int(doctor.personal_id)
                         self.controller.current_user_data = doctor
                         self.clear_entries()
                         self.controller.show_frame("DoctorMainScreen")
