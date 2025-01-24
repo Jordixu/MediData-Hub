@@ -1,13 +1,12 @@
 class Person():
-    def __init__(self, personal_id, hospital_id, password, name, surname, age, gender):
+    def __init__(self, personal_id, hospital_id, password, name, surname, birthday, gender):
         self.personal_id = personal_id
         self.hospital_id = hospital_id
         self._password = password
         self.name = name
         self.surname = surname
-        self.age = age
+        self.birthday = birthday
         self.gender = gender
-        self._notifications = []
         
     def get(self, attribute):
         try:
@@ -18,12 +17,18 @@ class Person():
             print('Invalid value')
         except:
             print('An error occurred')
+            
+    def get_password(self):
+        return self._password
+    
+    def set_password(self, password):
+        self._password = password
         
     def __name__(self):
         return self.name + ' ' + self.surname
     
     def check_password(self, password):
-        return self._password == password
+        return self.password == password
     
     def set_info(self, attribute, value, type):
         try:
@@ -40,14 +45,13 @@ class Person():
         except TypeError:
             print('Invalid value')
         except:
-            print('An error occurred')
-        
-            
+            print('An error occurred')  
+
     def add_notification(self, notification):
-        self._notifications.append(notification)
-        
+        self.__notifications.append(notification)
+
     def display_last_notification(self):
-        return self._notifications[-1]
-    
+        return self.__notifications[-1]
+
     def get_all_attributes(self):
         return self.__dict__
