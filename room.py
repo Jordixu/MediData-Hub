@@ -1,41 +1,41 @@
 class Room():
     def __init__(self, number, floor, department):
-        self.number = number # int
-        self.floor = floor # int
-        self.department = department # string
-        self._availability = {} # dictionary
+        self.__number = number # int
+        self.__floor = floor # int
+        self.__department = department # string
+        self.__availability = {} # dictionary
     
     def create_schedule(self, date, timeframes):
-        if date not in self._availability:
-            self._availability[date] = {}
+        if date not in self.__availability:
+            self.__availability[date] = {}
         for timeframe in timeframes:
-            self._availability[date][timeframe] = True
+            self.__availability[date][timeframe] = True
     
     def display_schedule(self):
-        return self._availability
+        return self.__availability
     
     def check_availability(self, date, timeframe):
-        if date in self._availability:
-            if timeframe in self._availability[date]:
-                return self._availability[date][timeframe]
+        if date in self.__availability:
+            if timeframe in self.__availability[date]:
+                return self.__availability[date][timeframe]
         return False
 
     def change_availability(self, date, timeframe):
-        if date in self._availability and timeframe in self._availability[date]:
-            self._availability[date][timeframe] = not self._availability[date][timeframe]
+        if date in self.__availability and timeframe in self.__availability[date]:
+            self.__availability[date][timeframe] = not self.__availability[date][timeframe]
 
     def change_department(self, department):
-        if self.department == department:
-            return f'The room {self.number} is already in the {self.department} department'
-        self.department = department
-        return f'The room {self.number} is now in the {self.department} department'
+        if self.__department == department:
+            return f'The room {self.__number} is already in the {self.__department} department'
+        self.__department = department
+        return f'The room {self.__number} is now in the {self.__department} department'
         
     def change_number(self, number):
-        previous_number = self.number
-        if self.number == number:
-            return f'The room number is already {self.number}'
-        self.number = number
-        return f'The room {previous_number} number is now {self.number}'
+        previous_number = self.__number
+        if self.__number == number:
+            return f'The room number is already {self.__number}'
+        self.__number = number
+        return f'The room {previous_number} number is now {self.__number}'
     
     def get_all_attributes(self):
         return self.__dict__
