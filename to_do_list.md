@@ -64,9 +64,6 @@
 
 ## Database
 
-- Correctly connect with database
-- Update correctly
-- Load correctly the values (hospital.patients/doctors/rooms...)
 - Set default values (preexisting database)
 
 ## Take Out the Test Modules
