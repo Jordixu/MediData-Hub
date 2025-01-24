@@ -3,7 +3,7 @@ from doctor import Doctor
 from patient import Patient
 from room import Room
 class Appointment():
-    def __init__(self, id: int, date: date, timeframe: tuple, doctor: Doctor, patient: Patient, room: Room, status:str) -> None:
+    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor: Doctor, patient: Patient, room: Room, status:str) -> None:
         """
         Initialize an Appointment instance.
         Args:
@@ -15,53 +15,68 @@ class Appointment():
             status (str): The current status of the appointment.
         """
 
-        self.id = id
-        self.date = date
-        self.time = timeframe
-        self.doctor = doctor
-        self.patient = patient
-        self.room = room
-        self.status = status
+        self.appointment_id = appointment_id
+        self.__date = date
+        self.__time = timeframe
+        self.__doctor = doctor
+        self.__patient = patient
+        self.__room = room
+        self.__status = status
 
     def __str__(self) -> str:
-        return f'{self.date} at {self.timeframe} with Dr. {self.doctor}'
+        return f'{self.__date} at {self.__time} with Dr. {self.__doctor}'
+    
+    def get_date(self) -> date:
+        return self.__date
+    
+    def get_time(self) -> tuple:
+        return self.__time
+    
+    def get_doctor(self) -> Doctor:
+        return self.__doctor
+    
+    def get_patient(self) -> Patient:
+        return self.__patient
+    
+    def get_room(self) -> Room:
+        return self.__room
     
     def change_status(self, status: str) -> str:
         if status not in ['scheduled', 'completed', 'cancelled']:
             raise ValueError('The status must be either scheduled, completed, or cancelled')
-        self.status = status
-        return f'The appointment status is now {self.status}'
+        self.__status = status
+        return f'The appointment status is now {self.__status}'
     
     def autocomplete(self) -> None:
-        if self.date < datetime.now().date():
-            if self.timeframe[1] < datetime.now().time():
-                self.status = 'completed'
+        if self.__date < datetime.now().date():
+            if self.__time[1] < datetime.now().time():
+                self.__status = 'completed'
     
     def change_date(self, date: date) -> str:
-        self.date = date
+        self.__date = date
     
-    def change_time(self, timeframe: tuple) -> str:
-        # Check if the doctor is available
-        if not self.doctor.availabilities[self.date][timeframe]:
-            return f'Dr. {self.doctor} is not available at {timeframe}'
-        # Check if the room is available
-        if not self.room.availabilities[self.date][timeframe]:
-            return f'The room {self.room.number} is not available at {timeframe}'
+    # def change_time(self, timeframe: tuple) -> str:
+    #     # Check if the doctor is available
+    #     if not self.doctor.availabilities[self.__date][timeframe]:
+    #         return f'Dr. {self.doctor} is not available at {timeframe}'
+    #     # Check if the room is available
+    #     if not self.__room.availabilities[self.__date][timeframe]:
+    #         return f'The room {self.__room.__number} is not available at {timeframe}'
         
-        self.timeframe = timeframe
-        return f'The appointment is now scheduled at {self.timeframe}'
+    #     self.timeframe = timeframe
+    #     return f'The appointment is now scheduled at {self.timeframe}'
     
     def change_doctor(self, doctor: Doctor) -> str:
-        if doctor == self.doctor:
-            return f'The appointment is already with Dr. {self.doctor}'
-        self.doctor = doctor
-        return f'The appointment is now with Dr. {self.doctor}'
+        if doctor == self.__doctor:
+            return f'The appointment is already with Dr. {self.__doctor}'
+        self.__doctor = doctor
+        return f'The appointment is now with Dr. {self.__doctor}'
     
     def change_patient(self, patient: Patient) -> str:
-        self.patient = patient
+        self.__patient = patient
     
     def change_room(self, room: Room) -> str:
-        self.room = room
+        self.__room = room
         
     def get_all_attributes(self) -> dict:
         return self.__dict__
