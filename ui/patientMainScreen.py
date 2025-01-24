@@ -20,7 +20,7 @@ class PatientMainScreen(ctk.CTkFrame):
         ctk.CTkButton(button_frame, text="Notifications", width=200,
             command=self.not_implemented).grid(row=1, column=1, padx=10, pady=10)
 
-        ctk.CTkButton(self, text="Go Back", command=lambda: controller.show_frame("RoleSelectionScreen")).pack(pady=20)
+        ctk.CTkButton(self, text="Go Back", command=lambda: controller.show_frame("LoginScreenPatient")).pack(pady=20)
 
     def not_implemented(self):
         messagebox.showinfo("Info", "Not implemented yet.")
