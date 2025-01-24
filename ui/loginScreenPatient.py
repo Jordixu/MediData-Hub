@@ -56,16 +56,20 @@ class LoginScreenPatient(ctk.CTkFrame):
 
     def login_action(self):
         role = getattr(self.controller, "selected_role", None)
-        personal_id = self.user_entry.get()
+        id = self.user_entry.get()
         password = self.pass_entry.get()
-        if role == "patient":
-            for patient in self.controller.hospital.patients:
-                if int(patient.personal_id) == int(personal_id):
-                    if patient.check_password(password):
-                        self.controller.current_user = int(personal_id)
-                        self.controller.current_user_data = patient
-                        self.clear_entries()
-                        self.controller.show_frame("PatientMainScreen")
-                    return
-            messagebox.showerror("Error", "Invalid user or password")
-        messagebox.showerror("Error", "Role not supported")
+        if all([id, password]):
+            if role == "patient":
+                for patient in self.controller.hospital.patients:
+                    if int(patient.personal_id) == int(id):
+                        if patient.check_password(password):
+                            self.controller.current_user = int(patient.personal_id)
+                            self.controller.current_user_data = patient
+                            self.clear_entries()
+                            self.controller.show_frame("PatientMainScreen")
+                        return
+                messagebox.showerror("Error", "Invalid user or password")
+                return
+            messagebox.showerror("Error", "Role not supported")
+            return
+        messagebox.showerror("Error", "Please fill all fields")
