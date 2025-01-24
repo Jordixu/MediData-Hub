@@ -1,6 +1,7 @@
 from tkinter import messagebox
 import customtkinter as ctk
 import tkinter as tk
+from tkcalendar import DateEntry
 
 class RegisterScreenPatient(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -18,8 +19,9 @@ class RegisterScreenPatient(ctk.CTkFrame):
         login_information_frame.pack(side="left", padx=50)
 
         ctk.CTkLabel(login_information_frame, text="Login Information", font=("Helvetica", 16)).pack(pady=5)
-        ctk.CTkLabel(login_information_frame, text="User (ID)").pack(padx=5, pady=2)
-        self.user_entry = ctk.CTkEntry(login_information_frame)
+        
+        ctk.CTkLabel(login_information_frame, text="Personal ID (User)").pack(padx=5, pady=2)
+        self.user_entry = ctk.CTkEntry(login_information_frame, placeholder_text="Eg: 123456")
         self.user_entry.pack(padx=5, pady=2)
 
         ctk.CTkLabel(login_information_frame, text="Password").pack(padx=5, pady=2)
@@ -50,9 +52,9 @@ class RegisterScreenPatient(ctk.CTkFrame):
         ctk.CTkRadioButton(gender_frame, text="Male", variable=self.gender_var, value="Male").grid(row=0, column=0)
         ctk.CTkRadioButton(gender_frame, text="Female", variable=self.gender_var, value="Female").grid(row=0, column=1)
 
-        ctk.CTkLabel(personal_information_frame, text="Age").pack(padx=5, pady=2)
-        self.age_entry = ctk.CTkEntry(personal_information_frame)
-        self.age_entry.pack(padx=5, pady=2)
+        ctk.CTkLabel(personal_information_frame, text="Birthday").pack(padx=5, pady=2)
+        self.birthday_entry = DateEntry(personal_information_frame, width=20, background='grey30', foreground='white', borderwidth=2, font=('Helvetica', 12), date_pattern='dd/MM/yyyy')
+        self.birthday_entry.pack(padx=5, pady=2)
 
         ctk.CTkLabel(personal_information_frame, text="Weight (in kg)").pack(padx=5, pady=2)
         self.weight_entry = ctk.CTkEntry(personal_information_frame)
@@ -73,7 +75,7 @@ class RegisterScreenPatient(ctk.CTkFrame):
         self.name_entry.delete(0, tk.END)
         self.surname_entry.delete(0, tk.END)
         self.gender_var.set("")
-        self.age_entry.delete(0, tk.END)
+        # self.age_entry.delete(0, tk.END)
         self.weight_entry.delete(0, tk.END)
         self.height_entry.delete(0, tk.END)
         self.pass_entry.delete(0, tk.END)
@@ -83,30 +85,33 @@ class RegisterScreenPatient(ctk.CTkFrame):
         name = self.name_entry.get()
         surname = self.surname_entry.get()
         gender = self.gender_var.get()
-        age = self.age_entry.get()
+        birthday = self.birthday_entry.get_date()
         weight = self.weight_entry.get()
         height = self.height_entry.get()
         password = self.pass_entry.get()
 
-        fields = [name, surname, gender, age, weight, height, personal_id, password]
+        fields = [name, surname, gender, birthday, weight, height, personal_id, password]
         if all(fields):
-            try:
-                self.controller.hospital.add_patient(
-                    personal_id=personal_id,
-                    password=password,
-                    name=name,
-                    surname=surname,
-                    age=age,
-                    gender=gender,
-                    weight=weight,
-                    height=height
-                )
-                messagebox.showinfo("Info", "Registration completed!")
-                self.clear_entries()
-                self.controller.show_frame("LoginScreenPatient")
-            except ValueError as e:
-                messagebox.showerror("Error", e)
-            except Exception as e:
-                messagebox.showerror("Error", e)
+            if name.isalpha() and surname.isalpha(): # Sinceramente esto debería estar en la clase hospital o paciente
+                try:
+                    self.controller.hospital.add_patient(
+                        personal_id=personal_id,
+                        password=password,
+                        name=name,
+                        surname=surname,
+                        birthday=birthday,
+                        gender=gender,
+                        weight=weight,
+                        height=height
+                    )
+                    messagebox.showinfo("Info", "Registration completed!")
+                    self.clear_entries()
+                    self.controller.show_frame("LoginScreenPatient")
+                except ValueError as e:
+                    messagebox.showerror("Error", e)
+                except Exception as e:
+                    messagebox.showerror("Error", e)
+            else:
+                messagebox.showerror("Error", "Name and Surname must be alphabetic")
         else:
             messagebox.showerror("Error", "Please fill out all fields")
