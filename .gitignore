@@ -3,3 +3,11 @@ __pycache__/
 prueba.py
 hecho_pr2.md
 problemas.md
+database/appointments.csv
+database/doctors.csv
+database/rooms.csv
+database/patients.csv
+database/medications.csv
+database/diagnoses.csv
+database/allergies.csv
+database/notifications.csv
