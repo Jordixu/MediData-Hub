@@ -1,47 +1,52 @@
 from tkinter import messagebox
 import customtkinter as ctk
 import tkinter as tk
+from tkcalendar import DateEntry
+import datetime as dt
 
 class PatientInformation(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
         self.title = "Personal Data"
+        
+        modify_frame = ctk.CTkFrame(self, fg_color="transparent")
+        modify_frame.pack(pady=10)
 
-        ctk.CTkLabel(self, text="Name").pack(pady=2)
-        self.name_entry = ctk.CTkEntry(self)
+        ctk.CTkLabel(modify_frame, text="Name").pack(pady=2)
+        self.name_entry = ctk.CTkEntry(modify_frame)
         self.name_entry.pack(pady=2)
 
-        ctk.CTkLabel(self, text="Surname").pack(pady=2)
-        self.surname_entry = ctk.CTkEntry(self)
+        ctk.CTkLabel(modify_frame, text="Surname").pack(pady=2)
+        self.surname_entry = ctk.CTkEntry(modify_frame)
         self.surname_entry.pack(pady=2)
         
-        ctk.CTkLabel(self, text="Gender").pack(pady=2)
-        gender_frame = ctk.CTkFrame(self, fg_color="transparent")
+        ctk.CTkLabel(modify_frame, text="Gender").pack(pady=2)
+        gender_frame = ctk.CTkFrame(modify_frame, fg_color="transparent")
         gender_frame.pack(pady=2)
         self.gender_var = tk.StringVar()
         self.male_check = ctk.CTkRadioButton(gender_frame, text="Male", variable=self.gender_var, value="Male").grid(row=0, column=0)
         self.female_check = ctk.CTkRadioButton(gender_frame, text="Female", variable=self.gender_var, value="Female").grid(row=0, column=1)
 
-        ctk.CTkLabel(self, text="Age").pack(pady=2)
-        self.age_entry = ctk.CTkEntry(self)
-        self.age_entry.pack(pady=2)
+        ctk.CTkLabel(modify_frame, text="Birthday").pack(pady=2)
+        self.birthday_entry = DateEntry(modify_frame, width=20, background='grey30', foreground='white', borderwidth=2, font=('Helvetica', 12), date_pattern='dd/MM/yyyy')
+        self.birthday_entry.pack(pady=2)
 
-        ctk.CTkLabel(self, text="Weight in kg").pack(pady=2)
-        self.weight_entry = ctk.CTkEntry(self)
+        ctk.CTkLabel(modify_frame, text="Weight (in kg)").pack(pady=2)
+        self.weight_entry = ctk.CTkEntry(modify_frame)
         self.weight_entry.pack(pady=2)
 
-        ctk.CTkLabel(self, text="Height (in cm)").pack(pady=2)
-        self.height_entry = ctk.CTkEntry(self)
+        ctk.CTkLabel(modify_frame, text="Height (in cm)").pack(pady=2)
+        self.height_entry = ctk.CTkEntry(modify_frame)
         self.height_entry.pack(pady=2)
         
-        spacer_frame = ctk.CTkFrame(self, fg_color="transparent", height=10)
+        spacer_frame = ctk.CTkFrame(modify_frame, fg_color="transparent", height=10)
         spacer_frame.pack()
 
-        ctk.CTkButton(self, text="Modify", command=self.modify_data).pack(pady=5)
-        ctk.CTkButton(self, text="Go Back", command=lambda: controller.show_frame("PatientMainScreen")).pack(pady=10)
+        ctk.CTkButton(modify_frame, text="Modify", command=self.modify_data).pack(pady=5)
+        ctk.CTkButton(modify_frame, text="Go Back", command=lambda: controller.show_frame("PatientMainScreen")).pack(pady=10)
         
-        delete_button = ctk.CTkButton(self, text="Delete User", fg_color=("gray75", "red"), command=self.delete_patient)
+        delete_button = ctk.CTkButton(modify_frame, text="Delete User", fg_color="#8B0000", command=self.delete_patient)
         delete_button.pack(pady=5)
 
     def load_data(self):
@@ -49,7 +54,6 @@ class PatientInformation(ctk.CTkFrame):
         self.name_entry.delete(0, tk.END)
         self.surname_entry.delete(0, tk.END)
         self.gender_var.set("")
-        self.age_entry.delete(0, tk.END)
         self.weight_entry.delete(0, tk.END)
         self.height_entry.delete(0, tk.END)
         
@@ -57,7 +61,7 @@ class PatientInformation(ctk.CTkFrame):
             self.name_entry.insert(0, self.controller.current_user_data.get("name"))
             self.surname_entry.insert(0, self.controller.current_user_data.get("surname"))
             self.gender_var.set(self.controller.current_user_data.get("gender"))
-            self.age_entry.insert(0, self.controller.current_user_data.get("age"))
+            self.birthday_entry.set_date(self.controller.current_user_data.get("birthday"))
             self.weight_entry.insert(0, self.controller.current_user_data.get("weight"))
             self.height_entry.insert(0, self.controller.current_user_data.get("height"))
         except AttributeError:
@@ -73,11 +77,9 @@ class PatientInformation(ctk.CTkFrame):
                     patient.set_info("name", self.name_entry.get(), 'str')
                     patient.set_info("surname", self.surname_entry.get(), 'str')
                     patient.set_info("gender", self.gender_var.get(), 'str')
-                    patient.set_info("age", self.controller.hospital.validate_value(
-                        self.age_entry.get(), int, 0, 150,
-                        custom_message_incorrect_type="The age is a number...",
-                        custom_message_lower="The age must be a positive number.",
-                        custom_message_upper="I don't think you are that old."),'int')
+                    if not (dt.date(1900, 1, 1) <= self.birthday_entry.get_date() <= dt.date.today()):
+                        raise ValueError("I don't think you were born in the future or in the 19th century...")
+                    patient.set_info("birthday", self.birthday_entry.get_date(), 'date')
                     patient.set_info("weight", self.controller.hospital.validate_value(
                         self.weight_entry.get(), float, 0, 1000,
                         custom_message_incorrect_type="The weight must be a number...",
@@ -101,6 +103,7 @@ class PatientInformation(ctk.CTkFrame):
             try:
                 self.controller.hospital.remove_patient(self.controller.current_user)
                 messagebox.showinfo("Info", "Account deleted successfully")
+                self.controller.show_frame("PatientMainScreen")
             except TypeError:
                 messagebox.showerror("Error", "There is no data to delete since you are using a test account.")
             except ValueError as e:
