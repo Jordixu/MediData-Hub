@@ -1,5 +1,7 @@
 from hospital import Hospital
 from ui.medidataHubUI import MedidataHubUI
+from random_datas import generate_fake_data
+from datetime import date
 
 
 def main():
