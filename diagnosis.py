@@ -1,6 +1,6 @@
 class Diagnosis():
-    def __init__(self, id, title, date, doctor, patient, description, treatment):
-        self.id = id
+    def __init__(self, id, title, date, doctor, patient, treatment, description = None):
+        self.diagnosis_id = id
         self.title = title
         self.__date = date
         self.__doctor = doctor

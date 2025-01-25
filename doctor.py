@@ -21,7 +21,7 @@ class Doctor(Person):
             appointments: list = None
             ) -> None:
         
-        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender)
+        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, appointments)
         self.speciality = speciality
         self.department = department
         self.__availability = availability
@@ -29,25 +29,10 @@ class Doctor(Person):
         self.salary = salary
         self.__assigned_patients = assigned_patients
         self.__notifications = notifications
-        self.__appointments = appointments
-    
+
     def __str__(self):
         return f'Dr. {self.name} {self.surname}'
-    
-    def add_appointment(self, appointment):
-        self.__appointments.append(appointment)
                     
-    def change_speciality(self, speciality):
-        self.speciality = speciality
-    
-    def change_department(self, department):
-        self.department = department
-    
-    def change_socialsecurity(self, socialsecurity):
-        self.socialsecurity = socialsecurity
-    
-    def change_salary(self, salary):
-        self.salary = salary
         
     def add_patient(self, patient):
         self.__assigned_patients.append(patient)

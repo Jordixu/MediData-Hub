@@ -64,8 +64,23 @@
 
 ## Database
 
-- Set default values (preexisting database)
+- Set default values (preexisting database) DONE
+- Maybe we should export the attributes changing the names directly (undo the name_mangling in get all atributes method)
 
 ## Take Out the Test Modules
 
 delete user return to main sceen
+
+add confirmation from hospital class that the patient/doctor has been successfully deleted, created?
+
+add confirmation to ensure that the appointment has been successfully created and deleted (instead of str, return boolean)
+
+change change_status (appointments) return to bool
+
+appointment class change_date_time method need to be modified
+
+appointment class change_doctor method has to ensure that doctor is available at that time
+
+appointment class change_patient method does not really make sense, does it? Maybe we should take it off
+
+appointment class change_room has to ensure that room is available

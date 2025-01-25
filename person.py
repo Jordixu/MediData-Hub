@@ -1,5 +1,5 @@
 class Person():
-    def __init__(self, personal_id, hospital_id, password, name, surname, birthday, gender):
+    def __init__(self, personal_id, hospital_id, password, name, surname, birthday, gender, appointments = None):
         self.personal_id = personal_id
         self.hospital_id = hospital_id
         self.password = password
@@ -7,6 +7,7 @@ class Person():
         self.surname = surname
         self.birthday = birthday
         self.gender = gender
+        self.appointments = appointments if appointments is not None else {}
         
     def get(self, attribute):
         try:
@@ -55,3 +56,6 @@ class Person():
 
     def get_all_attributes(self):
         return self.__dict__
+    
+    def add_appointment(self, appointment_id):
+        self.appointments.append(appointment_id)

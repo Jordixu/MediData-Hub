@@ -29,20 +29,11 @@ class Appointment():
     def __str__(self) -> str:
         return f'{self.__date} at {self.__timeframe} with Dr. {self.__doctor} and {self.__patient} in room {self.__room} is {self.__status}'
     
-    def get_date(self) -> date:
-        return self.__date
-    
-    def get_time(self) -> tuple:
-        return self.__timeframe
-    
-    def get_doctor(self) -> Doctor:
-        return self.__doctor
-    
-    def get_patient(self) -> Patient:
-        return self.__patient
-    
-    def get_room(self) -> Room:
-        return self.__room
+    def get(self, attribute: str) -> str:
+        try:
+            return getattr(self, f'__{attribute}')
+        except AttributeError:
+            return f'The attribute {attribute} does not exist'
     
     def change_status(self, status: str) -> str:
         if status not in ['Scheduled', 'In Progress', 'Completed', 'Cancelled']:
