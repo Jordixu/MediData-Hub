@@ -21,7 +21,7 @@ class Doctor(Person):
             appointments: list = None
             ) -> None:
         
-        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, notifications)
+        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender)
         self.speciality = speciality
         self.department = department
         self.__availability = availability
