@@ -7,7 +7,7 @@ import datetime as dt
 from utilities import Data
 
 class Hospital:
-    def __init__(self, name: str, location: str) -> None:
+    def __init__(self, username: str, password: str) -> None:
         """
         Initializes the Hospital object.
         Args:
@@ -15,15 +15,40 @@ class Hospital:
             location (str): The location of the hospital.
         """
         
-        self.__name = name
-        self.__location = location 
+        self.__admin_username = username
+        self.__admin_password = password
         self.patients = []
         self.doctors = []
         self.appointments = []
         self.rooms = []
         self.drugs = []
         
+    def checkadmin(self, username: str, password: str) -> bool:
+        """
+        Checks if the username and password match the admin credentials.
+        Args:
+            username (str): The username to check.
+            password (str): The password to check.
+        Returns:
+            bool: True if the credentials match, False otherwise.
+        """
+        return username == self.__admin_username and password == self.__admin_password
+    
     def load_data(self):
+        """
+        Loads data from CSV files into the hospital system.
+        This method attempts to load data for patients, doctors, appointments, and rooms
+        from their respective CSV files located in the './database/' directory. It handles
+        missing files and type errors gracefully by printing appropriate messages.
+        Raises:
+            FileNotFoundError: If the CSV file for drugs is not found (currently commented out).
+        Notes:
+            - Patient data is loaded from 'patients.csv' and transformed to match the Patient class.
+            - Doctor data is loaded from 'doctors.csv' and transformed to match the Doctor class.
+            - Appointment data is loaded from 'appointments.csv' and transformed to match the Appointment class.
+            - Room data is loaded from 'rooms.csv' and transformed to match the Room class.
+        """
+        
         try:
             patients = Data.load_from_csv('./database/patients.csv')
             for patient in patients:
@@ -35,38 +60,49 @@ class Hospital:
                 patient['diagnoses'] = patient.pop('_Patient__diagnoses', None)
                 new_patient = Patient(**patient)
                 self.patients.append(new_patient)
-                print(new_patient)
         except FileNotFoundError:
             print("No patients found in the database")
             pass
-        except TypeError:
-            print(f"{patient} is not a patient")
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
             pass
 
         try:
             doctors = Data.load_from_csv('./database/doctors.csv')
             for doctor in doctors:
-                doctor['_Person__password'] = doctor.pop('_password', None)
-                doctor['_Doctor__availability'] = doctor.pop('_availability', None)
-                doctor['_Doctor__assigned_patients'] = doctor.pop('_assigned_patients', None)
-                doctor['_Doctor__notifications'] = doctor.pop('_notifications', None)
-                doctor['_Doctor__appointments'] = doctor.pop('_appointments', None)
-                self.doctors.append(Doctor(**doctor))
+                doctor['availability'] = doctor.pop('_Doctor__availability', None)
+                doctor['assigned_patients'] = doctor.pop('_Doctor__assigned_patients', None)
+                doctor['notifications'] = doctor.pop('_Doctor__notifications', None)
+                doctor['appointments'] = doctor.pop('_Doctor__appointments', None)
+                new_doctor = Doctor(**doctor)
+                self.doctors.append(new_doctor)
         except FileNotFoundError:
             print("No doctors found in the database")
             pass
-        except TypeError:
-            print("Incorrect type")
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
             pass
 
         try:
             for appointment in Data.load_from_csv('./database/appointments.csv'):
-                self.appointments.append(Appointment(**appointment))
+                print(appointment)
+                appointment['date'] = appointment.pop('_Appointment__date', None)
+                appointment['timeframe'] = appointment.pop('_Appointment__timeframe', None)
+                appointment['doctor'] = appointment.pop('_Appointment__doctor', None)
+                appointment['patient'] = appointment.pop('_Appointment__patient', None)
+                appointment['room'] = appointment.pop('_Appointment__room', None)
+                appointment['status'] = appointment.pop('_Appointment__status', None)
+                appointment['diagnosis'] = appointment.pop('_Appointment__diagnosis', None)
+                appointment['medication'] = appointment.pop('_Appointment__medication', None)
+                appointment['notes'] = appointment.pop('_Appointment__notes', None)
+                new_appointment = Appointment(**appointment)
+                self.appointments.append(new_appointment)
+                print(new_appointment)
         except FileNotFoundError:
             print("No appointments found in the database")
             pass
-        except TypeError:
-            print("Incorrect type")
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
             pass
 
         try:
@@ -76,7 +112,7 @@ class Hospital:
             print("No rooms found in the database")
             pass
         except TypeError:
-            print("Incorrect type")
+            print("Incorrect type in rooms")
             pass
 
         # try:
@@ -272,3 +308,48 @@ class Hospital:
     
     def send_notification(self, person, message):
         person.add_notification(Notification(message))
+        
+    def search_appointments(self, search_term: str) -> list:
+        """
+        Searches for appointments based on the given search term.
+        Args:
+            search_term (str): The term to search for in the appointments.
+        Returns:
+            list: A list of appointments that match the search term.
+        """
+        return [appointment for appointment in self.appointments if search_term in str(appointment)]
+    
+    def get_appointment(self, appointment_id: str) -> Appointment:
+        """
+        Retrieves an appointment based on the given appointment ID.
+        Args:
+            appointment_id (str): The ID of the appointment to retrieve.
+        Returns:
+            Appointment: The appointment object that matches the given ID.
+        """
+        for appointment in self.appointments:
+            if appointment.id == appointment_id:
+                return appointment
+        return None
+    
+    def delete_appointment(self, appointment_id: str) -> None:
+        """
+        Deletes an appointment based on the given appointment ID.
+        Args:
+            appointment_id (str): The ID of the appointment to delete.
+        """
+        for appointment in self.appointments:
+            if appointment.id == appointment_id:
+                self.appointments.remove(appointment)
+                return
+        return None
+    
+    def get_appointments(self) -> list:
+        """
+        Retrieves all appointments in the system.
+        Returns:
+            list: A list of all appointments in the system.
+        """
+        return self.appointments
+    
+        
