@@ -3,7 +3,7 @@ from doctor import Doctor
 from patient import Patient
 from room import Room
 class Appointment():
-    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor: Doctor, patient: Patient, room: Room, status:str) -> None:
+    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor: Doctor, patient: Patient, room: Room, status:str, diagnosis:str = None, medication = None, notes:str = None) -> None:
         """
         Initialize an Appointment instance.
         Args:
@@ -17,20 +17,23 @@ class Appointment():
 
         self.appointment_id = appointment_id
         self.__date = date
-        self.__time = timeframe
+        self.__timeframe = timeframe
         self.__doctor = doctor
         self.__patient = patient
         self.__room = room
         self.__status = status
+        self.__diagnosis = diagnosis
+        self.__medication = medication
+        self.__notes = notes
 
     def __str__(self) -> str:
-        return f'{self.__date} at {self.__time} with Dr. {self.__doctor}'
+        return f'{self.__date} at {self.__timeframe} with Dr. {self.__doctor} and {self.__patient} in room {self.__room} is {self.__status}'
     
     def get_date(self) -> date:
         return self.__date
     
     def get_time(self) -> tuple:
-        return self.__time
+        return self.__timeframe
     
     def get_doctor(self) -> Doctor:
         return self.__doctor
@@ -42,14 +45,14 @@ class Appointment():
         return self.__room
     
     def change_status(self, status: str) -> str:
-        if status not in ['scheduled', 'completed', 'cancelled']:
+        if status not in ['Scheduled', 'In Progress', 'Completed', 'Cancelled']:
             raise ValueError('The status must be either scheduled, completed, or cancelled')
         self.__status = status
         return f'The appointment status is now {self.__status}'
     
     def autocomplete(self) -> None:
         if self.__date < datetime.now().date():
-            if self.__time[1] < datetime.now().time():
+            if self.__timeframe[1] < datetime.now().time():
                 self.__status = 'completed'
     
     def change_date(self, date: date) -> str:
