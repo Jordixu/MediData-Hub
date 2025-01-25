@@ -35,7 +35,7 @@ class Patient(Person):
         self.__notifications = notifications if notifications is not None else []
         
     def __str__(self):
-        return f'Patient {self.name} {self.surname} {self._password}'
+        return f'Patient {self.name} {self.surname} {self.password}'
         
     def get(self, attribute: str) -> str:
         try:
