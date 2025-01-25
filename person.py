@@ -2,7 +2,7 @@ class Person():
     def __init__(self, personal_id, hospital_id, password, name, surname, birthday, gender):
         self.personal_id = personal_id
         self.hospital_id = hospital_id
-        self._password = password
+        self.password = password
         self.name = name
         self.surname = surname
         self.birthday = birthday
@@ -19,10 +19,10 @@ class Person():
             print('An error occurred')
             
     def get_password(self):
-        return self._password
+        return self.password
     
     def set_password(self, password):
-        self._password = password
+        self.password = password
         
     def __name__(self):
         return self.name + ' ' + self.surname
