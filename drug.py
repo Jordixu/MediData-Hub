@@ -1,8 +1,10 @@
 class Drug():
-    def __init__(self, name, price, company=None):
+    def __init__(self, drug_id, name, price, company=None, prescription=False):
+        self.drug_id = drug_id
         self.__name = name
         self.__price = price
         self.__company = company
+        self.__prescription = prescription
         
 
     def __str__(self):
