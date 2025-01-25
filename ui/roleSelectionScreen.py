@@ -34,7 +34,7 @@ class RoleSelectionScreen(ctk.CTkFrame):
 
         ctk.CTkButton(
             buttons_frame, text="Administrator",
-            command=self.not_implemented,
+            command=lambda: self.select_role("admin"),
             width=200, height=50
         ).grid(row=0, column=3, pady=20, padx=20, sticky="ns")
 
@@ -44,6 +44,5 @@ class RoleSelectionScreen(ctk.CTkFrame):
             self.controller.show_frame("LoginScreenPatient")
         elif role == "doctor":
             self.controller.show_frame("LoginScreenDoctor")
-
-    def not_implemented(self):
-        messagebox.showinfo("Info", "Not implemented yet.")
+        elif role == "admin":
+            self.controller.show_frame("LoginScreenAdmin")
