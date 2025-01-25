@@ -2,7 +2,7 @@ from tkinter import messagebox
 import customtkinter as ctk
 import tkinter as tk
 
-class LoginScreenPatient(ctk.CTkFrame):
+class LoginScreenAdmin(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -25,7 +25,7 @@ class LoginScreenPatient(ctk.CTkFrame):
         # Credentials frame
         credentials_frame = ctk.CTkFrame(self, height=50, fg_color="transparent")
         credentials_frame.pack(pady=5)
-        self.user_entry = ctk.CTkEntry(credentials_frame, width=240, height=35, placeholder_text="User (Personal or Hospital ID)")
+        self.user_entry = ctk.CTkEntry(credentials_frame, width=240, height=35, placeholder_text="User (Personal ID)")
         self.user_entry.grid(row=0, column=0, padx=10, pady=10)
 
         self.pass_entry = ctk.CTkEntry(credentials_frame, show="*", width=240, height=35,  placeholder_text="Password")
@@ -55,13 +55,11 @@ class LoginScreenPatient(ctk.CTkFrame):
         personal_id = self.user_entry.get()
         password = self.pass_entry.get()
         if role == "admin":
-            for patient in self.controller.hospital.admins:
-                if int(patient.personal_id) == int(personal_id):
-                    if patient.check_password(password):
-                        self.controller.current_user = int(personal_id)
-                        self.controller.current_user_data = patient
-                        self.clear_entries()
-                        self.controller.show_frame("PatientMainScreen")
-                    return
+            if self.controller.hospital.checkadmin(personal_id, password):
+                self.clear_entries()
+                self.controller.show_frame("AdminMainScreen")
+                return
             messagebox.showerror("Error", "Invalid user or password")
+            return
         messagebox.showerror("Error", "Role not supported")
+        return
