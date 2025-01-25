@@ -67,3 +67,5 @@
 - Set default values (preexisting database)
 
 ## Take Out the Test Modules
+
+delete user return to main sceen
