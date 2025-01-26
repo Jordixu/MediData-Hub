@@ -5,7 +5,7 @@ from datetime import date
 
 def main():
     # If True generates new data. ALL OLD DATA WILL BE LOST
-    generate_new_data = True
+    generate_new_data = False
     
     if generate_new_data:
         DataGenerator.generate_patients()
