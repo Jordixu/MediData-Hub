@@ -2,7 +2,17 @@ import pandas as pd
 import datetime as dt
 import numpy as np
 
+# HAY DOS CLASES EN ESTE ARCHIVO
+
 class Data:
+    """
+    Class to load and save data to CSV files. All methods are static.
+    
+    Methods:
+        load_from_csv(filename): Loads data from a CSV file.
+        save_to_csv(data, filename): Saves data to a CSV file.
+        update_database(hospital): Updates the database with the hospital data.
+    """
     @staticmethod
     def load_from_csv(filename):
         try:
@@ -45,6 +55,14 @@ class Data:
         # save_to_csv(drugs_dict, './database/drugs.csv')
         
 class Datetime:
+    """
+    Class to create timeframes, weeks, and schedules for the hospital database. All methods are static.
+    
+    Methods:
+        create_timeframe(): Creates a list of timeframes from 9:00 to 21:00 in one-hour intervals.
+        create_week(): Creates a list of dates for the current week.
+        create_schedule(): Creates a schedule for the current week with timeframes
+    """
     @staticmethod
     def create_timeframe():
         timeframes = []
