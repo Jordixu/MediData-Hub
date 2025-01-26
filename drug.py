@@ -28,10 +28,10 @@ class Drug():
     
     def get_all_attributes(self):
         attributes = self.__dict__
-        attributes['name'] = self.__name
-        attributes['price'] = self.__price
-        attributes['company'] = self.__company
-        attributes['prescription'] = self.__prescription
+        attributes['name'] = attributes.pop('_Drug__name')
+        attributes['price'] = attributes.pop('_Drug__price')
+        attributes['company'] = attributes.pop('_Drug__company')
+        attributes['prescription'] = attributes.pop('_Drug__prescription')
         return attributes
     
     def get(self, attribute):

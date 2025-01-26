@@ -30,7 +30,6 @@ class Person():
         self.birthday = birthday
         self.gender = gender
         self.appointments = appointments if appointments is not None else {}
-        self.__notifications = []
         
     def get(self, attribute):
         try:
@@ -71,11 +70,11 @@ class Person():
         except:
             raise Exception('An error occurred in setting the attribute')
 
-    def add_notification(self, notification_id):
-        self.__notifications.append(notification_id)
+    # def add_notification(self, notification_id):
+    #     self.__notifications.append(notification_id)
 
-    def display_last_notification(self):
-        return self.__notifications[-1]
+    # def display_last_notification(self):
+    #     return self.__notifications[-1]
     
     def add_appointment(self, appointment_id):
         self.appointments.append(appointment_id)

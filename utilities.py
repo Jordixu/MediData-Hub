@@ -54,7 +54,7 @@ class Data:
             )
         # save_to_csv(drugs_dict, './database/drugs.csv')
         
-class Datetime:
+class Scheduler:
     """
     Class to create timeframes, weeks, and schedules for the hospital database. All methods are static.
     
@@ -87,8 +87,8 @@ class Datetime:
     @staticmethod
     def create_schedule():
         schedule = {}
-        for day in Datetime.create_week():
+        for day in Scheduler.create_week():
             schedule[day] = {}
-            for timeframe in Datetime.create_timeframe():
+            for timeframe in Scheduler.create_timeframe():
                 schedule[day][timeframe] = True
         return schedule

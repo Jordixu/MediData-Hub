@@ -85,9 +85,9 @@ class Doctor(Person):
             
     def get_all_attributes(self):
         attributes = self.__dict__
-        attributes['availability'] = self.__availability
-        attributes['assigned_patients'] = self.__assigned_patients
-        attributes['notifications'] = self.__notifications
-        attributes['salary'] = self.__salary
-        attributes['socialsecurity'] = self.__socialsecurity
+        attributes['availability'] = attributes.pop('_Doctor__availability')
+        attributes['assigned_patients'] = attributes.pop('_Doctor__assigned_patients')
+        attributes['notifications'] = attributes.pop('_Doctor__notifications')
+        attributes['salary'] = attributes.pop('_Doctor__salary')
+        attributes['socialsecurity'] = attributes.pop('_Doctor__socialsecurity')
         return attributes

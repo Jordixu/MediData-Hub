@@ -93,10 +93,6 @@ class Hospital:
         try:
             doctors = Data.load_from_csv('./database/doctors.csv')
             for doctor in doctors:
-                doctor['availability'] = doctor.pop('_Doctor__availability', None)
-                doctor['assigned_patients'] = doctor.pop('_Doctor__assigned_patients', None)
-                doctor['notifications'] = doctor.pop('_Doctor__notifications', None)
-                doctor['appointments'] = doctor.pop('_Doctor__appointments', None)
                 new_doctor = Doctor(**doctor)
                 self.doctors.append(new_doctor)
         except FileNotFoundError as exc:
@@ -108,15 +104,6 @@ class Hospital:
         try:
             for appointment in Data.load_from_csv('./database/appointments.csv'):
                 print(appointment)
-                appointment['date'] = appointment.pop('_Appointment__date', None)
-                appointment['timeframe'] = appointment.pop('_Appointment__timeframe', None)
-                appointment['doctor'] = appointment.pop('_Appointment__doctor', None)
-                appointment['patient'] = appointment.pop('_Appointment__patient', None)
-                appointment['room'] = appointment.pop('_Appointment__room', None)
-                appointment['status'] = appointment.pop('_Appointment__status', None)
-                appointment['diagnosis'] = appointment.pop('_Appointment__diagnosis', None)
-                appointment['medication'] = appointment.pop('_Appointment__medication', None)
-                appointment['notes'] = appointment.pop('_Appointment__notes', None)
                 new_appointment = Appointment(**appointment)
                 self.appointments.append(new_appointment)
                 print(new_appointment)

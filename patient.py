@@ -149,8 +149,8 @@ class Patient(Person):
             
     def get_all_attributes(self):
         attributes = self.__dict__
-        attributes['medications'] = self.__medications
-        attributes['allergies'] = self.__allergies
-        attributes['diagnoses'] = self.__diagnoses
-        attributes['notifications'] = self.__notifications
+        attributes['medications'] = attributes.pop('_Patient__medications')
+        attributes['allergies'] = attributes.pop('_Patient__allergies')
+        attributes['diagnoses'] = attributes.pop('_Patient__diagnoses')
+        attributes['notifications'] = attributes.pop('_Patient__notifications')
         return attributes

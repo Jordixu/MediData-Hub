@@ -2,7 +2,7 @@ from faker import Faker
 import random as rd
 from utilities import Data
 import datetime as dt
-from utilities import Datetime
+from utilities import Scheduler
 import pandas as pd
 
 fake = Faker(['en_US'])
@@ -19,10 +19,10 @@ class DataGenerator:
     """
 
     @staticmethod
-    def generate_patients():
+    def generate_patients(number_of_patients=100):
         patients = []
         patient_personal_ids = set()
-        for x in range(101):
+        for x in range(number_of_patients):
             patient = {
                 "personal_id": rd.randint(100000, 999999),
                 "hospital_id": x,
@@ -33,7 +33,7 @@ class DataGenerator:
                 "gender": rd.choice(["Male", "Female"]),
                 "weight": rd.randint(50, 150) + round(rd.uniform(0, 1), 2),
                 "height": rd.randint(150, 200) + round(rd.uniform(0, 1),2),
-                "assigned_doctor": None,
+                "assigned_doctor_hid": None,
                 "status": rd.choices(["Inpatient", "Outpatient", "Emergency"], weights=(0.15, 0.8, 0.05), k=1)[0],
                 "appointments": None,
                 "medications": None,
@@ -52,9 +52,9 @@ class DataGenerator:
 
 
     @staticmethod
-    def generate_doctors():
+    def generate_doctors(number_of_doctors=100):
         doctors = [] 
-        for x in range(101):
+        for x in range(number_of_doctors):
             doctors.append({
                 "personal_id": rd.randint(100000, 999999),
                 "hospital_id": x + 1000,
@@ -68,18 +68,18 @@ class DataGenerator:
                 "socialsecurity": fake.ssn(),
                 "salary": rd.randint(40000, 100000) + round(rd.uniform(0, 1), 2),
                 "assigned_patients": None,
-                "notifications": None,
-                "availability": Datetime.create_schedule(),
+                "notification_id": None,
+                "availability": Scheduler.create_schedule(),
                 "appointments": None
             })
         Data.save_to_csv(doctors, "./database/doctors.csv")
 
 
     @staticmethod
-    def generate_rooms():
+    def generate_rooms(number_of_floors=6, rooms_per_floor=20):
         rooms = []
-        for number in range(21):
-            for floor in range(6):
+        for number in range(rooms_per_floor):
+            for floor in range(number_of_floors):
                 rooms.append({
                     "number": number,
                     "floor": floor,
@@ -89,7 +89,7 @@ class DataGenerator:
 
 
     @staticmethod
-    def generate_appointments():        
+    def generate_appointments(number_of_appointments=100):        
         # Load previously generated data
         doctors = pd.read_csv("./database/doctors.csv")
         patients = pd.read_csv("./database/patients.csv")
@@ -100,14 +100,14 @@ class DataGenerator:
         room_numbers = rooms["number"].tolist()
 
         appointments = []
-        for x in range(100):
+        for x in range(number_of_appointments):
             appointments.append({
                 "appointment_id": x,
-                "doctor": rd.choice(doctor_ids),
-                "patient": rd.choice(patient_ids),
-                "date": rd.choice(Datetime.create_week()),
-                "timeframe": rd.choice(Datetime.create_timeframe()),
-                "room": rd.choice(room_numbers),
+                "doctor_hid": rd.choice(doctor_ids),
+                "patient_hid": rd.choice(patient_ids),
+                "date": rd.choice(Scheduler.create_week()),
+                "timeframe": rd.choice(Scheduler.create_timeframe()),
+                "room_number": rd.choice(room_numbers),
                 "status": rd.choice(["Scheduled", "Cancelled"]),
                 "diagnosis": None,
                 "medication": None,
@@ -115,9 +115,9 @@ class DataGenerator:
         Data.save_to_csv(appointments, "./database/appointments.csv")
         
     @staticmethod
-    def generate_drugs(): # Aun no se bien bien los atributos de los medicamentos
+    def generate_drugs(number_of_drugs = 100): # Aun no se bien bien los atributos de los medicamentos
         drugs = []
-        for x in range(100):
+        for x in range(number_of_drugs):
             drugs.append({
                 "medication_id": x,
                 "name": fake.word(),
