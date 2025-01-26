@@ -5,6 +5,12 @@ class Room():
         self.__department = department # string
         self.__availability = {} # dictionary
     
+    def get(self, attribute):
+        try:
+            return getattr(self, f'__{attribute}')
+        except AttributeError:
+            return f'The attribute {attribute} does not exist'
+    
     def create_schedule(self, date, timeframes):
         if date not in self.__availability:
             self.__availability[date] = {}
@@ -38,4 +44,9 @@ class Room():
         return f'The room {previous_number} number is now {self.__number}'
     
     def get_all_attributes(self):
-        return self.__dict__
+        attributes = {}
+        attributes['number'] = self.__number
+        attributes['floor'] = self.__floor
+        attributes['department'] = self.__department
+        attributes['availability'] = self.__availability
+        return attributes
