@@ -6,6 +6,16 @@ from utilities import Datetime
 import pandas as pd
 
 class DataGenerator:
+    """
+    Class to generate random data for the hospital database. All data is saved to CSV files. All methods are static.
+    
+    Methods:
+        generate_patients(): Generates random patient data.
+        generate_doctors(): Generates random doctor data.
+        generate_rooms(): Generates random room data.
+        generate_appointments(): Generates random appointment data.
+        generate_drugs(): Generates random drug data.
+    """
     
     global fake
     fake = Faker(['en_US'])
@@ -87,8 +97,8 @@ class DataGenerator:
         patients = pd.read_csv("./database/patients.csv")
         rooms = pd.read_csv("./database/rooms.csv")
 
-        doctor_ids = doctors["personal_id"].tolist()
-        patient_ids = patients["personal_id"].tolist()
+        doctor_ids = doctors["hospital_id"].tolist()
+        patient_ids = patients["hospital_id"].tolist()
         room_numbers = rooms["number"].tolist()
 
         appointments = []
@@ -103,12 +113,11 @@ class DataGenerator:
                 "status": rd.choice(["Scheduled", "Cancelled"]),
                 "diagnosis": None,
                 "medication": None,
-                "notes": fake.text(max_nb_chars=200),
             })
         Data.save_to_csv(appointments, "./database/appointments.csv")
         
     @staticmethod
-    def generate_drugs():
+    def generate_drugs(): # Aun no se bien bien los atributos de los medicamentos
         drugs = []
         for x in range(100):
             drugs.append({
