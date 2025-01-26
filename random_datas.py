@@ -5,6 +5,7 @@ import datetime as dt
 from utilities import Datetime
 import pandas as pd
 
+fake = Faker(['en_US'])
 class DataGenerator:
     """
     Class to generate random data for the hospital database. All data is saved to CSV files. All methods are static.
@@ -16,9 +17,6 @@ class DataGenerator:
         generate_appointments(): Generates random appointment data.
         generate_drugs(): Generates random drug data.
     """
-    
-    global fake
-    fake = Faker(['en_US'])
 
     @staticmethod
     def generate_patients():
