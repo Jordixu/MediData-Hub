@@ -1,21 +1,45 @@
-class Room():
-    def __init__(self, number, floor, department):
+from foundation import Foundation
+class Room(Foundation):
+    """
+    A class used to represent a room in a hospital.
+    
+    Attributes:
+        number (int): The number of the room.
+        floor (int): The floor of the room.
+        department (str): The department the room is in.
+        availability (dict): The availability of the room.
+        
+    Methods:
+        get(attribute): Returns the value of the attribute.
+        create_schedule(date, timeframes): Creates a schedule for the room.
+        display_schedule(): Displays the schedule of the room.
+        check_availability(date, timeframe): Checks the availability of the room.
+        change_availability(date, timeframe): Changes the availability of the room.
+        change_department(department): Changes the department of the room.
+        change_number(number): Changes the number of the room.
+        get_all_attributes(): Returns all the attributes
+    """
+    def __init__(self, number, floor, department, availability = None):
         self.__number = number # int
         self.__floor = floor # int
         self.__department = department # string
-        self.__availability = {} # dictionary
-    
-    def get(self, attribute):
-        try:
-            return getattr(self, f'__{attribute}')
-        except AttributeError:
-            return f'The attribute {attribute} does not exist'
-    
-    def create_schedule(self, date, timeframes):
-        if date not in self.__availability:
-            self.__availability[date] = {}
-        for timeframe in timeframes:
-            self.__availability[date][timeframe] = True
+        self.__availability = availability if availability is not None else {}
+
+    # def create_schedule(self, date, timeframes): # Utility function
+    #     """
+    #     Create a schedule for the room.
+        
+    #     Args:
+    #         date (date): The date of the schedule.
+    #         timeframes (list): The timeframes for the schedule.
+        
+    #     Returns:
+    #         dict: The schedule for the room.
+    #     """
+    #     if date not in self.__availability:
+    #         self.__availability[date] = {}
+    #     for timeframe in timeframes:
+    #         self.__availability[date][timeframe] = True
     
     def display_schedule(self):
         return self.__availability
@@ -42,11 +66,3 @@ class Room():
             return f'The room number is already {self.__number}'
         self.__number = number
         return f'The room {previous_number} number is now {self.__number}'
-    
-    def get_all_attributes(self):
-        attributes = {}
-        attributes['number'] = self.__number
-        attributes['floor'] = self.__floor
-        attributes['department'] = self.__department
-        attributes['availability'] = self.__availability
-        return attributes

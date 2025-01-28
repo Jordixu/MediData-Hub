@@ -4,7 +4,7 @@ from ui.registerScreenPatient import RegisterScreenPatient
 from ui.loginScreenDoctor import LoginScreenDoctor
 from ui.patientMainScreen import PatientMainScreen
 from ui.doctorMainScreen import DoctorMainScreen
-from ui.prescriptions import Prescriptions
+from ui.patientPrescriptions import Prescriptions
 from ui.patientInformation import PatientInformation
 from ui.adminAppointments import AdminAppointments
 from ui.adminDoctors import AdminDoctors
@@ -15,29 +15,30 @@ from ui.adminPatients import AdminPatients
 from ui.adminRooms import AdminRooms
 from ui.loginScreenAdmin import LoginScreenAdmin
 
-from utilities import Data
-
 from tkinter import messagebox
 import customtkinter as ctk
-from CTkMenuBar import *
+import tkinter as tk
 
 class MedidataHubUI(ctk.CTk):
-    def __init__(self, hospital=None, *args, **kwargs):
+    def __init__(self, utility, hospital=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title("Hospital Management System")
         self.selected_role = None
         self.current_user = None
         self.current_user_data = None
+        self.utility = utility
         self.hospital = hospital
         self.geometry("800x700")
 
         menu_container = ctk.CTkFrame(self)
         menu_container.pack(side="top", fill="x")
         
+        self.protocol("WM_DELETE_WINDOW", self.quit)
+        
         try:
-            save_button = ctk.CTkButton(menu_container, text="Save Data", fg_color="#006622", text_color="white", command=lambda: self.save(), width=30).pack(side="left", padx=10)
-            exit_button = ctk.CTkButton(menu_container, text="Exit", command=lambda: self.quit(), width=30, fg_color="#8B0000").pack(side="right", padx=10)
-            exit_and_save_button = ctk.CTkButton(menu_container, text="Exit and Save Data", fg_color="#006622", text_color="white", command=lambda: [self.save(), self.destroy()], width=30).pack(side="right", padx=10)
+            save_button = ctk.CTkButton(menu_container, text="Save Data", fg_color="#205f25", text_color="white", command=lambda: self.save(), width=30).pack(side="left", padx=10)
+            exit_button = ctk.CTkButton(menu_container, text="Exit", command=lambda: self.destroy(), width=30, fg_color="#8B0000").pack(side="right", padx=10)
+            exit_and_save_button = ctk.CTkButton(menu_container, text="Exit and Save Data", fg_color="#955600", text_color="white", command=lambda: [self.save(), self.destroy()], width=30).pack(side="right", padx=10)
         except:
             pass
 
@@ -61,7 +62,7 @@ class MedidataHubUI(ctk.CTk):
         self.show_frame("RoleSelectionScreen")
         
     def save(self):
-        Data.update_database(self.hospital)
+        self.utility.update_database(self.hospital)
         messagebox.showinfo("Info", "Data saved successfully.")
     
     def quit(self):

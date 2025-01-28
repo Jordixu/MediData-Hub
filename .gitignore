@@ -11,3 +11,4 @@ database/medications.csv
 database/diagnoses.csv
 database/allergies.csv
 database/notifications.csv
+random_datas.py

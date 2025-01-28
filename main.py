@@ -1,21 +1,22 @@
 from hospital import Hospital
 from ui.medidataHubUI import MedidataHubUI
-from random_datas import DataGenerator
 from datetime import date
+from utilities import Utilities
 
 def main():
     # If True generates new data. ALL OLD DATA WILL BE LOST
     generate_new_data = False
+    utility = Utilities()
     
     if generate_new_data:
-        DataGenerator.generate_patients()
-        DataGenerator.generate_doctors()
-        DataGenerator.generate_rooms()
-        DataGenerator.generate_appointments()
+        utility.generate_patients()
+        utility.generate_doctors()
+        utility.generate_rooms()
+        utility.generate_appointments()
     
-    hospital = Hospital("Admin", "Admin")
+    hospital = Hospital("Admin", "Admin", utility)
     hospital.load_data()
-    ui = MedidataHubUI(hospital)
+    ui = MedidataHubUI(utility=utility, hospital=hospital)
     ui.mainloop()
 
 

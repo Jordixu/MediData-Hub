@@ -92,7 +92,7 @@ class RegisterScreenPatient(ctk.CTkFrame):
 
         fields = [name, surname, gender, birthday, weight, height, personal_id, password]
         if all(fields):
-            if name.isalpha() and surname.isalpha(): # Sinceramente esto debería estar en la clase hospital o paciente
+            if name.isalpha() and surname.isalpha():
                 try:
                     self.controller.hospital.add_patient(
                         personal_id=personal_id,

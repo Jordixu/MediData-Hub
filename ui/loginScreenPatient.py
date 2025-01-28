@@ -61,9 +61,9 @@ class LoginScreenPatient(ctk.CTkFrame):
         if all([id, password]):
             if role == "patient":
                 for patient in self.controller.hospital.patients:
-                    if int(patient.personal_id) == int(id):
+                    if int(patient.get_protected_attribute("personal_id")) == int(id):
                         if patient.check_password(password):
-                            self.controller.current_user = int(patient.personal_id)
+                            self.controller.current_user = int(patient.get_protected_attribute("hospital_id"))
                             self.controller.current_user_data = patient
                             self.clear_entries()
                             self.controller.show_frame("PatientMainScreen")

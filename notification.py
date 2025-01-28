@@ -1,4 +1,5 @@
-class Notification():
+from foundation import Foundation
+class Notification(Foundation):
     """
     Represents a notification in a hospital.
     
@@ -19,22 +20,7 @@ class Notification():
         self.__datetime = datetime 
         self.__sender_id = sender_id
         self.__receiver_id = receiver_id
-        
-    def get_message(self):
-        return self.__message
-    
-    def get_datetime(self):
-        return "The message was sent on " + self.__datetime
-    
-    def get_sender(self):
-        return "The message was sent by " + self.__sender_id
-    def get_receiver(self):
-        return "The message was sent to " + self.__receiver_id
     
     def __str__(self):
         # for debugging purposes
         return f'{self.__message} {self.__datetime} {self.__sender_id} {self.__receiver_id}'
-    
-    def get_all_attributes(self):
-        return self.__dict__
-    

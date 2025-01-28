@@ -58,14 +58,17 @@ class PatientInformation(ctk.CTkFrame):
         self.height_entry.delete(0, tk.END)
         
         try:
-            self.name_entry.insert(0, self.controller.current_user_data.get("name"))
-            self.surname_entry.insert(0, self.controller.current_user_data.get("surname"))
-            self.gender_var.set(self.controller.current_user_data.get("gender"))
-            self.birthday_entry.set_date(self.controller.current_user_data.get("birthday"))
-            self.weight_entry.insert(0, self.controller.current_user_data.get("weight"))
-            self.height_entry.insert(0, self.controller.current_user_data.get("height"))
-        except AttributeError:
-            messagebox.showerror("Error", "Data not found. You are using a test account. Please login with a valid account.")
+            self.name_entry.insert(0, self.controller.current_user_data.get_protected_attribute("name"))
+            self.surname_entry.insert(0, self.controller.current_user_data.get_protected_attribute("surname"))
+            self.gender_var.set(self.controller.current_user_data.get_protected_attribute("gender"))
+            birthday_str = self.controller.current_user_data.get_protected_attribute("birthday")
+            birthday_date = dt.datetime.strptime(birthday_str, "%Y-%m-%d").date() if type(birthday_str) == str else birthday_str
+            self.birthday_entry.set_date(birthday_date)
+            self.weight_entry.insert(0, self.controller.current_user_data.get_private_attribute("weight"))
+            self.height_entry.insert(0, self.controller.current_user_data.get_private_attribute("height"))
+        except AttributeError as exc:
+            # messagebox.showerror("Error", "Data not found. You are using a test account. Please login with a valid account.")
+            messagebox.showerror("Error", exc)
 
     def modify_data(self):
         if self.controller.current_user_data is None:
@@ -73,19 +76,19 @@ class PatientInformation(ctk.CTkFrame):
             return
         try:
             for patient in self.controller.hospital.patients:
-                if patient.personal_id == self.controller.current_user:
-                    patient.set_info("name", self.name_entry.get(), 'str')
-                    patient.set_info("surname", self.surname_entry.get(), 'str')
-                    patient.set_info("gender", self.gender_var.get(), 'str')
+                if patient.get_protected_info("hospital_id") == self.controller.current_user:
+                    patient.set_protected_info("name", self.name_entry.get(), 'str')
+                    patient.set_protected_info("surname", self.surname_entry.get(), 'str')
+                    patient.set_protected_info("gender", self.gender_var.get(), 'str')
                     if not (dt.date(1900, 1, 1) <= self.birthday_entry.get_date() <= dt.date.today()):
                         raise ValueError("I don't think you were born in the future or in the 19th century...")
-                    patient.set_info("birthday", self.birthday_entry.get_date(), 'date')
-                    patient.set_info("weight", self.controller.hospital.validate_value(
+                    patient.set_protected_info("birthday", self.birthday_entry.get_date(), 'date')
+                    patient.set_private_info("weight", self.controller.hospital.validate_value(
                         self.weight_entry.get(), float, 0, 1000,
                         custom_message_incorrect_type="The weight must be a number...",
                         custom_message_lower="The weight must be a positive number.",
                         custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?"), 'float')
-                    patient.set_info("height", self.controller.hospital.validate_value(
+                    patient.set_private_info("height", self.controller.hospital.validate_value(
                         self.height_entry.get(), float, 0, 300,
                         custom_message_incorrect_type="The height must be a number...",
                         custom_message_lower="The height must be a positive number.",
@@ -103,7 +106,7 @@ class PatientInformation(ctk.CTkFrame):
             try:
                 self.controller.hospital.remove_patient(self.controller.current_user)
                 messagebox.showinfo("Info", "Account deleted successfully")
-                self.controller.show_frame("PatientMainScreen")
+                self.controller.show_frame("RoleSelectionScreen")
             except TypeError:
                 messagebox.showerror("Error", "There is no data to delete since you are using a test account.")
             except ValueError as e:

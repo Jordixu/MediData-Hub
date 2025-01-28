@@ -5,7 +5,6 @@ from doctor import Doctor
 from appointment import Appointment
 from room import Room
 from notification import Notification
-from utilities import Data
 
 class Hospital:
     """
@@ -37,7 +36,7 @@ class Hospital:
         delete_appointment(appointment_id): Deletes an appointment based on the given appointment ID.
         get_appointments(): Retrieves all appointments in the system.
     """
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(self, username: str, password: str, utility) -> None:
         """
         Initializes the Hospital object.
         Args:
@@ -52,6 +51,7 @@ class Hospital:
         self.rooms = []
         self.drugs = []
         self.notifications = []
+        self.utility = utility
 
     def checkadmin(self, username: str, password: str) -> bool:
         """
@@ -81,17 +81,18 @@ class Hospital:
         """
 
         try:
-            patients = Data.load_from_csv('./database/patients.csv')
+            patients = self.utility.load_from_csv('./database/patients.csv')
             for patient in patients:
                 new_patient = Patient(**patient)
                 self.patients.append(new_patient)
+                print(new_patient)
         except FileNotFoundError as exc:
             raise FileNotFoundError("No patients found in the database") from exc
         except TypeError as e:
             print(f"Incorrect type: {e}")
 
         try:
-            doctors = Data.load_from_csv('./database/doctors.csv')
+            doctors = self.utility.load_from_csv('./database/doctors.csv')
             for doctor in doctors:
                 new_doctor = Doctor(**doctor)
                 self.doctors.append(new_doctor)
@@ -102,26 +103,24 @@ class Hospital:
             print(f"Incorrect type: {e}")
 
         try:
-            for appointment in Data.load_from_csv('./database/appointments.csv'):
-                print(appointment)
+            for appointment in self.utility.load_from_csv('./database/appointments.csv'):
                 new_appointment = Appointment(**appointment)
                 self.appointments.append(new_appointment)
-                print(new_appointment)
         except FileNotFoundError as exc:
             raise FileNotFoundError("No appointments found in the database") from exc
         except TypeError as e:
             print(f"Incorrect type: {e}")
 
         try:
-            for room in Data.load_from_csv('./database/rooms.csv'):
+            for room in self.utility.load_from_csv('./database/rooms.csv'):
                 self.rooms.append(Room(**room))
         except FileNotFoundError as exc:
             raise FileNotFoundError('No rooms found in the database') from exc
-        except TypeError:
-            print("Incorrect type in rooms")
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
 
         # try:
-        #     for drug in Data.load_from_csv('./database/drugs.csv'):
+        #     for drug in self.utility.load_from_csv('./database/drugs.csv'):
         #         self.drugs.append(Drug(**drug))
         # except FileNotFoundError:
         #     raise FileNotFoundError('No drugs found in the database')
@@ -158,7 +157,7 @@ class Hospital:
 
         return value
 
-    def add_patient(self, **kwargs) -> str:
+    def add_patient(self, **kwargs) -> bool:
         """
         Adds a new patient to the system after validating the provided attributes.
         
@@ -186,10 +185,11 @@ class Hospital:
         if not (dt.date(1900, 1, 1) <= kwargs['birthday'] <= dt.date.today()):
             raise ValueError("The birthday must be between 1900-01-01 and today.")
 
-        if any(p.personal_id == kwargs['personal_id'] for p in self.patients):
+        if any(p.get_protected_attribute('personal_id') == kwargs['personal_id'] for p in self.patients):
             raise ValueError("The ID is already in our system, perhaps there is a typo?")
 
-        kwargs['hospital_id'] = self.patients[-1].hospital_id + 1 if self.patients else 1
+        if 'hospital_id' not in kwargs:
+            kwargs['hospital_id'] = self.patients[-1].get_protected_attribute("hospital_id") + 1 if self.patients else 1
 
         new_patient = Patient(**kwargs)
         self.patients.append(new_patient)
@@ -197,29 +197,26 @@ class Hospital:
             raise ValueError("The patient could not be added.")
         return True
 
-    def remove_patient(self, patient_personal_id: str) -> str:
+    def remove_patient(self, patient_hospital_id: int|str) -> str:
         """
         Removes a patient from the system based on their ID.
 
         Args:
-            patient_id (str): The ID of the patient to remove.
+            patient_id (int|str): The ID of the patient to remove.
 
         Raises:
             ValueError: If the patient is not found in the system.
-
-        Returns:
-            str: A confirmation message indicating the removed patient's name and surname.
         """
-        patient_personal_id = self.validate_value(patient_personal_id, int, custom_message_incorrect_type="The ID must be a number.")
+        patient_hospital_id = self.validate_value(patient_hospital_id, int, custom_message_incorrect_type="The ID must be a number.")
         
         for patient in self.patients:
-            if patient.personal_id == int(patient_personal_id):
+            if patient.get_protected_attributes("hospital_id") == int(patient_hospital_id):
                 self.patients.remove(patient)
                 return
     
         raise ValueError('Patient not found.')
 
-    def add_doctor(self, **kwargs) -> str:
+    def add_doctor(self, **kwargs) -> None:
         """
         Adds a new doctor to the system after validating the provided attributes.
         
@@ -237,9 +234,6 @@ class Hospital:
 
         Raises:
             ValueError: If a doctor with the same ID already exists or the validation fails.
-
-        Returns:
-            str: A confirmation message indicating the newly added doctor's name and surname.
         """
         kwargs['personal_id'] = self.validate_value(kwargs['personal_id'], int, 0)
         kwargs['hospital_id'] = self.validate_value(kwargs['hospital_id'], int, 0)
@@ -247,16 +241,17 @@ class Hospital:
         kwargs['socialsecurity'] = self.validate_value(kwargs['socialsecurity'], int)
         kwargs['salary'] = self.validate_value(kwargs['salary'], float, 0)
         
-        if any(d.id == kwargs['personal_id'] for d in self.doctors):
+        if any(d.get_protected_info("personal_id") == kwargs['personal_id'] for d in self.doctors):
             raise ValueError('Doctor already exists.')
         
         # Hospital_id for doctors will start at 1000
-        kwargs['hospital_id'] = self.doctors[-1].hospital_id + 1 if self.doctors else 1000
+        if 'hospital_id' not in kwargs:
+            kwargs['hospital_id'] = self.doctors[-1].hospital_id + 1 if self.doctors else 1000
         
         new_doctor = Doctor(**kwargs)
         self.doctors.append(new_doctor)
 
-    def remove_doctor(self, doctor_id: str) -> str:
+    def remove_doctor(self, doctor_id: int|str) -> None:
         """
         Removes a doctor from the system based on their ID.
 
@@ -265,19 +260,17 @@ class Hospital:
 
         Raises:
             ValueError: If the doctor is not found in the system.
-
-        Returns:
-            str: A confirmation message indicating the removed doctor's name and surname.
         """
         doctor_id = self.validate_value(doctor_id, int, custom_message_incorrect_type="The ID must be a number.")
 
         for doctor in self.doctors:
-            if doctor.id == doctor_id:
+            if doctor.get_protected_info("hospital_id") == doctor_id:
                 self.doctors.remove(doctor)
+                return
 
         raise ValueError('Doctor not found.')
 
-    def schedule_appointment(self, patient_hid: int, doctor_hid: int, date: str, timeframe: tuple) -> str:
+    def schedule_appointment(self, patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> str:
         """
         Schedules an appointment between a patient and a doctor.
         
@@ -292,12 +285,12 @@ class Hospital:
         """
         
         # Find the doctor
-        doctor = next((doc for doc in self.doctors if doc.hospital_id == doctor_hid), None)
+        doctor = next((doc for doc in self.doctors if doc.get_protected_info("hospital_id") == doctor_hid), None)
         if not doctor:
             raise ValueError('Doctor not found')
         
         # Find the patient
-        patient = next((pat for pat in self.patients if pat.hospital_id == patient_hid), None)
+        patient = next((pat for pat in self.patients if pat.get_protected_info("hospital_id") == patient_hid), None)
         if not patient:
             raise ValueError('Patient not found')
         
@@ -330,19 +323,19 @@ class Hospital:
     #             return f'Appointment cancelled for {date}'
     #     return 'Appointment not found'
     
-    def send_notification(self, receiver, sender, message):
+    def send_notification(self, receiver_hid, sender_hid, message):
         """
         Sends a notification from the sender to the receiver with the given message.
         Args:
-            receiver (str): The recipient of the notification.
-            sender (str): The sender of the notification.
+            receiver_hid (int): The recipient of the notification.
+            sender_hid (int): The sender of the notification.
             message (str): The content of the notification message.
         Returns:
             None
         """
 
         date = dt.datetime.now()
-        self.notifications.append(Notification(message, date, sender, receiver))
+        self.notifications.append(Notification(message, date, sender_hid, receiver_hid)) # FALTA IMPLEMENTAR EL METODO PARA QUE LOS DOCTORES Y PACIENTES PUEDAN VER SUS NOTIFICACIONES
         
     def search_appointments(self, search_term: str) -> list: # Hay que cambiar esto para que busque en todos los atributos de Appointment
         """
@@ -352,29 +345,29 @@ class Hospital:
         Returns:
             list: A list of appointments that match the search term.
         """
-        return [appointment for appointment in self.appointments if search_term in str(appointment)]
+        return [appointment for appointment in self.appointments if search_term in str(appointment)] # MODIFY
     
-    def get_appointment(self, appointment_id: str) -> Appointment:
+    def get_appointment(self, appointment_id: int) -> Appointment:
         """
         Retrieves an appointment based on the given appointment ID.
         Args:
-            appointment_id (str): The ID of the appointment to retrieve.
+            appointment_id (int): The ID of the appointment to retrieve.
         Returns:
             Appointment: The appointment object that matches the given ID.
         """
         for appointment in self.appointments:
-            if appointment.id == appointment_id:
+            if appointment.id == appointment_id: # MODIFY
                 return appointment
         return None
     
-    def delete_appointment(self, appointment_id: str) -> None:
+    def delete_appointment(self, appointment_id: int) -> None:
         """
         Deletes an appointment based on the given appointment ID.
         Args:
-            appointment_id (str): The ID of the appointment to delete.
+            appointment_id (int): The ID of the appointment to delete.
         """
         for appointment in self.appointments:
-            if appointment.id == appointment_id:
+            if appointment.id == appointment_id: # MODIFY
                 self.appointments.remove(appointment)
                 return
         return None

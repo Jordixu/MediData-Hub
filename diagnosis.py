@@ -1,4 +1,5 @@
-class Diagnosis():
+from foundation import Foundation
+class Diagnosis(Foundation):
     """
     Represents a diagnosis for a patient.
     
@@ -12,8 +13,8 @@ class Diagnosis():
         treatment (str): The treatment prescribed for the diagnosis.
     """
     def __init__(self, id: int, title: str, appointment_id: int, doctor_hid: int, patient_hid: int, treatment, description = None):
-        self.diagnosis_id = id
-        self.title = title
+        self.__diagnosis_id = id
+        self.__title = title
         self.__appointment_id = appointment_id
         self.__doctor_hid = doctor_hid
         self.__patient_hid = patient_hid
@@ -21,6 +22,6 @@ class Diagnosis():
         self.__treatment = treatment # medication, surgery, therapy, etc. POR DETERMINAR
         
     def __str__(self):
-        return f'{self.title} {self.__description} {self.__treatment}'
-    
+        return f'{self.__title} {self.__description} {self.__treatment}'
+        
     # FALTA

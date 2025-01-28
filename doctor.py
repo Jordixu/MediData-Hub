@@ -37,21 +37,20 @@ class Doctor(Person):
             salary: float,  
             availability: dict = None, 
             assigned_patients: list = None, 
-            notification_id: list = None, 
+            notifications: list = None, 
             appointments: list = None
             ) -> None:
         
         super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, appointments)
-        self.speciality = speciality
-        self.department = department
-        self.__availability = availability
+        self.__speciality = speciality
+        self.__department = department
+        self.__availability = availability if availability is not None else {}
         self.__socialsecurity = socialsecurity
         self.__salary = salary
-        self.__assigned_patients = assigned_patients
-        self.__notifications = notification_id
+        self.__assigned_patients = assigned_patients if assigned_patients is not None else []
 
     def __str__(self):
-        return f'Dr. {self.name} {self.surname}'
+        return f'Dr. {self._name} {self._surname}'
         
     def add_patient(self, patient_hid):
         self.__assigned_patients.append(patient_hid)
@@ -83,11 +82,21 @@ class Doctor(Person):
         if date in self.__availability and timeframe in self.__availability[date]:
             self.__availability[date][timeframe] = not self.__availability[date][timeframe]
             
-    def get_all_attributes(self):
-        attributes = self.__dict__
-        attributes['availability'] = attributes.pop('_Doctor__availability')
-        attributes['assigned_patients'] = attributes.pop('_Doctor__assigned_patients')
-        attributes['notifications'] = attributes.pop('_Doctor__notifications')
-        attributes['salary'] = attributes.pop('_Doctor__salary')
-        attributes['socialsecurity'] = attributes.pop('_Doctor__socialsecurity')
-        return attributes
+    # def get_all_attributes(self):
+    #     attributes = {}
+    #     attributes['personal_id'] = self._personal_id
+    #     attributes['hospital_id'] = self._hospital_id
+    #     attributes['password'] = self._password
+    #     attributes['name'] = self._name
+    #     attributes['surname'] = self._surname
+    #     attributes['gender'] = self._gender
+    #     attributes['birthday'] = self._birthday
+    #     attributes['speciality'] = self.__speciality
+    #     attributes['department'] = self.__department
+    #     attributes['availability'] = self.__availability
+    #     attributes['assigned_patients'] = self.__assigned_patients
+    #     attributes['notifications'] = self.__notifications
+    #     attributes['salary'] = self.__salary
+    #     attributes['socialsecurity'] = self.__socialsecurity
+        
+    #     return attributes

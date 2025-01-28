@@ -2,7 +2,8 @@ from datetime import date, time, datetime
 from doctor import Doctor
 from patient import Patient
 from room import Room
-class Appointment():
+from foundation import Foundation
+class Appointment(Foundation):
     """
     Represents an appointment in a hospital.
     
@@ -27,7 +28,7 @@ class Appointment():
         change_room(room_hid): Changes the room assigned for the appointment.
         get_all_attributes(): Returns all the attributes of the appointment.
     """
-    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor_hid: int, patient_hid: int, room_number: int, status:str, diagnosis:str = None, medication = None) -> None:
+    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor_hid: int, patient_hid: int, room_number: int, status:str, diagnosis_id:str = None, medication_id = None) -> None:
         """
         Initialize an Appointment instance.
         Args:
@@ -42,24 +43,18 @@ class Appointment():
             medication (str, optional): The medication prescribed to the patient. Defaults to None.
         """
 
-        self.appointment_id = appointment_id
+        self.__appointment_id = appointment_id
         self.__date = date
         self.__timeframe = timeframe
         self.__doctor_hid = doctor_hid
         self.__patient_hid = patient_hid
         self.__room_number = room_number
         self.__status = status
-        self.__diagnosis = diagnosis
-        self.__medication = medication
+        self.__diagnosis_id = diagnosis_id
+        self.__medication_id = medication_id
 
     def __str__(self) -> str:
         return f'{self.__date} at {self.__timeframe} with Dr. {self.__doctor_hid} and {self.__patient_hid} in room {self.__room_number} is {self.__status}'
-    
-    def get(self, attribute: str) -> str:
-        try:
-            return getattr(self, f'__{attribute}')
-        except AttributeError:
-            return f'The attribute {attribute} does not exist'
     
     def change_status(self, status: str) -> str:
         if status not in ['Scheduled', 'In Progress', 'Completed', 'Cancelled']:
@@ -93,22 +88,3 @@ class Appointment():
             return f'The appointment is already with Dr. {self.__doctor_hid}'
         self.__doctor_hid = doctor_hid
         return f'The appointment is now with Dr. {self.__doctor_hid}'
-    
-    def change_patient(self, patient_hid: Patient) -> str:
-        self.__patient_hid = patient_hid
-    
-    def change_room(self, room_number: Room) -> str:
-        self.__room_number = room_number
-        
-    def get_all_attributes(self) -> dict:
-        attributes = {}
-        attributes['appointment_id'] = self.appointment_id
-        attributes['date'] = self.__date
-        attributes['timeframe'] = self.__timeframe
-        attributes['doctor_hid'] = self.__doctor_hid
-        attributes['patient_hid'] = self.__patient_hid
-        attributes['room_number'] = self.__room_number
-        attributes['status'] = self.__status
-        attributes['diagnosis'] = self.__diagnosis
-        attributes['medication'] = self.__medication
-        return attributes
