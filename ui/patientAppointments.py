@@ -29,10 +29,10 @@ class PatientAppointments(ctk.CTkFrame):
 
         self.tree.bind("<<TreeviewSelect>>", self.selected)
 
-        self.request_button = ctk.CTkButton(self, text="Request New Appointment", command=lambda: self.request_appointment)
+        self.request_button = ctk.CTkButton(self, text="Request New Appointment", command=self.request_appointment)
         self.request_button.pack(side=ctk.LEFT, padx=20, pady=10)
 
-        self.cancel_button = ctk.CTkButton(self, text="Cancel Appointment", command=lambda: self.cancel_appointment)
+        self.cancel_button = ctk.CTkButton(self, text="Cancel Appointment", command=self.cancel_appointment)
         self.cancel_button.pack(side=ctk.RIGHT, padx=20, pady=10)
 
     def load_appointments(self):
@@ -43,41 +43,57 @@ class PatientAppointments(ctk.CTkFrame):
             print("No appointments found for this patient.") # Debugging purposes
             return
         for appointment_id in patient_data.get_protected_attribute("appointments"):
+            if isinstance(appointment_id, list) and len(appointment_id) == 1: # If the appointment_id is a list with one element (problems with the data)
+                appointment_id = appointment_id[0]
             print("Appointment ID:", appointment_id) # Debugging purposes
             print("Appointments:", type(patient_data.get_protected_attribute("appointments"))) # Debugging purposes
             for appointment in self.controller.hospital.appointments:
                 if appointment.get("appointment_id") == appointment_id:
                     appt_id = appointment.get("appointment_id")
                     date = appointment.get("date")
-                    time = appointment.get("timeframe")
+                    time = self.process_time_tuples(appointment.get("timeframe"))
                     doc = appointment.get("doctor_hid")
                     room = appointment.get("room_number")
                     status = appointment.get("status")
                     print("Appointment Data:", appt_id, date, time, doc, room, status) # Debugging purposes
                     self.tree.insert("", "end", values=(appt_id, date, time, doc, room, status))
 
-    def selected(self):
+    def process_time_tuples(self, time):
+        """Convert a tuple of time strings to a single string."""
+        return f"{time[0]} - {time[1]}"
+
+    def selected(self, event=None):
+        """
+        Handle selection events for the treeview.
+        """
+        _ = event # To avoid the unused variable warning
         selected_item = self.tree.selection()
         if selected_item:
             items = self.tree.item(selected_item[0], "values")
             print("Selected row:", items) # Debugging purposes
 
     def request_appointment(self):
-        # Implement your logic to add a new appointment to the hospital's data structure
+        """
+        Add a new appointment for the patient.
+        """
         pass
 
     def cancel_appointment(self):
+        """
+        Cancel the currently selected appointment.
+        """
         selected_item = self.tree.selection()
         if not selected_item:
-            messagebox.showwarning("No Selection", "Please select an appointment to cancel.")
+            messagebox.showwarning("No Selection","Please select an appointment to cancel.")
             return
-        ans = messagebox.askyesno("Confirm Cancelation", "Are you sure you want to cancel the selected appointment?")
+        ans = messagebox.askyesno("Confirm Cancelation","Are you sure you want to cancel this appointment?")
         if ans:
             appointment_values = self.tree.item(selected_item[0], "values")
             try:
-                self.controller.hospital.cancel_appointment(appointment_values(0))
-                messagebox.showinfo("Appointment Canceled", "The appointment has been canceled successfully.")
-            except Exception as exc:
+                print("appointment_values[0]:", appointment_values[0]) # Debugging purposes
+                self.controller.hospital.cancel_appointment(appointment_values[0])
+                messagebox.showinfo("Appointment Canceled", "The appointment has been canceled.")
+            except ValueError as exc:
                 messagebox.showerror("Error", exc)
 
     def tkraise(self, *args, **kwargs):

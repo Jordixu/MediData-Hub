@@ -9,7 +9,7 @@ def main():
     utility = Utilities()
     
     if generate_new_data:
-        utility.random_datas()
+        utility.random_datas(number_of_appointments=200)
     
     hospital = Hospital("Admin", "Admin", utility)
     hospital.load_data()

@@ -43,7 +43,15 @@ class Utilities:
         if pd.isna(value):
             return None
         try:
-            return tuple(value.split('-')) if '-' in value else value
+            if ',' in value:
+                timeframe = tuple(value.split(','))
+                start_time, end_time = timeframe
+                start_time = dt.datetime.strptime(start_time.strip().strip("('").strip("')"), '%H:%M').time()
+                end_time = dt.datetime.strptime(end_time.strip().strip("('").strip("')"), '%H:%M').time()
+                timeframe = (start_time, end_time)
+                return timeframe
+            else: 
+                return value
         except AttributeError:
             return None
 

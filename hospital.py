@@ -310,7 +310,7 @@ class Hospital:
         
         return 'No available rooms, please choose another date or timeframe'
 
-    def cancel_appointment(self, appoitment_id: int) -> str:
+    def cancel_appointment(self, appointment_id: int) -> str:
         """
         Cancels an appointment between a patient and a doctor.
         
@@ -320,15 +320,16 @@ class Hospital:
         Returns:
             str: A confirmation message or an error message.
         """
-        appointment = self.get_appointment(appoitment_id)
-        if not appointment:
-            raise LookupError('Appointment not found')
+        if appointment_id in [appt.get("appointment_id") for appt in self.appointments]:
+            appointment = next((appt for appt in self.appointments if appt.get("appointment_id") == appointment_id), None)
+            if not appointment:
+                raise LookupError('Appointment not found')
         
-        doctor = next((doc for doc in self.doctors if doc.get_protected_info("hospital_id") == appointment.get("doctor_hid")), None)
+        doctor = next((doc for doc in self.doctors if doc.get_protected_attribute("hospital_id") == appointment.get("doctor_hid")), None)
         if not doctor:
             raise StopIteration('Doctor not found')
         
-        patient = next((pat for pat in self.patients if pat.get_protected_info("hospital_id") == appointment.get("patient_hid")), None)
+        patient = next((pat for pat in self.patients if pat.get_protected_attribute("hospital_id") == appointment.get("patient_hid")), None)
         if not patient:
             raise StopIteration('Patient not found')
         
