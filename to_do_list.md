@@ -1,6 +1,6 @@
 # To Do List
 
-## Documentation
+## Documentation (UPDATE ALL THE DOCSTRINGS)
 
 - UI
 - Person
@@ -13,7 +13,6 @@
 ## Administrator Role
 
 - UI of Administrator
-- Create class / define it correctly
 - Control the functions of the Administrator
   - Add, modify and delete doctors
   - Add, modify and delete rooms
@@ -27,13 +26,13 @@
 
 ## Doctor UI
 
-- Login, register
+++
 
 ### Schedule System
 
 ### Room System
 
-- Create rooms
+- Create rooms (from admin)
 
 ### Notification System
 
@@ -58,20 +57,13 @@
 
 ### Assigned Doctor
 
-## Error handling
-
-- Check if name and surname is isalpha()
-
 ## Database
+Save the notifications and drugs
 
-- Set default values (preexisting database) DONE
-- Maybe we should export the attributes changing the names directly (undo the name_mangling in get all atributes method)
+Add relationship between the doctors, the patients, the appointments...
 
 ## Take Out the Test Modules
 
-delete user return to main sceen
-
-add confirmation from hospital class that the patient/doctor has been successfully deleted, created?
 
 add confirmation to ensure that the appointment has been successfully created and deleted (instead of str, return boolean)
 

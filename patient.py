@@ -82,7 +82,7 @@ class Patient(Person):
         Returns:
             str: The string representation of the patient.
         """
-        return f'Patient {self._name} {self._surname} {self._password} {self._birthday} {self.__medications} {self.__allergies} {self.__diagnoses} {self._notifications}'
+        return f'Patient {self._name} {self._surname} {self._personal_id} {self._password} {self._birthday} {self.__medications} {self.__allergies} {self.__diagnoses} {self._notifications} {self.__weight} {self.__height} {self.__assigned_doctor_hid} {self.__status} {self._appointments}'
         
     def add_diagnosis(self, diagnosis_id) -> None:
         """Adds a diagnosis to the patient.
@@ -146,24 +146,3 @@ class Patient(Person):
             self.__allergies = [al for al in self.__allergies if al != allergy]
             
     # Falta: añadir/mod doctor, añadir/mod notificaciones, añadir/mod citas, añadir/mod medicamentos, añadir/mod diagnósticos, algunos de estos quizas estan en hospital
-            
-    # def get_all_attributes(self):
-    #     attributes = {}
-        
-    #     attributes['personal_id'] = self._personal_id
-    #     attributes['hospital_id'] = self._hospital_id
-    #     attributes['password'] = self._password
-    #     attributes['name'] = self._name
-    #     attributes['surname'] = self._surname
-    #     attributes['birthday'] = self._birthday
-    #     attributes['gender'] = self._gender
-    #     attributes['weight'] = self.__weight
-    #     attributes['height'] = self.__height
-    #     attributes['assigned_doctor_hid'] = self.__assigned_doctor_hid
-    #     attributes['status'] = self.__status
-    #     attributes['medications'] = self.__medications
-    #     attributes['allergies'] = self.__allergies
-    #     attributes['diagnoses'] = self.__diagnoses
-    #     attributes['notifications'] = self._notifications
-
-    #     return attributes

@@ -16,7 +16,7 @@ class PatientMainScreen(ctk.CTkFrame):
         ctk.CTkButton(button_frame, text="Prescriptions", width=200,
             command=lambda: controller.show_frame("Prescriptions")).grid(row=0, column=1, padx=10, pady=10)
         ctk.CTkButton(button_frame, text="Appointments", width=200,
-            command=self.not_implemented).grid(row=1, column=0, padx=10, pady=10)
+            command=lambda: controller.show_frame("PatientAppointments")).grid(row=1, column=0, padx=10, pady=10)
         ctk.CTkButton(button_frame, text="Notifications", width=200,
             command=self.not_implemented).grid(row=1, column=1, padx=10, pady=10)
 

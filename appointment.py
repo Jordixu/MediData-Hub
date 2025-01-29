@@ -19,14 +19,11 @@ class Appointment(Foundation):
         medication (str): The medication prescribed to the patient.
         
     Methods:
-        get(attribute): Returns the value of the attribute.
         change_status(status): Changes the status of the appointment.
         autocomplete(): Automatically changes the status of the appointment to completed if the date and time have passed.
         change_datetime(date, timeframe): Changes the date and time of the appointment.
+        change_time(timeframe): Changes the time of the appointment.
         change_doctor(doctor_hid): Changes the doctor assigned to the appointment.
-        change_patient(patient_hid): Changes the patient scheduled for the appointment.
-        change_room(room_hid): Changes the room assigned for the appointment.
-        get_all_attributes(): Returns all the attributes of the appointment.
     """
     def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor_hid: int, patient_hid: int, room_number: int, status:str, diagnosis_id:str = None, medication_id = None) -> None:
         """

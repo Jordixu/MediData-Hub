@@ -14,6 +14,7 @@ from ui.adminNotifications import AdminNotifications
 from ui.adminPatients import AdminPatients
 from ui.adminRooms import AdminRooms
 from ui.loginScreenAdmin import LoginScreenAdmin
+from ui.patientAppointments import PatientAppointments
 
 from tkinter import messagebox
 import customtkinter as ctk
@@ -53,7 +54,7 @@ class MedidataHubUI(ctk.CTk):
         
         self.frames = {}
         for F in (
-            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, Prescriptions, PatientInformation, AdminAppointments, AdminDoctors, AdminDrugs, AdminMainScreen, AdminNotifications, AdminPatients, AdminRooms, LoginScreenAdmin
+            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, Prescriptions, PatientInformation, AdminAppointments, AdminDoctors, AdminDrugs, AdminMainScreen, AdminNotifications, AdminPatients, AdminRooms, LoginScreenAdmin, PatientAppointments
         ):
             frame = F(container, self)
             self.frames[F.__name__] = frame

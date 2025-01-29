@@ -125,7 +125,6 @@ class Hospital:
         # except FileNotFoundError:
         #     raise FileNotFoundError('No drugs found in the database')
 
-    #@staticmethod
     def validate_value(self, value: any,value_type: object, lower: int|float = None, upper: int|float = None, custom_message_incorrect_type: str = None, custom_message_lower: str = None, custom_message_upper: str = None) -> object: # quizás integremos esto fuera de la clase Hospital o lo definimos como staticmethod para usarlo fuera
         """
         Validates the given value by casting it to a specified type and optionally checking if it falls within lower and upper bounds.
@@ -311,17 +310,30 @@ class Hospital:
         
         return 'No available rooms, please choose another date or timeframe'
 
-    # def cancel_appointment(self, patient: Patient, doctor: Doctor, date: str, timeframe: tuple) -> str:
-    #     for appointment in self.appointments:
-    #         if appointment.patient == patient and appointment.doctor == doctor and appointment.date == date and appointment.timeframe == timeframe:
-    #             doctor.availabilities[date][timeframe] = True
-    #             self.rooms[appointment.room].availability[date][timeframe] = True
-    #             appointment.change_status('cancelled')
-
-    #             self.send_notification(patient, doctor, f'Your appointment on {date} has been cancelled.')
-    #             self.send_notification(doctor, patient, f'Your appointment on {date} has been cancelled.')
-    #             return f'Appointment cancelled for {date}'
-    #     return 'Appointment not found'
+    def cancel_appointment(self, appoitment_id: int) -> str:
+        """
+        Cancels an appointment between a patient and a doctor.
+        
+        Args:
+            appointment_id (int): The ID of the appointment to cancel.
+        
+        Returns:
+            str: A confirmation message or an error message.
+        """
+        appointment = self.get_appointment(appoitment_id)
+        if not appointment:
+            raise LookupError('Appointment not found')
+        
+        doctor = next((doc for doc in self.doctors if doc.get_protected_info("hospital_id") == appointment.get("doctor_hid")), None)
+        if not doctor:
+            raise StopIteration('Doctor not found')
+        
+        patient = next((pat for pat in self.patients if pat.get_protected_info("hospital_id") == appointment.get("patient_hid")), None)
+        if not patient:
+            raise StopIteration('Patient not found')
+        
+        appointment.change_status('cancelled')
+        return
     
     def send_notification(self, receiver_hid, sender_hid, message):
         """
@@ -356,21 +368,21 @@ class Hospital:
             Appointment: The appointment object that matches the given ID.
         """
         for appointment in self.appointments:
-            if appointment.id == appointment_id: # MODIFY
+            if appointment.get("appointment_id") == appointment_id:
                 return appointment
         return None
     
-    def delete_appointment(self, appointment_id: int) -> None:
-        """
-        Deletes an appointment based on the given appointment ID.
-        Args:
-            appointment_id (int): The ID of the appointment to delete.
-        """
-        for appointment in self.appointments:
-            if appointment.id == appointment_id: # MODIFY
-                self.appointments.remove(appointment)
-                return
-        return None
+    # def delete_appointment(self, appointment_id: int) -> None:
+    #     """
+    #     Deletes an appointment based on the given appointment ID.
+    #     Args:
+    #         appointment_id (int): The ID of the appointment to delete.
+    #     """
+    #     for appointment in self.appointments:
+    #         if appointment.id == appointment_id: # MODIFY
+    #             self.appointments.remove(appointment)
+    #             return
+    #     return None
     
     def get_appointments(self) -> list: # mmm no se si es buena idea devolver la lista de appointments directamente, quizas deberiamas devolver los ids y ya
         """
