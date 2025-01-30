@@ -8,7 +8,7 @@ def main():
     utility = Utilities()
     
     if generate_new_data:
-        utility.random_datas(number_of_appointments=200)
+        utility.random_datas() # It is possible to set the number of patients, doctors, and appointments to be generated.
     
     hospital = Hospital("Admin", "Admin", utility) # You can change the admin credentials here
     hospital.load_data() # Load the data from the files
