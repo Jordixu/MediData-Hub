@@ -16,7 +16,7 @@ class PatientAppointments(ctk.CTkFrame):
         style = ttk.Style()
         style.configure('Treeview', background='white', foreground='black', rowheight=30, fieldbackground='#e5e5e5', font=('Helvetica', 14))
         style.configure('Treeview.Heading', font=('Helvetica', 16, 'bold'))
-        style.map('Treeview', background=[('selected', '#4CAF50')])
+        style.map('Treeview', background=[('selected', 'grey30')])
 
         self.tree = ttk.Treeview(frame, columns=("ID", "Date", "Time", "Doctor", "Room", "Status"), show='headings')
         self.tree.heading("ID", text="ID")
@@ -40,23 +40,30 @@ class PatientAppointments(ctk.CTkFrame):
         self.tree.delete(*self.tree.get_children())
         patient_data = self.controller.current_user_data
         if not patient_data or not patient_data.get_protected_attribute("appointments"):
-            print("No appointments found for this patient.") # Debugging purposes
+            messagebox.showinfo("No Appointments", "You have no appointments scheduled.")
             return
         for appointment_id in patient_data.get_protected_attribute("appointments"):
-            if isinstance(appointment_id, list) and len(appointment_id) == 1: # If the appointment_id is a list with one element (problems with the data)
+            if not isinstance(appointment_id, int):
+                continue
+            # print("app type", type(appointment_id)) # Debugging purposes
+            if isinstance(appointment_id, list) and len(appointment_id) == 1:
                 appointment_id = appointment_id[0]
-            print("Appointment ID:", appointment_id) # Debugging purposes
-            print("Appointments:", type(patient_data.get_protected_attribute("appointments"))) # Debugging purposes
-            for appointment in self.controller.hospital.appointments:
-                if appointment.get("appointment_id") == appointment_id:
-                    appt_id = appointment.get("appointment_id")
-                    date = appointment.get("date")
-                    time = self.process_time_tuples(appointment.get("timeframe"))
-                    doc = appointment.get("doctor_hid")
-                    room = appointment.get("room_number")
-                    status = appointment.get("status")
-                    print("Appointment Data:", appt_id, date, time, doc, room, status) # Debugging purposes
-                    self.tree.insert("", "end", values=(appt_id, date, time, doc, room, status))
+            # print("Appointment ID:", appointment_id) # Debugging purposes
+            # print("Appointments:", type(patient_data.get_protected_attribute("appointments"))) # Debugging purposes
+            try:
+                appointment = self.controller.hospital.appointments.get(appointment_id)
+                appt_id = appointment.get("appointment_id")
+                date = appointment.get("date")
+                time = self.process_time_tuples(appointment.get("timeframe"))
+                doc = appointment.get("doctor_hid")
+                room = appointment.get("room_number")
+                status = appointment.get("status")
+                # print("Appointment Data:", appt_id, date, time, doc, room, status)
+                self.tree.insert("", "end", values=(appt_id, date, time, doc, room, status))
+            except ValueError as exc:
+                messagebox.showerror("Error", exc)
+            except KeyError:
+                messagebox.showerror("Error", "Appointment data not found.")
 
     def process_time_tuples(self, time):
         """Convert a tuple of time strings to a single string."""
@@ -70,7 +77,7 @@ class PatientAppointments(ctk.CTkFrame):
         selected_item = self.tree.selection()
         if selected_item:
             items = self.tree.item(selected_item[0], "values")
-            print("Selected row:", items) # Debugging purposes
+            # print("Selected row:", items)
 
     def request_appointment(self):
         """
@@ -90,9 +97,11 @@ class PatientAppointments(ctk.CTkFrame):
         if ans:
             appointment_values = self.tree.item(selected_item[0], "values")
             try:
-                print("appointment_values[0]:", appointment_values[0]) # Debugging purposes
+                # print("appointment_values[0]:", appointment_values[0])
+                # print("appointment_values_type:", type(appointment_values[0]))
                 self.controller.hospital.cancel_appointment(appointment_values[0])
                 messagebox.showinfo("Appointment Canceled", "The appointment has been canceled.")
+                self.load_appointments()
             except ValueError as exc:
                 messagebox.showerror("Error", exc)
 

@@ -1,5 +1,5 @@
 from foundation import Foundation
-class Notification(Foundation):
+class Notification(Foundation): # Unfinished
     """
     Represents a notification in a hospital.
     

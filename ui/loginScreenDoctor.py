@@ -25,7 +25,7 @@ class LoginScreenDoctor(ctk.CTkFrame):
         # Credentials frame
         credentials_frame = ctk.CTkFrame(self, height=50, fg_color="transparent")
         credentials_frame.pack(pady=5)
-        self.user_entry = ctk.CTkEntry(credentials_frame, width=240, height=35, placeholder_text="User (Personal or Hospital ID)")
+        self.user_entry = ctk.CTkEntry(credentials_frame, width=240, height=35, placeholder_text="User (Personal ID)")
         self.user_entry.grid(row=0, column=0, padx=10, pady=10)
 
         self.pass_entry = ctk.CTkEntry(credentials_frame, show="*", width=240, height=35,  placeholder_text="Password")
@@ -55,8 +55,8 @@ class LoginScreenDoctor(ctk.CTkFrame):
         id = self.user_entry.get()
         password = self.pass_entry.get()
         if role == "doctor":
-            for doctor in self.controller.hospital.doctors:
-                if int(doctor.get_protected_info("personal_id")) == int(id) or int(doctor.get_protected_info("hospital_id")) == int(id):
+            for doctor in self.controller.hospital.doctors.values():
+                if int(doctor.get_protected_info("personal_id")) == int(id):
                     if doctor.check_password(password):
                         self.controller.current_user = int(doctor.hospital_id)
                         self.controller.current_user_data = doctor

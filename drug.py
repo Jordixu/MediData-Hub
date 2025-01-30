@@ -28,4 +28,4 @@ class Drug(Foundation):
     def __str__(self):
         return f'{self.__name} {self.__price}'
     
-    # TO BE IMPLEMENTED...
+    # Unfinished class

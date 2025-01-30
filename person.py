@@ -1,4 +1,6 @@
 from foundation import Foundation
+from datetime import date
+from typing import Union
 class Person(Foundation):
     """
     The base class for all people in the hospital.
@@ -22,7 +24,7 @@ class Person(Foundation):
         display_last_notification(): Displays the last notification the person received.
         add_appointment(appointment_id): Adds an appointment to the person.
     """
-    def __init__(self, personal_id, hospital_id, password, name, surname, birthday, gender, appointments = None, notifications = None):
+    def __init__(self, personal_id: int, hospital_id: int, password: str, name: str, surname: str, birthday: date, gender: str, appointments: list = None, notifications: list = None):
         self._personal_id = personal_id
         self._hospital_id = hospital_id
         self._password = password
@@ -33,17 +35,17 @@ class Person(Foundation):
         self._appointments = appointments if appointments is not None else {}
         self._notifications = notifications if notifications is not None else []
         
-    def __name__(self):
+    def __name__(self) -> str:
         return self._name + ' ' + self._surname
     
-    def check_password(self, password):
-        return self._password == password
+    def check_password(self, password: Union[str, int]) -> bool:
+        return str(self._password) == str(password)
 
-    def add_notification(self, notification_id):
+    def add_notification(self, notification_id: int) -> None:
         self._notifications.append(notification_id)
 
-    def display_last_notification(self):
+    def display_last_notification(self): # Unfinished
         return self._notifications[-1]
     
-    def add_appointment(self, appointment_id):
+    def add_appointment(self, appointment_id: int): # Falta mirar si los appointments ya existen
         self._appointments.append(appointment_id)

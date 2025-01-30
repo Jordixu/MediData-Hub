@@ -8,7 +8,7 @@ class Patient(Person):
     """
     Represents a patient in a hospital.
     
-    Attributes:
+    Attributes (not form person):
         weight (float): The weight of the patient.
         height (float): The height of the patient.
         assigned_doctor (Doctor): The doctor assigned to the patient.
