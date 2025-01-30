@@ -34,7 +34,7 @@ class MedidataHubUI(ctk.CTk):
         
         try:
             save_button = ctk.CTkButton(menu_container, text="Save Data", fg_color="#205f25", text_color="white", command=lambda: self.save(), width=30).pack(side="left", padx=10)
-            exit_button = ctk.CTkButton(menu_container, text="Exit", command=lambda: self.destroy(), width=30, fg_color="#8B0000").pack(side="right", padx=10)
+            # exit_button = ctk.CTkButton(menu_container, text="Exit", command=lambda: self.destroy(), width=30, fg_color="#8B0000").pack(side="right", padx=10)
             exit_and_save_button = ctk.CTkButton(menu_container, text="Exit and Save Data", fg_color="#955600", text_color="white", command=lambda: [self.save(), self.destroy()], width=30).pack(side="right", padx=10)
         except:
             pass
