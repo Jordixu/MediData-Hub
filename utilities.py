@@ -259,9 +259,8 @@ class Utilities:
                 "birthday": self.fake.date_of_birth(minimum_age=25, maximum_age=70),
                 "gender": rd.choice(["Male", "Female"]),
                 "speciality": rd.choice([
-                    "Cardiology","Neurology","Oncology","Pediatrics","Psychiatry",
-                    "Nephrology","Gynecology","Urology","Dermatology","Endocrinology"
-                ]),
+                    "Cardiology", "Dermatology", "Endocrinology", "Gastroenterology", "Hematology", "Infectious Disease", "Nephrology", "Neurology", "Oncology", "Pulmonology", "Rheumatology", "Urology"
+                    ]),
                 "department": rd.choice([
                     "ER","Surgery","Internal Medicine","Pediatrics","Psychiatry","Oncology",
                     "Cardiology","Neurology","Gynecology","Urology"

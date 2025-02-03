@@ -58,6 +58,9 @@ class Doctor(Person):
         self.__socialsecurity = socialsecurity
         self.__salary = salary
         self.__assigned_patients = assigned_patients if assigned_patients is not None else []
+        
+    def __name__(self):
+        return 'Doctor' + super().__name__()
 
     def __str__(self): # Debbugins
         return f'Dr. {self._name} {self._surname}'
@@ -122,3 +125,4 @@ class Doctor(Person):
         """
         if date in self.__availability and timeframe in self.__availability[date]:
             self.__availability[date][timeframe] = not self.__availability[date][timeframe]
+        

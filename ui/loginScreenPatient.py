@@ -67,7 +67,7 @@ class LoginScreenPatient(ctk.CTkFrame):
                             self.controller.current_user_data = patient
                             self.clear_entries()
                             self.controller.show_frame("PatientMainScreen")
-                        return
+                            return
                 messagebox.showerror("Error", "Invalid user or password")
                 return
             messagebox.showerror("Error", "Role not supported")

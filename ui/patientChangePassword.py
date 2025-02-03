@@ -61,7 +61,10 @@ class PatientChangePassword(ctk.CTkFrame):
             messagebox.showerror("Error", "Old password is incorrect.")
             return
         
-        self.controller.current_user_data.set_protected_info("password", new_password, str)
+
+        self.controller.current_user_data.set_protected_info("password", new_password, 'str')
+
+        print(self.controller.current_user_data.get_protected_attribute("password"))
         messagebox.showinfo("Success", "Password changed successfully.")
         
         self.old_password_entry.delete(0, "end")

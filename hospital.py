@@ -280,7 +280,7 @@ class Hospital:
         appointment.change_status('Cancelled')
         return 'Appointment cancelled successfully.'
 
-    def send_notification(self, receiver_hid: int, sender_hid: int, message: str): # Unfinished
+    def send_notification(self, receiver_hid: int, sender_hid: int, title:str, message: str): # Unfinished
         """
         Sends a notification from the sender to the receiver with the given message.
         
@@ -294,7 +294,7 @@ class Hospital:
         """
         date = dt.datetime.now()
         notification_id = max(self.notifications.keys(), default=0) + 1
-        self.notifications[notification_id] = Notification(message, date, sender_hid, receiver_hid)
+        self.notifications[notification_id] = Notification(title, date, sender_hid, receiver_hid, message)
 
     def search_appointments(self, search_term: str) -> list: # Unfinished
         """

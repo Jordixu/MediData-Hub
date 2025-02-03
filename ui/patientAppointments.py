@@ -29,7 +29,7 @@ class PatientAppointments(ctk.CTkFrame):
 
         self.tree.bind("<<TreeviewSelect>>", self.selected)
 
-        self.request_button = ctk.CTkButton(self, text="Request New Appointment", command=self.request_appointment)
+        self.request_button = ctk.CTkButton(self, text="Request New Appointment", command=lambda: self.controller.show_frame("PatientRequestAppointment"))
         self.request_button.pack(side=ctk.LEFT, padx=20, pady=10)
 
         self.cancel_button = ctk.CTkButton(self, text="Cancel Appointment", command=self.cancel_appointment)
@@ -39,8 +39,11 @@ class PatientAppointments(ctk.CTkFrame):
         """Load the appointments from the controller's patient data."""
         self.tree.delete(*self.tree.get_children())
         patient_data = self.controller.current_user_data
-        if not patient_data or not patient_data.get_protected_attribute("appointments"):
+        # print("Patient Data:", patient_data)
+        # print("Appointments:", patient_data.get_protected_attribute("appointments"))
+        if not patient_data or patient_data.get_protected_attribute("appointments") == "{}" or patient_data.get_protected_attribute("appointments") == None:
             messagebox.showinfo("No Appointments", "You have no appointments scheduled.")
+            # print("No appointments found.")
             return
         for appointment_id in patient_data.get_protected_attribute("appointments"):
             if not isinstance(appointment_id, int):
@@ -79,12 +82,6 @@ class PatientAppointments(ctk.CTkFrame):
             items = self.tree.item(selected_item[0], "values")
             # print("Selected row:", items)
 
-    def request_appointment(self):
-        """
-        Add a new appointment for the patient.
-        """
-        pass
-
     def cancel_appointment(self):
         """
         Cancel the currently selected appointment.
@@ -108,3 +105,4 @@ class PatientAppointments(ctk.CTkFrame):
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_appointments()
+        # print("Appointments loaded.")
