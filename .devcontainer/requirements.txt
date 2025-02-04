@@ -1,0 +1,6 @@
+customtkinter
+pandas
+numpy
+tkinter
+faker
+tkcalendar
