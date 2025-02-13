@@ -39,6 +39,8 @@ Saw that the return statement was not correctly indented, corrected the indentat
 
 ### Problem description
 
-### Solving process
+Doctor not showing when department and specialty was selected in PatientRequestAppointment frame.
 
 ### Solution
+
+Modified selected_doctors() function so that the names are correctly inputted in the combobox.

@@ -47,7 +47,7 @@ class PatientAppointments(ctk.CTkFrame):
             return
         for appointment_id in patient_data.get_protected_attribute("appointments"):
             if not isinstance(appointment_id, int):
-                print("app type", type(appointment_id)) # Debugging purposes
+                # print("app type", type(appointment_id)) # Debugging purposes
                 continue
             if isinstance(appointment_id, list) and len(appointment_id) == 1:
                 appointment_id = appointment_id[0]
@@ -94,9 +94,9 @@ class PatientAppointments(ctk.CTkFrame):
         if ans:
             appointment_values = self.tree.item(selected_item[0], "values")
             try:
-                # print("appointment_values[0]:", appointment_values[0])
-                # print("appointment_values_type:", type(appointment_values[0]))
-                self.controller.hospital.cancel_appointment(appointment_values[0])
+                print("appointment_values[0]:", appointment_values[0])
+                print("appointment_values_type:", type(appointment_values[0]))
+                self.controller.hospital.cancel_appointment(int(appointment_values[0]))
                 messagebox.showinfo("Appointment Canceled", "The appointment has been canceled.")
                 self.load_appointments()
             except ValueError as exc:

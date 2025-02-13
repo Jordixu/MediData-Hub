@@ -122,20 +122,15 @@ class Utilities:
                 return value.lower() == 'true'
             try:
                 if '.' in value:  # Check if it's a float
-                    if '.' in value:  # Check if it's a float
-                        return float(value)
-                    elif '[' in value:  # Check if it's a list of integers
-                        inside = value.strip('[]')
-                        if ',' in inside:
-                            result = [int(v.strip()) for v in inside.split(',') if v.strip().isdigit()]
-                        else:
-                            result = [int(inside)] if inside.isdigit() else inside
-                        return list(result)
+                    return float(value)
+                elif '[' in value:  # Check if it's a list of integers
+                    inside = value.strip('[]')
+                    if ',' in inside:
+                        return [int(v.strip()) for v in inside.split(',') if v.strip().isdigit()]
                     else:
-                        result = [int(value.strip('[]'))] if value.strip('[]').isdigit() else value.strip('[]') # Extract the integer from the list, strip is used to remove leading/trailing whitespace, the list is used to avoid errors when converting to int if the value is not an integer.
-                    return result
-                else:  # Check if it's an integer
-                    return int(value) if value.isdigit() else value
+                        return [int(inside)] if inside.isdigit() else inside
+                elif value.isdigit():  # Check if it's an integer
+                    return int(value)
             except ValueError:
                 pass  # If conversion fails, keep as string
         return value # Return the original value if it's not a string (already converted)

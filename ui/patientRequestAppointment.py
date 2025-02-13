@@ -7,7 +7,7 @@ class PatientRequestAppointment(ctk.CTkFrame):
         self.title = "Personal Data"
         
         self.container_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.container_frame.pack(expand=True, fill="both", padx=20, pady=20)
+        self.container_frame.pack(expand=True, fill="both")
         
         self.menu_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
         self.menu_frame.pack(expand=True, fill="both", padx=10, pady=10)
@@ -37,7 +37,7 @@ class PatientRequestAppointment(ctk.CTkFrame):
         self.doctor_menu = ctk.CTkComboBox(self.menu_frame, state='readonly', values=["Select Doctor"])
         self.doctor_menu.grid(row=1, column=2, padx=10, pady=10, sticky="ew")
         
-        self.update_button = ctk.CTkButton(self.menu_frame, text="Update", command=lambda: self.selected_doctors())
+        self.update_button = ctk.CTkButton(self.menu_frame, text="Search Doctor", command=lambda: self.selected_doctors())
         self.update_button.grid(row=1, column=3, padx=10, pady=10, sticky="ew")
         
         # Text frame (title and description)
@@ -67,17 +67,15 @@ class PatientRequestAppointment(ctk.CTkFrame):
         self.send_button.grid(row=0, column=1, sticky="e")
         
     def selected_doctors(self):
-        """Populate doctor selection based on department/specialty filters"""
+        self.doctor_menu.set("Select Doctor")
         doctors = []
         print("Updating doctors")
         for doctor in self.controller.hospital.doctors.values():
-            # Get protected attributes through proper accessor methods
             department = doctor.get("department")
             specialty = doctor.get("speciality")
             
             if (department == self.department_menu.get() and 
                 specialty == self.specialty_menu.get()):
-                # Construct full name using proper attribute access
                 doctors.append(
                     f"{doctor.get_protected_attribute('name')} "
                     f"{doctor.get_protected_attribute('surname')}"

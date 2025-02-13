@@ -1,6 +1,6 @@
 # To Do List
 
-## Documentation (UPDATE ALL THE DOCSTRINGS)
+## Documentation (UPDATE ALL THE DOCSTRINGS AND COMMENTS)
 
 - [ ] UI
 - [ ] Person
@@ -19,12 +19,12 @@
 
 ## Appointment System
 
-- [ ] Relate the classes for correct program functionality (technically done, needs debbuging)
-- [ ] Implementation in UI
-  - [ ] Show appointments (done)
-  - [ ] Cancel appointments (done)
+- [x] Relate the classes for correct program functionality (technically done, needs debbuging)
+- [x] Implementation in UI
+  - [x] Show appointments
+  - [x] Cancel appointments
   - [ ] Modify appointments
-  - [ ] Request new appointment
+  - [x] Request new appointment
   - [ ] Accept / Decline appointments.
 - [ ] Notifications!
   - [ ] Show notifications
@@ -39,6 +39,7 @@
     - [ ] View previous consults
     - [ ] See patient medical history
     - [ ] NO registration screen nor modification/deleition
+- [ ] Change the specialty and departments so that they make sense.
 
 ### Schedule System
 
