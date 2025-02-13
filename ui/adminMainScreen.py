@@ -25,7 +25,12 @@ class AdminMainScreen(ctk.CTkFrame):
             command=lambda: self.not_implemented()).grid(row=1, column=2, padx=10, pady=10)
 
 
-        ctk.CTkButton(self, text="Go Back", command=lambda: controller.show_frame("LoginScreenPatient")).pack(pady=20)
+        ctk.CTkButton(self, text="Go Back", command=lambda: self.home_button()).pack(pady=20)
+
+    def home_button(self):
+        self.controller.current_user = None
+        self.controller.current_user_data = None
+        self.controller.show_frame("RoleSelectionScreen")
 
     def not_implemented(self):
         messagebox.showinfo("Info", "Not implemented yet.")

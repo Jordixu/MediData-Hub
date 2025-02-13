@@ -56,7 +56,7 @@ class LoginScreenDoctor(ctk.CTkFrame):
         password = self.pass_entry.get()
         if role == "doctor":
             for doctor in self.controller.hospital.doctors.values():
-                if int(doctor.get_protected_info("personal_id")) == int(id):
+                if int(doctor.get_protected_attribute("personal_id")) == int(id):
                     if doctor.check_password(password):
                         self.controller.current_user = int(doctor.hospital_id)
                         self.controller.current_user_data = doctor

@@ -1,4 +1,4 @@
-from hospital import Hospital
+from MediDataHub import Hospital
 from ui.medidataHubUI import MedidataHubUI
 from datetime import date
 from utilities import Utilities
@@ -16,4 +16,4 @@ def main():
     ui.mainloop()
 
 if __name__ == "__main__":
-    main()  
+    main()

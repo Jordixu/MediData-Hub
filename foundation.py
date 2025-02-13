@@ -133,6 +133,11 @@ class Foundation:
             if isinstance(value, tuple): # Convert time tuples to strings
                 if isinstance(value[0], dt.time) and isinstance(value[1], dt.time):
                     value = (value[0].strftime('%H:%M:%S'), value[1].strftime('%H:%M:%S'))
+            if isinstance(value, dt.date): # Convert date objects to strings
+                value = value.strftime('%Y-%m-%d')
+            if isinstance(value, dict):
+                if isinstance(value.keys(), dt.date):
+                    value = {key.strftime('%Y-%m-%d'): value[key] for key in value.keys()}
             if attribute.startswith(f"_{self.__class__.__name__}__"): # Remove name mangling
                 result[attribute.split(f"_{self.__class__.__name__}__")[1]] = value
             elif attribute.startswith('_'): # Remove protected attribute prefix

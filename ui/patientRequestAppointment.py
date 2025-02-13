@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import messagebox
 class PatientRequestAppointment(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -60,27 +61,50 @@ class PatientRequestAppointment(ctk.CTkFrame):
         self.buttons_frame.grid_columnconfigure(0, weight=1)
         self.buttons_frame.grid_columnconfigure(1, weight=1)
 
-        self.cancel_button = ctk.CTkButton(self.buttons_frame, text="Cancel", width=200, height=40)
+        self.cancel_button = ctk.CTkButton(self.buttons_frame, text="Cancel", width=200, height=40, command= lambda: controller.show_frame("PatientAppointments"))
         self.cancel_button.grid(row=0, column=0, sticky="w")
-        self.send_button = ctk.CTkButton(self.buttons_frame, text="Send", width=200, height=40, command=lambda: self.send_request(self.doctor_menu.get(), self.title_entry.get(), self.description_entry.get("1.0", "end-1c")))
+        self.send_button = ctk.CTkButton(self.buttons_frame, text="Send", width=200, height=40, command=lambda: self.send_request())
         self.send_button.grid(row=0, column=1, sticky="e")
         
     def selected_doctors(self):
+        """Populate doctor selection based on department/specialty filters"""
         doctors = []
         print("Updating doctors")
         for doctor in self.controller.hospital.doctors.values():
-            print(doctor.get("department"), self.department_menu.get(), doctor.get('speciality'), self.specialty_menu.get())
-            if doctor.get("department") == self.department_menu.get() and doctor.get('speciality') == self.specialty_menu.get():
-                doctors.append(doctor.__name__)
-                print(doctor.__name__)
-                print(doctors)
+            # Get protected attributes through proper accessor methods
+            department = doctor.get("department")
+            specialty = doctor.get("speciality")
+            
+            if (department == self.department_menu.get() and 
+                specialty == self.specialty_menu.get()):
+                # Construct full name using proper attribute access
+                doctors.append(
+                    f"{doctor.get_protected_attribute('name')} "
+                    f"{doctor.get_protected_attribute('surname')}"
+                )
         self.doctor_menu.configure(values=doctors)
-        print("Doctors updated")
         return
     
-    def send_request(self, selected_doctor, title, description):
-        for doctor in self.controller.doctors.values():
-            if doctor.__name__ == selected_doctor:
-                doctor_hid = doctor.get_protected_attribute("hospital_id")
-                self.controller.hospital.send_notification(self.controller.current_user, doctor_hid, title, description)
-
+    def send_request(self):
+        """Handle appointment request submission"""
+        selected_doctor_name = self.doctor_menu.get()
+        
+        # Proper access through hospital object
+        for doctor in self.controller.hospital.doctors.values():
+            full_name = (f"{doctor.get_protected_attribute('name')} "
+                        f"{doctor.get_protected_attribute('surname')}")
+            
+            if full_name == selected_doctor_name:
+                # Create notification using proper hospital ID
+                self.controller.hospital.send_notification(
+                    self.controller.current_user,
+                    doctor.get_protected_attribute("hospital_id"),
+                    self.title_entry.get(),
+                    self.description_entry.get("1.0", "end-1c"),
+                    'Appointment Request'
+                )
+                messagebox.showinfo("Success", "Request sent successfully")
+                self.controller.show_frame("PatientAppointments")
+                return
+        
+        messagebox.showerror("Error", "Selected doctor not found")

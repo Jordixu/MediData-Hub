@@ -7,12 +7,26 @@ class DoctorMainScreen(ctk.CTkFrame):
         self.controller = controller
         self.title = "Doctor Main Screen"
 
-        ctk.CTkLabel(self, text="Doctor Main Screen", font=("Helvetica", 16)).pack(pady=10)
+        ctk.CTkLabel(self, text="Welcome", font=("Helvetica", 24)).pack(pady=20)
 
-        ctk.CTkButton(self, text="Prescriptions", command=self.not_implemented).pack(pady=5)
-        ctk.CTkButton(self, text="Appointments", command=self.not_implemented).pack(pady=5)
-        ctk.CTkButton(self, text="Notifications", command=self.not_implemented).pack(pady=5)
-        ctk.CTkButton(self, text="Go Back", command=lambda: controller.show_frame("RoleSelectionScreen")).pack(pady=10)
+        button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        button_frame.pack(pady=20, padx=20, expand=True)
+
+        ctk.CTkButton(button_frame, text="Personal Data", width=220, height=40,
+            command=lambda: self.not_implemented()).grid(row=0, column=0, padx=20, pady=20)
+        ctk.CTkButton(button_frame, text="Prescriptions", width=220, height=40,
+            command=lambda: self.not_implemented()).grid(row=0, column=1, padx=20, pady=20)
+        ctk.CTkButton(button_frame, text="Notifications", width=220, height=40,
+            command=lambda: self.controller.show_frame("DoctorNotifications")).grid(row=1, column=0, padx=20, pady=20)
+        ctk.CTkButton(button_frame, text="Appointments", width=220, height=40,
+            command=self.not_implemented).grid(row=1, column=1, padx=20, pady=20)
+
+        ctk.CTkButton(self, text="Go Back", width=220, height=40, command=lambda: self.home_button()).pack(pady=20)
+        
+    def home_button(self):
+        self.controller.current_user = None
+        self.controller.current_user_data = None
+        self.controller.show_frame("RoleSelectionScreen")
 
     def not_implemented(self):
         messagebox.showinfo("Info", "Not implemented yet.")

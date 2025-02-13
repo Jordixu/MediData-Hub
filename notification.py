@@ -15,12 +15,13 @@ class Notification(Foundation): # Unfinished
         get_sender(): Returns the ID of the sender of the notification.
         get_receiver(): Returns the ID of the receiver of the notification.
     """
-    def __init__(self, title, datetime, sender_id, receiver_id, message = None):
+    def __init__(self, title, datetime, sender_id, receiver_id, notif_type, message = None):
         self.__title = title
         self.__message = message
         self.__datetime = datetime 
         self.__sender_id = sender_id
         self.__receiver_id = receiver_id
+        self.__type = notif_type
     
     def __str__(self):
         # for debugging purposes

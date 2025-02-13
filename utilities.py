@@ -122,10 +122,15 @@ class Utilities:
                 return value.lower() == 'true'
             try:
                 if '.' in value:  # Check if it's a float
-                    return float(value)
-                elif '[' in value:  # Check if it's a list of integers (specially for ids)
-                    if ',' in value:
-                        result = [int(v.strip()) for v in value.split(',') if v.strip().isdigit()] # Extract integers from the list, strip is used to remove leading/trailing whitespace
+                    if '.' in value:  # Check if it's a float
+                        return float(value)
+                    elif '[' in value:  # Check if it's a list of integers
+                        inside = value.strip('[]')
+                        if ',' in inside:
+                            result = [int(v.strip()) for v in inside.split(',') if v.strip().isdigit()]
+                        else:
+                            result = [int(inside)] if inside.isdigit() else inside
+                        return list(result)
                     else:
                         result = [int(value.strip('[]'))] if value.strip('[]').isdigit() else value.strip('[]') # Extract the integer from the list, strip is used to remove leading/trailing whitespace, the list is used to avoid errors when converting to int if the value is not an integer.
                     return result
@@ -199,7 +204,7 @@ class Utilities:
         week = []
         today = dt.date.today() # Get the current date (to create a week starting from today)
         for i in range(7): # Create a list of dates for the week
-            week.append(today + dt.timedelta(days=i)) # Add each day to the list
+            week.append(today + dt.timedelta(days=i)) # Add each day (as string) to the list
         return week
     
     def create_schedule(self):
@@ -265,7 +270,7 @@ class Utilities:
                     "ER","Surgery","Internal Medicine","Pediatrics","Psychiatry","Oncology",
                     "Cardiology","Neurology","Gynecology","Urology"
                 ]),
-                "socialsecurity": self.fake.ssn(),
+                "socialsecurity": self.fake.ssn(taxpayer_identification_number_type="SSN"),
                 "salary": rd.randint(40000, 100000) + round(rd.uniform(0, 1), 2),
                 "availability": self.create_schedule(),
                 "appointments": []

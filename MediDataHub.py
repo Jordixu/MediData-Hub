@@ -218,7 +218,7 @@ class Hospital:
 
         raise ValueError('Doctor not found.')
 
-    def schedule_appointment(self, patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> str:
+    def schedule_appointment(self, patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> str: # Has to be changed
         """
         Schedules an appointment between a patient and a doctor.
         
@@ -280,7 +280,7 @@ class Hospital:
         appointment.change_status('Cancelled')
         return 'Appointment cancelled successfully.'
 
-    def send_notification(self, receiver_hid: int, sender_hid: int, title:str, message: str): # Unfinished
+    def send_notification(self, receiver_hid: int, sender_hid: int, title:str, message: str, type: str): # Unfinished
         """
         Sends a notification from the sender to the receiver with the given message.
         
@@ -294,7 +294,7 @@ class Hospital:
         """
         date = dt.datetime.now()
         notification_id = max(self.notifications.keys(), default=0) + 1
-        self.notifications[notification_id] = Notification(title, date, sender_hid, receiver_hid, message)
+        self.notifications[notification_id] = Notification(title, date, sender_hid, receiver_hid, message, type)
 
     def search_appointments(self, search_term: str) -> list: # Unfinished
         """

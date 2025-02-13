@@ -39,20 +39,20 @@ class PatientAppointments(ctk.CTkFrame):
         """Load the appointments from the controller's patient data."""
         self.tree.delete(*self.tree.get_children())
         patient_data = self.controller.current_user_data
-        # print("Patient Data:", patient_data)
-        # print("Appointments:", patient_data.get_protected_attribute("appointments"))
+        print("Patient Data:", patient_data)
+        print("Appointments:", patient_data.get_protected_attribute("appointments"))
         if not patient_data or patient_data.get_protected_attribute("appointments") == "{}" or patient_data.get_protected_attribute("appointments") == None:
             messagebox.showinfo("No Appointments", "You have no appointments scheduled.")
-            # print("No appointments found.")
+            print("No appointments found.")
             return
         for appointment_id in patient_data.get_protected_attribute("appointments"):
             if not isinstance(appointment_id, int):
+                print("app type", type(appointment_id)) # Debugging purposes
                 continue
-            # print("app type", type(appointment_id)) # Debugging purposes
             if isinstance(appointment_id, list) and len(appointment_id) == 1:
                 appointment_id = appointment_id[0]
-            # print("Appointment ID:", appointment_id) # Debugging purposes
-            # print("Appointments:", type(patient_data.get_protected_attribute("appointments"))) # Debugging purposes
+            print("Appointment ID:", appointment_id) # Debugging purposes
+            print("Appointments:", type(patient_data.get_protected_attribute("appointments"))) # Debugging purposes
             try:
                 appointment = self.controller.hospital.appointments.get(appointment_id)
                 appt_id = appointment.get("appointment_id")
@@ -61,7 +61,7 @@ class PatientAppointments(ctk.CTkFrame):
                 doc = appointment.get("doctor_hid")
                 room = appointment.get("room_number")
                 status = appointment.get("status")
-                # print("Appointment Data:", appt_id, date, time, doc, room, status)
+                print("Appointment Data:", appt_id, date, time, doc, room, status)
                 self.tree.insert("", "end", values=(appt_id, date, time, doc, room, status))
             except ValueError as exc:
                 messagebox.showerror("Error", exc)
