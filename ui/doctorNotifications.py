@@ -80,7 +80,11 @@ class DoctorNotifications(ctk.CTkFrame):
                 print("Notification:", notification)
                 if notification:
                     self.controller.selected_notification = notification
-                    self.controller.show_frame("DoctorNotificationsDetailsRequest")
+                    if self.controller.selected_notification.get("notif_type") == "Appointment Request":
+                        self.controller.show_frame("DoctorNotificationsDetailsRequest")
+                    else:
+                        self.controller.show_frame("DoctorNotificationsDetails")
+                    
                 else:
                     messagebox.showerror("Error", "Notification not found.")
             else:

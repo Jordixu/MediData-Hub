@@ -44,3 +44,15 @@ Doctor not showing when department and specialty was selected in PatientRequestA
 ### Solution
 
 Modified selected_doctors() function so that the names are correctly inputted in the combobox.
+
+---
+
+## Problem 4
+
+### Problem description
+
+Availability were not parsed correctly in the .csv saving process (they were saved as datetime objects, not str) and the extraction process (they were extracted as str).
+
+## Solution
+
+New functions in Utility and Foundation classes to parse correctly.

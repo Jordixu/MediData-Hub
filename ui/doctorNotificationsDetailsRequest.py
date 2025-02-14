@@ -110,7 +110,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
 
     def update_times(self, selected_date):
         available_slots = self.controller.current_user_data.get("availability")
-        times_dict = available_slots.get(selected_date, {})
+        times_dict = available_slots[selected_date]
 
         available_times = [time_range for time_range, available in times_dict.items() if available]
 

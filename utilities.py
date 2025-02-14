@@ -351,7 +351,7 @@ class Utilities:
                 "room_number": room["number"],
                 "date": day,
                 "timeframe": time,
-                "status": rd.choice(["Scheduled", "Cancelled"]),
+                "status": rd.choices(["Scheduled", "Cancelled"], weights=(0.9, 0.1), k=1)[0],
                 "diagnosis_id": None,
                 "medication_id": None,
             })
