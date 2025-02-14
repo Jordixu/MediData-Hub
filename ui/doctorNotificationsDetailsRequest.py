@@ -55,7 +55,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             values=["Select Date"], 
             width=200, 
             height=40,
-            command=self.update_times  # Added command to update times when date changes
+            command=self.update_times
         )
         self.date_select.grid(row=1, column=0, padx=10, pady=10)
         
@@ -89,55 +89,41 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         self.title_entry.configure(state='disabled')
         self.description_entry.configure(state='disabled')
         
-        # Get doctor's availability from the controller
         if hasattr(self.controller, 'current_user_data') and self.controller.current_user_data:
-            # Retrieve the availability dictionary from current_user_data
             available_slots = self.controller.current_user_data.get("availability")
-            if available_slots:  # Check if there are any available slots
-                # Extract and sort the dates directly from the dictionary keys
+            if available_slots:
                 dates = sorted(available_slots.keys())
                 self.date_select.configure(values=dates)
                 if dates:
-                    # Set the first date as the default selection
                     selected_date = dates[0]
                     self.date_select.set(selected_date)
-                    # Update time slots for the selected date
                     self.update_times(selected_date)
                 else:
                     self.date_select.set("No available dates")
                     self.time_select.set("No available times")
             else:
-                # Handle case where no availability data exists (empty or missing)
                 self.date_select.set("No available dates")
                 self.time_select.set("No available times")
         else:
-            # Handle case where user data isn't available
             self.date_select.set("No availability data")
             self.time_select.set("No availability data")
 
     def update_times(self, selected_date):
-        # Retrieve the latest availability data
         available_slots = self.controller.current_user_data.get("availability")
         times_dict = available_slots.get(selected_date, {})
 
-        # Extract available time slots (tuple keys where value is True)
         available_times = [time_range for time_range, available in times_dict.items() if available]
 
-        # Sort time ranges by their start time
         sorted_ranges = sorted(available_times, key=lambda x: x[0])
 
-        # Format start times as "HH:MM" strings
         formatted_times = []
         for time_range in sorted_ranges:
             if isinstance(time_range, tuple) and len(time_range) >= 1:
                 start_time = time_range[0]
                 try:
-                    # Handle both time objects and string representations
                     if isinstance(start_time, str):
-                        # Parse string time if needed (e.g., "09:00:00")
                         h, m, _ = start_time.split(':')
                     elif hasattr(start_time, 'hour') and hasattr(start_time, 'minute'):
-                        # Extract from time/datetime object
                         h, m = start_time.hour, start_time.minute
                     else:
                         continue
@@ -147,15 +133,11 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
                 except (ValueError, AttributeError):
                     continue
 
-        # Update UI components
         self.time_select.configure(values=formatted_times)
         if formatted_times:
             self.time_select.set(formatted_times[0])
         else:
             self.time_select.set("No available times")
-            
-        def accept_appointment(self):
-            messagebox.showinfo("Info", "Appointment accepted.")
             
     def accept_appointment(self):
         messagebox.showinfo("Info", "Appointment accepted.")
