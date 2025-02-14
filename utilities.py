@@ -1,6 +1,5 @@
 import pandas as pd
 import datetime as dt
-import numpy as np
 import random as rd
 from faker import Faker
 from typing import Union
@@ -55,10 +54,46 @@ class Utilities:
                 df[column] = df[column].apply(self.process_date)
             elif column == 'timeframe':
                 df[column] = df[column].apply(self.process_timeframe)
+            elif column == 'availability':
+                df[column] = df[column].apply(self.process_availability)
             else:
                 df[column] = df[column].apply(self.auto_convert)
 
         return df.to_dict('records') # 'records' is used to return a list of dictionaries (one for each row)
+    
+    def process_availability(self, value: any) -> dict:
+        """
+        Converts the availability string into a nested dictionary with date and time objects.
+        """
+        if pd.isna(value) or value is None:
+            return None
+        try:
+            namespace = {'datetime': dt}
+            availability_dict = eval(value, namespace)
+            
+            # Process each date and its associated time slots
+            processed_dict = {}
+            for date_key, time_slots in availability_dict.items():
+                processed_time_slots = {}
+                for time_tuple, is_available in time_slots.items():
+                    # Check if time_tuple contains datetime.time objects
+                    if isinstance(time_tuple[0], dt.time) and isinstance(time_tuple[1], dt.time):
+                        processed_time_slots[time_tuple] = is_available
+                    else:
+                        # Handle string-based time slots (if necessary)
+                        try:
+                            start_str = str(time_tuple[0])
+                            end_str = str(time_tuple[1])
+                            start_time = dt.datetime.strptime(start_str, '%H:%M:%S').time()
+                            end_time = dt.datetime.strptime(end_str, '%H:%M:%S').time()
+                            processed_time_slots[(start_time, end_time)] = is_available
+                        except (ValueError, TypeError) as e:
+                            print(f"Skipping invalid time slot {time_tuple}: {e}")
+                processed_dict[date_key] = processed_time_slots
+            return processed_dict
+        except Exception as e:
+            print(f"Error processing availability: {e}")
+            return None
 
     def process_date(self, value: any) -> dt.date:
         """
@@ -121,7 +156,10 @@ class Utilities:
             if value.lower() in ('true', 'false'):  # Handle booleans, case-insensitive
                 return value.lower() == 'true'
             try:
-                if '.' in value:  # Check if it's a float
+                if value.isdigit():  # Check if it's an integer
+                    print("Utilities, l63:", value)
+                    return int(value)
+                elif '.' in value:  # Check if it's a float
                     return float(value)
                 elif '[' in value:  # Check if it's a list of integers
                     inside = value.strip('[]')
@@ -129,9 +167,8 @@ class Utilities:
                         return [int(v.strip()) for v in inside.split(',') if v.strip().isdigit()]
                     else:
                         return [int(inside)] if inside.isdigit() else inside
-                elif value.isdigit():  # Check if it's an integer
-                    return int(value)
             except ValueError:
+                print(f"Could not convert value '{value}' to int, float, or bool.") # Debugging purposes
                 pass  # If conversion fails, keep as string
         return value # Return the original value if it's not a string (already converted)
     
@@ -169,7 +206,10 @@ class Utilities:
             [room.get_all_attributes() for room in hospital.rooms.values()], 
             './database/rooms.csv'
             )
-        # save_to_csv(drugs_dict, './database/drugs.csv')
+        self.save_to_csv(
+            [notification.get_all_attributes() for notification in hospital.notifications.values()],
+            './database/notifications.csv'
+            )
         
     def create_timeframe(self):
         """
@@ -332,6 +372,12 @@ class Utilities:
                 "dosage": self.fake.text(max_nb_chars=200),
                 "prescription": None,
             })
+            
+        for doctor in doctors:
+            doctor["availability"] = str(doctor["availability"])
+        
+        for room in rooms:
+            room["availability"] = str(room["availability"])
 
         self.save_to_csv(patients, "./database/patients.csv")
         self.save_to_csv(doctors, "./database/doctors.csv")

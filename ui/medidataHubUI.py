@@ -24,8 +24,8 @@ class MedidataHubUI(ctk.CTk):
         super().__init__(*args, **kwargs)
         self.title("Hospital Management System")
         self.selected_role = None
-        self.current_user = None
-        self.current_user_data = None
+        self.current_user = None # The id of the current user
+        self.current_user_data = None # The data of the current user
         self.utility = utility
         self.hospital = hospital
         self.selected_notification = None

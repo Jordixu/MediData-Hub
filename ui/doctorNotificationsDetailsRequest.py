@@ -41,7 +41,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         self.description_label = ctk.CTkLabel(self.text_frame, text="Description", font=("Helvetica", 24))
         self.description_label.pack(pady=20)
         
-        self.description_entry = ctk.CTkTextbox(self.text_frame, height=250, width=50, wrap="word", border_width=2, state='disabled')
+        self.description_entry = ctk.CTkTextbox(self.text_frame, height=180, width=50, wrap="word", border_width=2, state='disabled')
         self.description_entry.pack(pady=20, expand=True, fill="both")
         
         self.time_selection_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
@@ -50,7 +50,13 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         self.date_label = ctk.CTkLabel(self.time_selection_frame, text="Date")
         self.date_label.grid(row=0, column=0, padx=10, pady=10)
         
-        self.date_select = ctk.CTkComboBox(self.time_selection_frame, values=["Select Date"], width=200, height=40)
+        self.date_select = ctk.CTkComboBox(
+            self.time_selection_frame, 
+            values=["Select Date"], 
+            width=200, 
+            height=40,
+            command=self.update_times  # Added command to update times when date changes
+        )
         self.date_select.grid(row=1, column=0, padx=10, pady=10)
         
         self.time_label = ctk.CTkLabel(self.time_selection_frame, text="Time")
@@ -68,29 +74,98 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         self.reject_button = ctk.CTkButton(self.buttons_frame, text="Reject", command=lambda: self.reject_appointment(), height=40, width=200)
         self.reject_button.grid(row=0, column=1, padx=10, pady=10)
                 
-        self.back_button = ctk.CTkButton(self.buttons_frame, text="Go Back", command=lambda: self.controller.show_frame("DoctorNotifications"), height=40, width=200)
+        self.back_button = ctk.CTkButton(self.buttons_frame, text="Go Back", command=lambda: self.go_back(), height=40, width=200)
         self.back_button.grid(row=0, column=2, padx=10, pady=10)
         
-    def load_data(self, data = None):
+    def load_data(self, data=None):
         self.title_entry.configure(state='normal')
         self.description_entry.configure(state='normal')
         
         self.title_entry.delete(0, "end")
         self.description_entry.delete(1.0, "end")
         
-        self.title_entry.insert(0, "to be mod")
-        self.description_entry.insert(1.0, "to be mod")
+        self.title_entry.insert(0, self.controller.selected_notification.get("title"))
+        self.description_entry.insert(1.0, self.controller.selected_notification.get("message"))
         self.title_entry.configure(state='disabled')
-        
         self.description_entry.configure(state='disabled')
-        self.date_select.configure(values="to be mod")
-        self.time_select.configure(values="to be mod")
         
+        # Get doctor's availability from the controller
+        if hasattr(self.controller, 'current_user_data') and self.controller.current_user_data:
+            # Retrieve the availability dictionary from current_user_data
+            available_slots = self.controller.current_user_data.get("availability")
+            if available_slots:  # Check if there are any available slots
+                # Extract and sort the dates directly from the dictionary keys
+                dates = sorted(available_slots.keys())
+                self.date_select.configure(values=dates)
+                if dates:
+                    # Set the first date as the default selection
+                    selected_date = dates[0]
+                    self.date_select.set(selected_date)
+                    # Update time slots for the selected date
+                    self.update_times(selected_date)
+                else:
+                    self.date_select.set("No available dates")
+                    self.time_select.set("No available times")
+            else:
+                # Handle case where no availability data exists (empty or missing)
+                self.date_select.set("No available dates")
+                self.time_select.set("No available times")
+        else:
+            # Handle case where user data isn't available
+            self.date_select.set("No availability data")
+            self.time_select.set("No availability data")
+
+    def update_times(self, selected_date):
+        # Retrieve the latest availability data
+        available_slots = self.controller.current_user_data.get("availability")
+        times_dict = available_slots.get(selected_date, {})
+
+        # Extract available time slots (tuple keys where value is True)
+        available_times = [time_range for time_range, available in times_dict.items() if available]
+
+        # Sort time ranges by their start time
+        sorted_ranges = sorted(available_times, key=lambda x: x[0])
+
+        # Format start times as "HH:MM" strings
+        formatted_times = []
+        for time_range in sorted_ranges:
+            if isinstance(time_range, tuple) and len(time_range) >= 1:
+                start_time = time_range[0]
+                try:
+                    # Handle both time objects and string representations
+                    if isinstance(start_time, str):
+                        # Parse string time if needed (e.g., "09:00:00")
+                        h, m, _ = start_time.split(':')
+                    elif hasattr(start_time, 'hour') and hasattr(start_time, 'minute'):
+                        # Extract from time/datetime object
+                        h, m = start_time.hour, start_time.minute
+                    else:
+                        continue
+
+                    formatted_time = f"{int(h):02d}:{int(m):02d}"
+                    formatted_times.append(formatted_time)
+                except (ValueError, AttributeError):
+                    continue
+
+        # Update UI components
+        self.time_select.configure(values=formatted_times)
+        if formatted_times:
+            self.time_select.set(formatted_times[0])
+        else:
+            self.time_select.set("No available times")
+            
+        def accept_appointment(self):
+            messagebox.showinfo("Info", "Appointment accepted.")
+            
     def accept_appointment(self):
         messagebox.showinfo("Info", "Appointment accepted.")
         
     def reject_appointment(self):
         messagebox.showinfo("Info", "Appointment rejected.")
+        
+    def go_back(self):
+        self.controller.selected_notification = None
+        self.controller.show_frame("DoctorNotifications")
         
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)

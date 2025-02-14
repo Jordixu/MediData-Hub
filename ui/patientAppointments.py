@@ -41,7 +41,7 @@ class PatientAppointments(ctk.CTkFrame):
         patient_data = self.controller.current_user_data
         print("Patient Data:", patient_data)
         print("Appointments:", patient_data.get_protected_attribute("appointments"))
-        if not patient_data or patient_data.get_protected_attribute("appointments") == "{}" or patient_data.get_protected_attribute("appointments") == None:
+        if not patient_data or patient_data.get_protected_attribute("appointments") == "[]" or patient_data.get_protected_attribute("appointments") == None:
             messagebox.showinfo("No Appointments", "You have no appointments scheduled.")
             print("No appointments found.")
             return

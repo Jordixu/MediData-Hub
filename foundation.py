@@ -122,26 +122,40 @@ class Foundation:
         
     def get_all_attributes(self):
         """
-        Get all the attributes of the object.
+        Get all attributes of the object, converting dates/times to strings for serialization.
         
         Returns:
-            A dictionary containing all the attributes of the object.
+            A dictionary with all attributes, including nested structures.
         """
+        def serialize(value):
+            # Recursively serialize dates and times
+            if isinstance(value, dt.date):
+                return value.strftime('%Y-%m-%d')
+            elif isinstance(value, dt.time):
+                return value.strftime('%H:%M:%S')
+            elif isinstance(value, tuple):
+                # Handle tuples of time objects (e.g., timeframe tuples)
+                return tuple(serialize(item) for item in value)
+            elif isinstance(value, dict):
+                # Serialize dictionary keys and values
+                return {serialize(k): serialize(v) for k, v in value.items()}
+            elif isinstance(value, list):
+                return [serialize(item) for item in value]
+            else:
+                return value
+
         attributes = self.__dict__.copy()
         result = {}
         for attribute, value in attributes.items():
-            if isinstance(value, tuple): # Convert time tuples to strings
-                if isinstance(value[0], dt.time) and isinstance(value[1], dt.time):
-                    value = (value[0].strftime('%H:%M:%S'), value[1].strftime('%H:%M:%S'))
-            if isinstance(value, dt.date): # Convert date objects to strings
-                value = value.strftime('%Y-%m-%d')
-            if isinstance(value, dict):
-                if isinstance(value.keys(), dt.date):
-                    value = {key.strftime('%Y-%m-%d'): value[key] for key in value.keys()}
-            if attribute.startswith(f"_{self.__class__.__name__}__"): # Remove name mangling
-                result[attribute.split(f"_{self.__class__.__name__}__")[1]] = value
-            elif attribute.startswith('_'): # Remove protected attribute prefix
-                result[attribute[1:]] = value
+            # Remove name mangling and prefixes
+            if attribute.startswith(f"_{self.__class__.__name__}__"):  
+                key = attribute.split(f"_{self.__class__.__name__}__")[1]
+            elif attribute.startswith('_'):  
+                key = attribute[1:]
             else:
-                result[attribute] = value
+                key = attribute
+            
+            # Serialize dates, times, and nested structures
+            result[key] = serialize(value)
+
         return result

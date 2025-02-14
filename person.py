@@ -32,7 +32,7 @@ class Person(Foundation):
         self._surname = surname
         self._birthday = birthday
         self._gender = gender
-        self._appointments = appointments if appointments is not None else {}
+        self._appointments = appointments if appointments is not None else []
         self._notifications = notifications if notifications is not None else []
         
     def __name__(self) -> str:

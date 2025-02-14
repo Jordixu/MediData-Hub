@@ -102,7 +102,9 @@ class Hospital:
         try:
             doctors = self.utility.load_from_csv('./database/doctors.csv')
             for doctor in doctors:
+                print("Notifications before:", doctor['notifications'])
                 new_doctor = Doctor(**doctor)
+                print("Notifications:", new_doctor.get_protected_attribute('notifications'))
                 self.doctors[new_doctor.get_protected_attribute('hospital_id')] = new_doctor
         except FileNotFoundError as exc:
             raise FileNotFoundError("No doctors found in the database") from exc
@@ -124,6 +126,16 @@ class Hospital:
                 self.rooms[new_room.get('number')] = new_room
         except FileNotFoundError as exc:
             raise FileNotFoundError('No rooms found in the database') from exc
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
+            
+        try:
+            for notification in self.utility.load_from_csv('./database/notifications.csv'):
+                new_notification = Notification(**notification)
+                self.notifications[new_notification.get('notification_id')] = new_notification
+                print("Notification:", new_notification)
+        except FileNotFoundError as exc:
+            raise FileNotFoundError('No notifications found in the database') from exc
         except TypeError as e:
             print(f"Incorrect type: {e}")
 
@@ -251,7 +263,8 @@ class Hospital:
                 self.appointments[appointment_id] = appointment
                 doctor.add_appointment(appointment_id)
                 patient.add_appointment(appointment_id)
-                return f'Appointment scheduled with Dr. {doctor.surname} on {date} at {timeframe}'
+                self.send_notification(patient_hid, doctor_hid, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {doctor.surname} has been scheduled for {date} at {timeframe}')
+                return
         
         return 'No available rooms, please choose another date or timeframe'
 
@@ -278,9 +291,12 @@ class Hospital:
             raise ValueError(f"Patient associated with appointment ID {appointment_id} not found.")
         
         appointment.change_status('Cancelled')
-        return 'Appointment cancelled successfully.'
+        
+        self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.__name__} has been cancelled.')
+        
+        return
 
-    def send_notification(self, receiver_hid: int, sender_hid: int, title:str, message: str, type: str): # Unfinished
+    def send_notification(self, receiver_hid: int, sender_hid: int, title:str, type: str, message: str):
         """
         Sends a notification from the sender to the receiver with the given message.
         
@@ -294,7 +310,16 @@ class Hospital:
         """
         date = dt.datetime.now()
         notification_id = max(self.notifications.keys(), default=0) + 1
-        self.notifications[notification_id] = Notification(title, date, sender_hid, receiver_hid, message, type)
+        new_notif = Notification(notification_id, title, date, sender_hid, receiver_hid, type, message)
+        self.notifications[notification_id] = new_notif
+        
+        if receiver_hid in self.patients:
+            self.patients[receiver_hid].add_notification(notification_id)
+        elif receiver_hid in self.doctors:
+            self.doctors[receiver_hid].add_notification(notification_id)
+        else:
+            raise ValueError('Receiver not found')
+        
 
     def search_appointments(self, search_term: str) -> list: # Unfinished
         """
