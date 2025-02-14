@@ -140,6 +140,12 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             self.time_select.set("No available times")
             
     def accept_appointment(self):
+        self.controller.hospital.schedule_appointment(
+            self.controller.selected_notification.get("sender_hid"),
+            self.controller.current_user_data.get("hospital_id"),
+            self.date_select.get(),
+            self.time_select.get()
+        )
         messagebox.showinfo("Info", "Appointment accepted.")
         
     def reject_appointment(self):
