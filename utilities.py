@@ -74,6 +74,7 @@ class Utilities:
             # Process each date and its associated time slots
             processed_dict = {}
             for date_key, time_slots in availability_dict.items():
+                date_key = self.process_date(date_key)
                 processed_time_slots = {}
                 for time_tuple, is_available in time_slots.items():
                     # Check if time_tuple contains datetime.time objects
@@ -105,11 +106,17 @@ class Utilities:
         Returns:
             date: The date object or None if the value is not a valid date.
         """
-        if pd.isna(value) or value is None: # Check if the value is Null, pd.isna is used to check for NaN values (if the conversion failed)
+        # Check if the value is Null, pd.isna is used to check for NaN values (if the conversion failed)
+        if pd.isna(value) or value is None:
             return None
+        if isinstance(value, dt.date):
+            return value
         try:
-            return dt.datetime.strptime(value.split()[0], '%Y-%m-%d').date() # Extract the date part and convert it to a date object, the split is used to remove the time part (jus in case is present, it should not be tho)
+            # Extract the date part and convert it to a date object, the split is used to remove the time part (just in case it is present, it should not be though)
+            return dt.datetime.strptime(value, '%Y-%m-%d').date()
         except (ValueError, AttributeError):
+            # Debugging purposes
+            print(f"Could not convert value '{value}' to date.")
             return None
 
     def process_timeframe(self, value: any) -> tuple:
@@ -157,7 +164,7 @@ class Utilities:
                 return value.lower() == 'true'
             try:
                 if value.isdigit():  # Check if it's an integer
-                    print("Utilities, l63:", value)
+                    # print("Utilities, l63:", value)
                     return int(value)
                 elif '.' in value:  # Check if it's a float
                     return float(value)
@@ -168,8 +175,9 @@ class Utilities:
                     else:
                         return [int(inside)] if inside.isdigit() else inside
             except ValueError:
+                if any(keyword in value for keyword in ["appointment", "Dr.", "Mr.", "Mrs.", "Ms."]):
+                    return
                 print(f"Could not convert value '{value}' to int, float, or bool.") # Debugging purposes
-                pass  # If conversion fails, keep as string
         return value # Return the original value if it's not a string (already converted)
     
     def save_to_csv(self, data: list, filename: str) -> None:
@@ -262,7 +270,7 @@ class Utilities:
         number_of_doctors: int = 100, 
         number_of_floors: int = 6, 
         rooms_per_floor: int = 20, 
-        number_of_appointments: int = 100, 
+        number_of_appointments: int = 1000, 
         number_of_drugs: int = 100
     ) -> None:
         # Generate patients

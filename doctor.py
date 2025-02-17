@@ -37,7 +37,7 @@ class Doctor(Person):
             salary: float,  
             availability: dict = None, 
             assigned_patients: list = None, 
-            notifications: list = None, 
+            notifications: list = None,
             appointments: list = None
             ) -> None:
         """
@@ -99,20 +99,20 @@ class Doctor(Person):
     def display_schedule(self): # Unfinished
         return self.__availability
     
-    def check_availability(self, date: date, timeframe: tuple) -> bool:
+    def check_availability(self, check_date: date, timeframe: tuple) -> bool:
         """
         Checks if the doctor is available at a given date and timeframe
         
         Args:
-            date (date): The date to check.
+            check_date (date): The date to check.
             timeframe (tuple): The timeframe to check.
             
         Returns:
             bool: True if the doctor is available, False otherwise.
         """
-        if date in self.__availability:
-            if timeframe in self.__availability[date]:
-                return self.__availability[date][timeframe]
+        if check_date in self.__availability:
+            if timeframe in self.__availability[check_date]:
+                return self.__availability[check_date][timeframe]
         return False
     
     def change_availability(self, date: date, timeframe: tuple) -> None:

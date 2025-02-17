@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
+import datetime as dt
 
 class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -92,7 +93,9 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         if hasattr(self.controller, 'current_user_data') and self.controller.current_user_data:
             available_slots = self.controller.current_user_data.get("availability")
             if available_slots:
-                dates = sorted(available_slots.keys())
+                dates_proc = [date.strftime("%Y-%m-%d") for date in available_slots.keys()]
+                print(dates_proc)
+                dates = sorted(dates_proc)
                 self.date_select.configure(values=dates)
                 if dates:
                     selected_date = dates[0]
@@ -110,7 +113,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
 
     def update_times(self, selected_date):
         available_slots = self.controller.current_user_data.get("availability")
-        times_dict = available_slots[selected_date]
+        times_dict = available_slots[dt.datetime.strptime(selected_date, "%Y-%m-%d").date()]
 
         available_times = [time_range for time_range, available in times_dict.items() if available]
 
@@ -140,15 +143,40 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             self.time_select.set("No available times")
             
     def accept_appointment(self):
-        self.controller.hospital.schedule_appointment(
-            self.controller.selected_notification.get("sender_hid"),
-            self.controller.current_user_data.get("hospital_id"),
-            self.date_select.get(),
-            self.time_select.get()
-        )
-        messagebox.showinfo("Info", "Appointment accepted.")
+        # Get selected time string from ComboBox
+        selected_time_str = self.time_select.get()  # e.g., "09:00"
+        
+        try:
+            # Parse hours and minutes from the string
+            start_hour, start_minute = map(int, selected_time_str.split(':'))
+            
+            # Create start and end times (assume 1-hour slots)
+            start_time = dt.time(start_hour, start_minute)
+            end_time = dt.time(start_hour + 1, start_minute)
+            
+            # Schedule the appointment
+            self.controller.hospital.schedule_appointment(
+                patient_hid=self.controller.selected_notification.get("sender_hid"),
+                doctor_hid=self.controller.current_user,
+                date=dt.datetime.strptime(self.date_select.get(), "%Y-%m-%d").date(),
+                timeframe=(start_time, end_time)
+            )
+            
+            messagebox.showinfo("Success", "Appointment accepted.")
+            
+        except ValueError as e:
+            messagebox.showerror("Error", f"Invalid time format: {e}")
+        # except Exception as e:
+        #     messagebox.showerror("Error", f"Failed to schedule: {e}")
         
     def reject_appointment(self):
+        self.controller.hospital.send_notification(
+            sender_hid=self.controller.current_user_data.get("hospital_id"),
+            receiver_hid=self.controller.selected_notification.get("sender_hid"),
+            title="Appointment Rejected",
+            message="Your appointment request has been rejected.",
+            notif_type="Appointment Rejected"
+        )
         messagebox.showinfo("Info", "Appointment rejected.")
         
     def go_back(self):
@@ -158,7 +186,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_data()
-        
+
 if __name__ == "__main__":
     root = ctk.CTk()
     ctk.set_appearance_mode("light")

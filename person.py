@@ -42,10 +42,22 @@ class Person(Foundation):
         return str(self._password) == str(password)
 
     def add_notification(self, notification_id: int) -> None:
-        self._notifications.append(notification_id)
+        # print("Notification type", type(notification_id), type(self._notifications), self._notifications)
+        if self._notifications is None or type(self._notifications) != list:
+            self._notifications = [notification_id]
+        else:
+            self._notifications.append(notification_id)
 
     def display_last_notification(self): # Unfinished
         return self._notifications[-1]
     
     def add_appointment(self, appointment_id: int): # Falta mirar si los appointments ya existen
-        self._appointments.append(appointment_id)
+        if self._appointments is None or type(self._appointments) != list:
+            self._appointments = [appointment_id]
+            return
+        else:
+            if appointment_id in self._appointments:
+                raise ValueError("Appointment already exists")
+            else:
+                self._appointments.append(appointment_id)
+                return

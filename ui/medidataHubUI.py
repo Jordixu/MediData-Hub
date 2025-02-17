@@ -6,7 +6,6 @@ from ui.patientMainScreen import PatientMainScreen
 from ui.doctorMainScreen import DoctorMainScreen
 from ui.patientPrescriptions import Prescriptions
 from ui.patientInformation import PatientInformation
-from ui.adminAppointments import AdminAppointments
 from ui.adminMainScreen import AdminMainScreen
 from ui.loginScreenAdmin import LoginScreenAdmin
 from ui.patientAppointments import PatientAppointments
@@ -55,7 +54,7 @@ class MedidataHubUI(ctk.CTk):
         
         self.frames = {}
         for F in (
-            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, Prescriptions, PatientInformation, AdminAppointments, AdminMainScreen, LoginScreenAdmin, PatientAppointments, PatientChangePassword, PatientRequestAppointment, DoctorNotifications, DoctorNotificationsDetailsRequest, DoctorNotificationsDetails
+            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, Prescriptions, PatientInformation, AdminMainScreen, LoginScreenAdmin, PatientAppointments, PatientChangePassword, PatientRequestAppointment, DoctorNotifications, DoctorNotificationsDetailsRequest, DoctorNotificationsDetails
         ):
             frame = F(container, self)
             self.frames[F.__name__] = frame

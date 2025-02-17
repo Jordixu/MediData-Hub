@@ -102,9 +102,9 @@ class Hospital:
         try:
             doctors = self.utility.load_from_csv('./database/doctors.csv')
             for doctor in doctors:
-                print("Notifications before:", doctor['notifications'])
+                # print("Notifications before:", doctor['notifications'])
                 new_doctor = Doctor(**doctor)
-                print("Notifications:", new_doctor.get_protected_attribute('notifications'))
+                # print("Notifications:", new_doctor.get_protected_attribute('notifications'))
                 self.doctors[new_doctor.get_protected_attribute('hospital_id')] = new_doctor
         except FileNotFoundError as exc:
             raise FileNotFoundError("No doctors found in the database") from exc
@@ -133,7 +133,7 @@ class Hospital:
             for notification in self.utility.load_from_csv('./database/notifications.csv'):
                 new_notification = Notification(**notification)
                 self.notifications[new_notification.get('notification_id')] = new_notification
-                print("Notification:", new_notification)
+                # print("Notification:", new_notification)
         except FileNotFoundError as exc:
             raise FileNotFoundError('No notifications found in the database') from exc
         except TypeError as e:
@@ -230,7 +230,7 @@ class Hospital:
 
         raise ValueError('Doctor not found.')
 
-    def schedule_appointment(self, patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> str: # Has to be changed
+    def schedule_appointment(self, patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> None:
         """
         Schedules an appointment between a patient and a doctor.
         
@@ -239,34 +239,42 @@ class Hospital:
             doctor_hid (int): The hospital ID of the doctor.
             date (dt.date): The date of the appointment.
             timeframe (tuple): The timeframe of the appointment.
-        
-        Returns:
-            str: A confirmation message or an error message.
         """
-        doctor = self.doctors.get(doctor_hid)
+        doctor = self.doctors[doctor_hid]
         if not doctor:
             raise ValueError('Doctor not found')
         
-        patient = self.patients.get(patient_hid)
+        patient = self.patients[patient_hid]
         if not patient:
             raise ValueError('Patient not found')
         
         if not doctor.check_availability(date, timeframe):
-            return f'Dr. {doctor.surname} is not available at that time, please choose another date or timeframe'
+            # print(doctor.get('availability'))
+            # print(date, timeframe)
+            # print(type(doctor.get('availability')[date]))
+            # print(type(doctor.get('availability')[date][timeframe]))
+            # print(type(date))
+            raise ValueError('Doctor not available at that time')
 
-        for room in self.rooms.values():
-            if room.check_availability(date, timeframe):
-                doctor.change_availability(date, timeframe)
-                room.change_availability(date, timeframe)
-                appointment_id = max(self.appointments.keys(), default=0) + 1
-                appointment = Appointment(appointment_id, date, timeframe, doctor_hid, patient_hid, room.get("number"), 'scheduled')
-                self.appointments[appointment_id] = appointment
-                doctor.add_appointment(appointment_id)
-                patient.add_appointment(appointment_id)
-                self.send_notification(patient_hid, doctor_hid, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {doctor.surname} has been scheduled for {date} at {timeframe}')
-                return
-        
-        return 'No available rooms, please choose another date or timeframe'
+        try:
+            for room in self.rooms.values():
+                if room.check_availability(date, timeframe):
+                    doctor.change_availability(date, timeframe)
+                    room.change_availability(date, timeframe)
+                    appointment_id = max(self.appointments.keys(), default=0) + 1
+                    appointment = Appointment(appointment_id, date, timeframe, doctor_hid, patient_hid, room.get("number"), 'Scheduled')
+                    # print(appointment)
+                    self.appointments[appointment_id] = appointment
+                    doctor.add_appointment(appointment_id)
+                    patient.add_appointment(appointment_id)
+                    self.send_notification(patient_hid, doctor_hid, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been scheduled for {str(date)} at {str(timeframe[0])}')
+                    return
+                else:
+                    continue
+            raise ValueError('No available rooms for the appointment')
+        except Exception as exc:
+            print(exc)
+            
 
     def cancel_appointment(self, appointment_id: int) -> str:
         """
@@ -292,7 +300,7 @@ class Hospital:
         
         appointment.change_status('Cancelled')
         
-        self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.__name__} has been cancelled.')
+        self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
         
         return
 

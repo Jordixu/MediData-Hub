@@ -38,8 +38,8 @@ class DoctorNotifications(ctk.CTkFrame):
         """Load the notifications from the controller's doctor data."""
         self.tree.delete(*self.tree.get_children())
         doctor_data = self.controller.current_user_data
-        print("Doctor Data:", doctor_data)
-        print("Notifications:", doctor_data.get_protected_attribute("notifications"))
+        # print("Doctor Data:", doctor_data)
+        # print("Notifications:", doctor_data.get_protected_attribute("notifications"))
         if not doctor_data or doctor_data.get_protected_attribute("notifications") == "[]" or doctor_data.get_protected_attribute("notifications") == None:
             messagebox.showinfo("No Notifications", "You have no notifications.")
             # print("No notifications found.")
@@ -47,11 +47,11 @@ class DoctorNotifications(ctk.CTkFrame):
         for notification_id in doctor_data.get_protected_attribute("notifications"):
             if not isinstance(notification_id, int):
                 continue
-            print("notification type", type(notification_id)) # Debugging purposes
+            # print("notification type", type(notification_id)) # Debugging purposes
             if isinstance(notification_id, list) and len(notification_id) == 1:
                 notification_id = notification_id[0]
-            print("Notification ID:", notification_id) # Debugging purposes
-            print("Notifications:", type(doctor_data.get_protected_attribute("notifications"))) # Debugging purposes
+            # print("Notification ID:", notification_id) # Debugging purposes
+            # print("Notifications:", type(doctor_data.get_protected_attribute("notifications"))) # Debugging purposes
             try:
                 notification = self.controller.hospital.notifications.get(notification_id)
                 id = notification.get("notification_id")
@@ -59,7 +59,7 @@ class DoctorNotifications(ctk.CTkFrame):
                 sent_at = notification.get("datetime")
                 notification_type = notification.get("notif_type")
                 title = notification.get("title")
-                print("Notification Data:", id, sender, sent_at, notification_type, title)
+                # print("Notification Data:", id, sender, sent_at, notification_type, title)
                 self.tree.insert("", "end", values=(id, sender, sent_at, notification_type, title))
             except ValueError as exc:
                 messagebox.showerror("Error", exc)
@@ -73,11 +73,11 @@ class DoctorNotifications(ctk.CTkFrame):
         selected_item = self.tree.selection()
         if selected_item:
             items = self.tree.item(selected_item[0], "values")
-            print("Selected row:", items)
+            # print("Selected row:", items)
             if items:
-                print("Notification ID:", items[0], type(items[0]))
+                # print("Notification ID:", items[0], type(items[0]))
                 notification = self.controller.hospital.notifications.get(int(items[0]))
-                print("Notification:", notification)
+                # print("Notification:", notification)
                 if notification:
                     self.controller.selected_notification = notification
                     if self.controller.selected_notification.get("notif_type") == "Appointment Request":
@@ -92,26 +92,6 @@ class DoctorNotifications(ctk.CTkFrame):
         else:
             messagebox.showerror("Error", "No notification selected.")
             
-    # def delete_notification(self):
-    #     """
-    #     Handle the delete notification button action.
-    #     """
-    #     selected_item = self.tree.selection()
-    #     if selected_item:
-    #         items = self.tree.item(selected_item[0], "values")
-    #         # print("Selected row:", items)
-    #         if items:
-    #             notification = self.controller.hospital.notifications.get(items[0])
-    #             if notification:
-    #                 self.controller.hospital.delete_notification(notification) # Not implemented yet
-    #                 self.load_notifications()
-    #             else:
-    #                 messagebox.showerror("Error", "Notification not found.")
-    #         else:
-    #             messagebox.showerror("Error", "No notification selected.")
-    #     else:
-    #         messagebox.showerror("Error", "No notification selected.")
-
     def process_time_tuples(self, time):
         """Convert a tuple of time strings to a single string."""
         return f"{time[0]} - {time[1]}"
