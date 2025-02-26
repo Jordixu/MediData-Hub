@@ -1,8 +1,5 @@
 from person import Person
-from notification import Notification
-from doctor import Doctor
 from datetime import date
-from diagnosis import Diagnosis
 
 class Patient(Person):
     """

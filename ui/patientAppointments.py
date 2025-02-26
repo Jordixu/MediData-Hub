@@ -91,7 +91,7 @@ class PatientAppointments(ctk.CTkFrame):
         # print("Appointments:", patient_data.get_protected_attribute("appointments"))
         if not patient_data or patient_data.get_protected_attribute("appointments") == "[]" or patient_data.get_protected_attribute("appointments") == None:
             messagebox.showinfo("No Appointments", "You have no appointments scheduled.")
-            print("No appointments found.")
+            # print("No appointments found.")
             return
         for appointment_id in patient_data.get_protected_attribute("appointments"):
             if not isinstance(appointment_id, int):
@@ -144,7 +144,7 @@ class PatientAppointments(ctk.CTkFrame):
             try:
                 # print("appointment_values[0]:", appointment_values[0])
                 # print("appointment_values_type:", type(appointment_values[0]))
-                self.controller.hospital.cancel_appointment(int(appointment_values[0]))
+                self.controller.hospital.cancel_appointment(int(appointment_values[0]), "patient")
                 messagebox.showinfo("Appointment Canceled", "The appointment has been canceled.")
                 self.load_appointments()
             except ValueError as exc:

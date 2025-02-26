@@ -1,7 +1,4 @@
 from datetime import date, time, datetime
-from doctor import Doctor
-from patient import Patient
-from room import Room
 from foundation import Foundation
 
 class Appointment(Foundation):
@@ -59,7 +56,7 @@ class Appointment(Foundation):
         """
         return f'{self.__date} at {self.__timeframe} with Dr. {self.__doctor_hid} and {self.__patient_hid} in room {self.__room_number} is {self.__status}'
     
-    def change_status(self, status: str) -> str:
+    def change_status(self, status: str) -> str: # Change
         """
         Changes the status of the appointment.
         
@@ -85,7 +82,7 @@ class Appointment(Foundation):
             if self.__timeframe[1] < datetime.now().time():
                 self.__status = 'completed'
     
-    def change_datetime(self, date: date, timeframe: tuple) -> str:
+    def change_datetime(self, date: date, timeframe: tuple) -> str: # Change
         """
         Changes the date and time of the appointment.
         
@@ -100,7 +97,7 @@ class Appointment(Foundation):
         self.__timeframe = timeframe
         return f'The appointment is now scheduled on {self.__date} at {self.__timeframe}'
     
-    def change_doctor(self, doctor_hid: Doctor) -> str:
+    def change_doctor(self, doctor_hid: int) -> str: # Change
         """
         Changes the doctor assigned to the appointment.
         

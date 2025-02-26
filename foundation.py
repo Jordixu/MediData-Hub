@@ -129,10 +129,12 @@ class Foundation:
         """
         def serialize(value):
             # Recursively serialize dates and times
-            if isinstance(value, dt.date):
+            if isinstance(value, dt.date) and not isinstance(value, dt.datetime):
                 return value.strftime('%Y-%m-%d')
             elif isinstance(value, dt.time):
                 return value.strftime('%H:%M:%S')
+            elif isinstance(value, dt.datetime):
+                return value.strftime('%Y-%m-%d %H:%M:%S')
             elif isinstance(value, tuple):
                 # Handle tuples of time objects (e.g., timeframe tuples)
                 return tuple(serialize(item) for item in value)

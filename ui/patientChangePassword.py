@@ -71,10 +71,3 @@ class PatientChangePassword(ctk.CTkFrame):
         self.confirm_password_entry.delete(0, "end")
 
         self.controller.show_frame("PatientInformation")
-        
-# if __name__ == "__main__":
-#     root = ctk.CTk()
-#     ctk.set_appearance_mode("light")
-#     container = PatientChangePassword(root, None)
-#     container.pack(expand=True, fill="both")
-#     root.mainloop()

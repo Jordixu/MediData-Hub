@@ -13,13 +13,13 @@ class DoctorMainScreen(ctk.CTkFrame):
         button_frame.pack(pady=20, padx=20, expand=True)
 
         ctk.CTkButton(button_frame, text="Personal Data", width=220, height=40,
-            command=lambda: self.not_implemented()).grid(row=0, column=0, padx=20, pady=20)
+            command=lambda: self.controller.show_frame("DoctorInformation")).grid(row=0, column=0, padx=20, pady=20)
         ctk.CTkButton(button_frame, text="Prescriptions", width=220, height=40,
             command=lambda: self.not_implemented()).grid(row=0, column=1, padx=20, pady=20)
         ctk.CTkButton(button_frame, text="Notifications", width=220, height=40,
             command=lambda: self.controller.show_frame("DoctorNotifications")).grid(row=1, column=0, padx=20, pady=20)
         ctk.CTkButton(button_frame, text="Appointments", width=220, height=40,
-            command=self.not_implemented).grid(row=1, column=1, padx=20, pady=20)
+            command=lambda: self.controller.show_frame("DoctorAppointments")).grid(row=1, column=1, padx=20, pady=20)
 
         ctk.CTkButton(self, text="Go Back", width=220, height=40, command=lambda: self.home_button()).pack(pady=20)
         

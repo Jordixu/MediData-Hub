@@ -9,33 +9,32 @@ from utilities import Utilities
 
 class Hospital:
     """
-    Represents a hospital system.
-    
+    The Hospital class represents a hospital management system that handles patients, doctors, appointments, rooms, drugs, and notifications.
     Attributes:
-        name (str): The name of the hospital.
-        location (str): The location of the hospital.
-        patients (dict): A dictionary of patients in the hospital.
-        doctors (dict): A dictionary of doctors in the hospital.
-        appointments (dict): A dictionary of appointments in the hospital.
-        rooms (dict): A dictionary of rooms in the hospital.
-        drugs (dict): A dictionary of drugs in the hospital.
-        notifications (dict): A dictionary of notifications in the hospital.
-        
+        __admin_username (str): The admin username.
+        __admin_password (str): The admin password.
+        patients (dict): A dictionary to store patient objects.
+        doctors (dict): A dictionary to store doctor objects.
+        appointments (dict): A dictionary to store appointment objects.
+        rooms (dict): A dictionary to store room objects.
+        drugs (dict): A dictionary to store drug objects.
+        notifications (dict): A dictionary to store notification objects.
+        utility (Utilities): Utility object for various operations.
     Methods:
-        change_admin_credentials(username, password): Changes the admin credentials.
-        checkadmin(username, password): Checks if the username and password match the admin credentials.
-        load_data(): Loads data from CSV files into the hospital system.
-        add_patient(**kwargs): Adds a new patient to the system after validating the provided attributes.
-        remove_patient(patient_id): Removes a patient from the system based on their ID.
-        add_doctor(**kwargs): Adds a new doctor to the system after validating the provided attributes.
-        remove_doctor(doctor_id): Removes a doctor from the system based on their ID.
-        schedule_appointment(patient_id, doctor_id, date, timeframe): Schedules an appointment between a patient and a doctor.
-        cancel_appointment(appointment_id): Cancels an appointment between a patient and a doctor.
-        send_notification(receiver_id, sender_id, message): Sends a notification from the sender to the receiver with the given message.
-        search_appointments(search_term): Searches for appointments based on the given search term.
-        get_appointment(appointment_id): Retrieves an appointment based on the given appointment ID.
-        get_appointments(): Retrieves all appointments in the system.
+        __init__(username: str, password: str, utility: Utilities) -> None:
+        change_admin_credentials(username: str, password: str) -> None:
+        checkadmin(username: str, password: str) -> bool:
+        load_data() -> None:
+        add_patient(**kwargs) -> bool:
+        remove_patient(patient_hospital_id: Union[int, str]) -> str:
+        add_doctor(**kwargs) -> None:
+        remove_doctor(doctor_id: Union[int, str]) -> None:
+        schedule_appointment(patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> None:
+        cancel_appointment(appointment_id: int) -> str:
+        send_notification(receiver_hid: int, sender_hid: int, title: str, type: str, message: str) -> None:
+        search_appointments(search_term: str) -> list:
     """
+
     def __init__(self, username: str, password: str, utility: Utilities) -> None:
         """
         Initializes the Hospital object.
@@ -167,7 +166,6 @@ class Hospital:
 
         new_patient = Patient(**kwargs)
         self.patients[new_patient.get_protected_attribute('hospital_id')] = new_patient
-        return True
 
     def remove_patient(self, patient_hospital_id: Union[int, str]) -> str:
         """
@@ -276,7 +274,7 @@ class Hospital:
             print(exc)
             
 
-    def cancel_appointment(self, appointment_id: int) -> str:
+    def cancel_appointment(self, appointment_id: int, sender: str) -> str:
         """
         Cancels an appointment between a patient and a doctor.
         
@@ -300,9 +298,14 @@ class Hospital:
         
         appointment.change_status('Cancelled')
         
-        self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
-        
-        return
+        if sender == 'doctor':
+            self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been cancelled.')
+            return
+        elif sender == 'patient':
+            self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
+            return
+        else:
+            raise ValueError('Sender not found')
 
     def send_notification(self, receiver_hid: int, sender_hid: int, title:str, type: str, message: str):
         """
@@ -316,9 +319,11 @@ class Hospital:
         Returns:
             None
         """
-        date = dt.datetime.now()
+        dat = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        dat = dt.datetime.strptime(dat, '%Y-%m-%d %H:%M:%S')
+        
         notification_id = max(self.notifications.keys(), default=0) + 1
-        new_notif = Notification(notification_id, title, date, sender_hid, receiver_hid, type, message)
+        new_notif = Notification(notification_id, title, dat, sender_hid, receiver_hid, type, message)
         self.notifications[notification_id] = new_notif
         
         if receiver_hid in self.patients:

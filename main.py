@@ -1,6 +1,5 @@
 from MediDataHub import Hospital
 from ui.medidataHubUI import MedidataHubUI
-from datetime import date
 from utilities import Utilities
 
 def main():
@@ -17,3 +16,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # pyinstaller --onefile --windowed --icon=icon.ico main.py

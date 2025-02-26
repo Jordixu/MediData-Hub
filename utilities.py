@@ -6,29 +6,60 @@ from typing import Union
 
 class Utilities:
     """
-    Includes all the auxiliar methods/functions of the hospital management system.
-    
-    Attributes:
-        fake (Faker): A Faker object to generate fake data. Used to generate random data for the hospital.
-        
+    Utilities class provides various utility functions for handling data processing, 
+    file operations, and generating random data for a hospital management system.
     Methods:
-        load_from_csv(filename): Loads data from a CSV file and returns it as a list of dictionaries.
-        process_dataframe(df): Processes a DataFrame and returns it as a list of dictionaries.
-        process_date(value): Processes a date value and returns it as a date object.
-        process_timeframe(value): Processes a timeframe value and returns it as a tuple of time objects.
-        auto_convert(value): Converts a value to an appropriate data type.
-        save_to_csv(data, filename): Saves data to a CSV file.
-        update_database(hospital): Updates the database with the hospital data.
-        create_timeframe(): Creates a list of timeframes for appointments.
-        create_week(): Creates a list of dates for a week.
-        create_schedule(): Creates a schedule for a week with available time slots.
-        random_datas(number_of_patients, number_of_doctors, number_of_floors, rooms_per_floor, number_of_appointments, number_of_drugs): Generates random data for the hospital.
-        validate_and_cast_value(value, value_type, lower, upper, custom_message_incorrect_type, custom_message_lower, custom_message_upper): Validates and casts a value to a specified type.
+        __init__():
+            Initializes the Utilities class with a Faker instance for generating fake data.
+        load_from_csv(filename: str) -> list:
+            Loads data from a CSV file, processes it, and returns a list of dictionaries.
+        process_dataframe(df: pd.DataFrame) -> list:
+            Processes a DataFrame to convert values to appropriate data types and returns a list of dictionaries.
+        process_availability(value: any) -> dict:
+            Converts an availability string into a nested dictionary with date and time objects.
+        process_date(value: any) -> dt.date:
+            Transforms a date string into a date object.
+        process_timeframe(value: any) -> tuple:
+            Processes a timeframe value and returns it as a tuple of time objects.
+        auto_convert(value: any) -> any:
+            Converts a value to an appropriate data type (int, float, bool, list of ints, or string).
+        save_to_csv(data: list, filename: str) -> None:
+            Saves data to a CSV file.
+        update_database(hospital) -> None:
+            Updates the database with hospital data by saving it to CSV files.
+        create_timeframe() -> list:
+            Creates a list of timeframes for appointments and returns it.
+        create_week() -> list:
+            Creates a list of dates for a week and returns it.
+        create_schedule() -> dict:
+            Creates a schedule for a week with available time slots and returns it.
+        random_datas(
+            Generates random data for patients, doctors, rooms, appointments, and drugs, and saves them to CSV files.
+        validate_and_cast_value(
+            value: any, 
+            value_type: object, 
+            lower: Union[int, float] = None, 
+            upper: Union[int, float] = None, 
+            custom_message_incorrect_type: str = None, 
+            custom_message_lower: str = None, 
+            custom_message_upper: str = None
+        ) -> object:
+            Validates and casts a value to a specified type, optionally checking if it falls within lower and upper bounds.
     """
+    
     def __init__(self):
-        self.fake = Faker(['en_US'])
+        self.__fake = Faker(['en_US'])
 
     def load_from_csv(self, filename):
+        """
+        Loads data from a CSV file, processes it, and returns a list of dictionaries.
+        
+        Args:
+            filename (str): The name of the file to load the data from.
+            
+        Returns:
+            list: A list of dictionaries with the processed data.
+        """
         try:
             df = pd.read_csv(filename, sep=';').replace({float('nan'): None}) # Replace NaN values with None
             return self.process_dataframe(df)
@@ -56,6 +87,8 @@ class Utilities:
                 df[column] = df[column].apply(self.process_timeframe)
             elif column == 'availability':
                 df[column] = df[column].apply(self.process_availability)
+            elif column == 'datetime':
+                df[column] = df[column].apply(lambda x: dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S') if pd.notnull(x) else None)
             else:
                 df[column] = df[column].apply(self.auto_convert)
 
@@ -270,7 +303,7 @@ class Utilities:
         number_of_doctors: int = 100, 
         number_of_floors: int = 6, 
         rooms_per_floor: int = 20, 
-        number_of_appointments: int = 1000, 
+        number_of_appointments: int = 10000, 
         number_of_drugs: int = 100
     ) -> None:
         # Generate patients
@@ -283,10 +316,10 @@ class Utilities:
                 patients.append({
                     "personal_id": pid,
                     "hospital_id": x,
-                    "password": self.fake.password(),
-                    "name": self.fake.name().split()[0],
-                    "surname": self.fake.name().split()[1],
-                    "birthday": self.fake.date_of_birth(minimum_age=16, maximum_age=120),
+                    "password": self.__fake.password(),
+                    "name": self.__fake.name().split()[0],
+                    "surname": self.__fake.name().split()[1],
+                    "birthday": self.__fake.date_of_birth(minimum_age=16, maximum_age=120),
                     "gender": rd.choice(["Male", "Female"]),
                     "weight": rd.randint(50, 150) + round(rd.uniform(0, 1), 2),
                     "height": rd.randint(150, 200) + round(rd.uniform(0, 1), 2),
@@ -301,10 +334,10 @@ class Utilities:
             doctors.append({
                 "personal_id": rd.randint(100000, 999999),
                 "hospital_id": x + 1000,
-                "password": self.fake.password(),
-                "name": self.fake.name().split()[0],
-                "surname": self.fake.name().split()[1],
-                "birthday": self.fake.date_of_birth(minimum_age=25, maximum_age=70),
+                "password": self.__fake.password(),
+                "name": self.__fake.name().split()[0],
+                "surname": self.__fake.name().split()[1],
+                "birthday": self.__fake.date_of_birth(minimum_age=25, maximum_age=70),
                 "gender": rd.choice(["Male", "Female"]),
                 "speciality": rd.choice([
                     "Cardiology", "Dermatology", "Endocrinology", "Gastroenterology", "Hematology", "Infectious Disease", "Nephrology", "Neurology", "Oncology", "Pulmonology", "Rheumatology", "Urology"
@@ -313,7 +346,7 @@ class Utilities:
                     "ER","Surgery","Internal Medicine","Pediatrics","Psychiatry","Oncology",
                     "Cardiology","Neurology","Gynecology","Urology"
                 ]),
-                "socialsecurity": self.fake.ssn(taxpayer_identification_number_type="SSN"),
+                "socialsecurity": self.__fake.ssn(taxpayer_identification_number_type="SSN"),
                 "salary": rd.randint(40000, 100000) + round(rd.uniform(0, 1), 2),
                 "availability": self.create_schedule(),
                 "appointments": []
@@ -374,10 +407,10 @@ class Utilities:
         for x in range(number_of_drugs):
             drugs.append({
                 "medication_id": x,
-                "name": self.fake.word(),
-                "description": self.fake.text(max_nb_chars=200),
-                "side_effects": self.fake.text(max_nb_chars=200),
-                "dosage": self.fake.text(max_nb_chars=200),
+                "name": self.__fake.word(),
+                "description": self.__fake.text(max_nb_chars=200),
+                "side_effects": self.__fake.text(max_nb_chars=200),
+                "dosage": self.__fake.text(max_nb_chars=200),
                 "prescription": None,
             })
             
@@ -394,7 +427,7 @@ class Utilities:
         self.save_to_csv(drugs, "./database/drugs.csv")
         
         
-    def validate_and_cast_value(self, value: any,value_type: object, lower: Union[int, float] = None, upper: Union[int, float] = None, custom_message_incorrect_type: str = None, custom_message_lower: str = None, custom_message_upper: str = None) -> object: # quizás integremos esto fuera de la clase Hospital o lo definimos como staticmethod para usarlo fuera
+    def validate_and_cast_value(self, value: any,value_type: object, lower: Union[int, float] = None, upper: Union[int, float] = None, custom_message_incorrect_type: str = None, custom_message_lower: str = None, custom_message_upper: str = None) -> object:
         """
         Validates the given value by casting it to a specified type and optionally checking if it falls within lower and upper bounds.
         

@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
+import datetime as dt
 
 class DoctorNotifications(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -12,19 +13,28 @@ class DoctorNotifications(ctk.CTkFrame):
 
         frame = ctk.CTkFrame(self)
         frame.pack(pady=20, expand=True, fill='both')
+        
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
 
         style = ttk.Style()
         style.configure('Treeview', background='white', foreground='black', rowheight=30, fieldbackground='#e5e5e5', font=('Helvetica', 14))
         style.configure('Treeview.Heading', font=('Helvetica', 16, 'bold'))
         style.map('Treeview', background=[('selected', 'grey30')])
-
-        self.tree = ttk.Treeview(frame, columns=("ID", "Sender", "Sent at", "Type", "Title"), show='headings')
-        self.tree.heading("ID", text="ID")
-        self.tree.heading("Sender", text="Sender")
-        self.tree.heading("Sent at", text="Sent at")
-        self.tree.heading("Type", text="Type")
-        self.tree.heading("Title", text="Title")
+        
+        # Treeview setup
+        columns = ("ID", "Sender", "Sent at", "Type", "Title")
+        self.tree = ttk.Treeview(frame, columns=columns, show='headings', yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.tree.yview)
+        
+        # Configure headings with sort commands
+        for col in columns:
+            self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
         self.tree.pack(expand=True, fill='both')
+
+        # Initialize sort order tracking
+        self.sort_order = {col: False for col in columns}  # False = Ascending, True = Descending
 
         self.tree.bind("<<TreeviewSelect>>", self.selected)
 
@@ -33,6 +43,38 @@ class DoctorNotifications(ctk.CTkFrame):
 
         # self.delete_button = ctk.CTkButton(self, text="Delete Notification", command=self.delete_notification)
         # self.delete_button.pack(side=ctk.RIGHT, padx=20, pady=10)
+        
+    def sort_treeview(self, col): 
+        # Get all items and their current values in the selected column
+        items = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
+        
+        # Determine sorting key based on column type
+        if col == "ID" or col == "Sender":
+            items.sort(key=lambda x: int(x[0]), reverse=self.sort_order[col])
+        elif col == "Sent at":
+            items.sort(key=lambda x: dt.datetime.strftime(x, '%Y-%m-%d %H:%M:%S'), reverse=self.sort_order[col])
+        else: # Default to string sorting (Status)
+            items.sort(key=lambda x: x[0].lower(), reverse=self.sort_order[col])
+        
+        # Rearrange items in Treeview
+        for index, (value, item) in enumerate(items):
+            self.tree.move(item, '', index)
+        
+        # Toggle sort order and update heading
+        self.sort_order[col] = not self.sort_order[col]
+        self.update_heading_arrow(col)
+
+    def update_heading_arrow(self, col):
+        # Remove existing arrows from all columns
+        for column in self.tree["columns"]:
+            text = self.tree.heading(column)["text"]
+            text = text.replace("   ˄", "").replace("   ˅", "")
+            self.tree.heading(column, text=text)
+        
+        # Add arrow to current column
+        arrow = "   ˅" if self.sort_order[col] else "   ˄"
+        current_text = self.tree.heading(col)["text"]
+        self.tree.heading(col, text=current_text + arrow)
                 
     def load_notifications(self):
         """Load the notifications from the controller's doctor data."""

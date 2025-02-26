@@ -78,7 +78,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         self.back_button = ctk.CTkButton(self.buttons_frame, text="Go Back", command=lambda: self.go_back(), height=40, width=200)
         self.back_button.grid(row=0, column=2, padx=10, pady=10)
         
-    def load_data(self, data=None):
+    def load_data(self):
         self.title_entry.configure(state='normal')
         self.description_entry.configure(state='normal')
         

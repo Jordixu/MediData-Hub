@@ -5,7 +5,7 @@ class Notification(Foundation): # Unfinished
     
     Attributes:
         message (str): The message of the notification.
-        datetime (str): The date and time the notification was sent.
+        datetime (datetime): The date and time the notification was sent.
         sender_id (int): The ID of the sender of the notification.
         receiver_id (int): The ID of the receiver of the notification.
         
