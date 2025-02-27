@@ -24,22 +24,6 @@ class Room(Foundation):
         self.__floor = floor # int
         self.__department = department # string
         self.__availability = availability if availability is not None else {}
-
-    # def create_schedule(self, date, timeframes): # Utility function
-    #     """
-    #     Create a schedule for the room.
-        
-    #     Args:
-    #         date (date): The date of the schedule.
-    #         timeframes (list): The timeframes for the schedule.
-        
-    #     Returns:
-    #         dict: The schedule for the room.
-    #     """
-    #     if date not in self.__availability:
-    #         self.__availability[date] = {}
-    #     for timeframe in timeframes:
-    #         self.__availability[date][timeframe] = True
     
     def display_schedule(self):
         return self.__availability

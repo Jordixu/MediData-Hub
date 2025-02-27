@@ -51,8 +51,11 @@ class DoctorNotifications(ctk.CTkFrame):
         # Determine sorting key based on column type
         if col == "ID" or col == "Sender":
             items.sort(key=lambda x: int(x[0]), reverse=self.sort_order[col])
-        elif col == "Sent at":
-            items.sort(key=lambda x: dt.datetime.strftime(x, '%Y-%m-%d %H:%M:%S'), reverse=self.sort_order[col])
+        elif col == "Sent at": # Canviar
+            items.sort(
+                key=lambda x: dt.datetime.strptime(x[0], '%Y-%m-%d %H:%M:%S'),
+                reverse=self.sort_order[col]
+            )
         else: # Default to string sorting (Status)
             items.sort(key=lambda x: x[0].lower(), reverse=self.sort_order[col])
         
@@ -88,6 +91,7 @@ class DoctorNotifications(ctk.CTkFrame):
             return
         for notification_id in doctor_data.get_protected_attribute("notifications"):
             if not isinstance(notification_id, int):
+                # print("Notification ID is not an integer.")
                 continue
             # print("notification type", type(notification_id)) # Debugging purposes
             if isinstance(notification_id, list) and len(notification_id) == 1:
@@ -99,6 +103,7 @@ class DoctorNotifications(ctk.CTkFrame):
                 id = notification.get("notification_id")
                 sender = notification.get("sender_hid")
                 sent_at = notification.get("datetime")
+                # print(type(sent_at))
                 notification_type = notification.get("notif_type")
                 title = notification.get("title")
                 # print("Notification Data:", id, sender, sent_at, notification_type, title)

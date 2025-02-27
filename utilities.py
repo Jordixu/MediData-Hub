@@ -88,10 +88,9 @@ class Utilities:
             elif column == 'availability':
                 df[column] = df[column].apply(self.process_availability)
             elif column == 'datetime':
-                df[column] = df[column].apply(lambda x: dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S') if pd.notnull(x) else None)
+                df[column] = pd.to_datetime(df[column], format='%Y-%m-%d %H:%M:%S')
             else:
                 df[column] = df[column].apply(self.auto_convert)
-
         return df.to_dict('records') # 'records' is used to return a list of dictionaries (one for each row)
     
     def process_availability(self, value: any) -> dict:

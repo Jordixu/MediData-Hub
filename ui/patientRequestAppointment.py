@@ -94,12 +94,17 @@ class PatientRequestAppointment(ctk.CTkFrame):
             
             if full_name == selected_doctor_name:
                 # Create notification using proper hospital ID
+                appointment_id = self.controller.hospital.request_appointment(
+                                    self.controller.current_user,
+                                    doctor.get_protected_attribute("hospital_id"),
+                                )
                 self.controller.hospital.send_notification(
                     doctor.get_protected_attribute("hospital_id"),
                     self.controller.current_user,
                     self.title_entry.get(),
                     "Appointment Request",
-                    self.description_entry.get("1.0", "end-1c")
+                    self.description_entry.get("1.0", "end-1c"),
+                    appointment_id=appointment_id
                 )
                 messagebox.showinfo("Success", "Request sent successfully")
                 self.controller.show_frame("PatientAppointments")

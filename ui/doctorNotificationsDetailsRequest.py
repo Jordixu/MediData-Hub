@@ -153,11 +153,11 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             # Create start and end times (assume 1-hour slots)
             start_time = dt.time(start_hour, start_minute)
             end_time = dt.time(start_hour + 1, start_minute)
-            
+            appt = self.controller.selected_notification.get("appointment_id")
+            print(appt)
             # Schedule the appointment
             self.controller.hospital.schedule_appointment(
-                patient_hid=self.controller.selected_notification.get("sender_hid"),
-                doctor_hid=self.controller.current_user,
+                appointment_id = appt,
                 date=dt.datetime.strptime(self.date_select.get(), "%Y-%m-%d").date(),
                 timeframe=(start_time, end_time)
             )
@@ -177,6 +177,8 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             message="Your appointment request has been rejected.",
             notif_type="Appointment Rejected"
         )
+        appt = self.controller.selected_notification.get("appointment_id")
+        self.controller.hospital.appointments[appt].change_status("Rejected")
         messagebox.showinfo("Info", "Appointment rejected.")
         
     def go_back(self):

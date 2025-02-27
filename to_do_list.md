@@ -34,19 +34,20 @@
 ## Doctor UI
 
 - [ ] Not done, however it is almost the same as the patient except for:
-  - [ ] Accepting/declining appointments
+  - [x] Accepting/declining appointments
   - [ ] The consultation system
     - [ ] Add new consult
     - [ ] View previous consults
     - [ ] See patient medical history
     - [ ] NO registration screen nor modification/deleition
 - [ ] Change the specialty and departments so that they make sense.
-- [ ] Order notifications
+- [x] Order notifications
 
 ### Schedule System
 
-- [ ] The creation is done (utilities.py) but no system to do modifications.
+- [x] The creation is done (utilities.py) but no system to do modifications.
 - [ ] Also, need debbuging.
+- [ ] Add pending appointment
 
 ### Room System
 

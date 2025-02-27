@@ -69,7 +69,7 @@ class Appointment(Foundation):
         Raises:
             ValueError: If the status is not one of 'Scheduled', 'In Progress', 'Completed', or 'Cancelled'.
         """
-        if status not in ['Scheduled', 'In Progress', 'Completed', 'Cancelled']:
+        if status not in ['Scheduled', 'In Progress', 'Completed', 'Cancelled', 'Rescheduled', 'Pending', 'Rejected']:
             raise ValueError('The status must be either scheduled, completed, or cancelled')
         self.__status = status
         return f'The appointment status is now {self.__status}'
@@ -95,19 +95,5 @@ class Appointment(Foundation):
         """
         self.__date = date
         self.__timeframe = timeframe
-        return f'The appointment is now scheduled on {self.__date} at {self.__timeframe}'
+        return
     
-    def change_doctor(self, doctor_hid: int) -> str: # Change
-        """
-        Changes the doctor assigned to the appointment.
-        
-        Args:
-            doctor_hid (Doctor): The new doctor assigned to the appointment.
-        
-        Returns:
-            str: A message indicating the new doctor assigned to the appointment.
-        """
-        if doctor_hid == self.__doctor_hid:
-            return f'The appointment is already with Dr. {self.__doctor_hid}'
-        self.__doctor_hid = doctor_hid
-        return f'The appointment is now with Dr. {self.__doctor_hid}'

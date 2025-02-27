@@ -104,10 +104,10 @@ class PatientAppointments(ctk.CTkFrame):
             try:
                 appointment = self.controller.hospital.appointments.get(appointment_id)
                 appt_id = appointment.get("appointment_id")
-                date = appointment.get("date")
-                time = self.process_time_tuples(appointment.get("timeframe"))
+                date = appointment.get("date") if appointment.get("date") else "N/A"
+                time = self.process_time_tuples(appointment.get("timeframe")) if appointment.get("timeframe") else "N/A"
                 doc = appointment.get("doctor_hid")
-                room = appointment.get("room_number")
+                room = appointment.get("room_number") if appointment.get("room_number") else "N/A"
                 status = appointment.get("status")
                 # print("Appointment Data:", appt_id, date, time, doc, room, status)
                 self.tree.insert("", "end", values=(appt_id, date, time, doc, room, status))

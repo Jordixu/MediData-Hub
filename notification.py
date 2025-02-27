@@ -15,7 +15,7 @@ class Notification(Foundation): # Unfinished
         get_sender(): Returns the ID of the sender of the notification.
         get_receiver(): Returns the ID of the receiver of the notification.
     """
-    def __init__(self, notification_id, title, datetime, sender_hid, receiver_hid, notif_type, message = None):
+    def __init__(self, notification_id, title, datetime, sender_hid, receiver_hid, notif_type, message = None, appointment_id = None):
         self.__notification_id = notification_id
         self.__title = title
         self.__message = message
@@ -23,6 +23,7 @@ class Notification(Foundation): # Unfinished
         self.__sender_hid = sender_hid
         self.__receiver_hid = receiver_hid
         self.__notif_type = notif_type
+        self.__appointment_id = appointment_id
     
     def __str__(self):
         # for debugging purposes
