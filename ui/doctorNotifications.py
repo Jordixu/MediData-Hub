@@ -1,6 +1,6 @@
-import customtkinter as ctk
 from tkinter import ttk, messagebox
 import datetime as dt
+import customtkinter as ctk
 
 class DoctorNotifications(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -32,6 +32,13 @@ class DoctorNotifications(ctk.CTkFrame):
         for col in columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
         self.tree.pack(expand=True, fill='both')
+        
+        # Disable column resizing by capturing and canceling the resize events
+        def block_column_resize(event):
+            if self.tree.identify_region(event.x, event.y) == "separator":
+                return "break"
+
+        self.tree.bind('<Button-1>', block_column_resize)
 
         # Initialize sort order tracking
         self.sort_order = {col: False for col in columns}  # False = Ascending, True = Descending
@@ -58,11 +65,11 @@ class DoctorNotifications(ctk.CTkFrame):
             )
         else: # Default to string sorting (Status)
             items.sort(key=lambda x: x[0].lower(), reverse=self.sort_order[col])
-        
+
         # Rearrange items in Treeview
         for index, (value, item) in enumerate(items):
             self.tree.move(item, '', index)
-        
+
         # Toggle sort order and update heading
         self.sort_order[col] = not self.sort_order[col]
         self.update_heading_arrow(col)
@@ -73,12 +80,12 @@ class DoctorNotifications(ctk.CTkFrame):
             text = self.tree.heading(column)["text"]
             text = text.replace("   ˄", "").replace("   ˅", "")
             self.tree.heading(column, text=text)
-        
+
         # Add arrow to current column
         arrow = "   ˅" if self.sort_order[col] else "   ˄"
         current_text = self.tree.heading(col)["text"]
         self.tree.heading(col, text=current_text + arrow)
-                
+
     def load_notifications(self):
         """Load the notifications from the controller's doctor data."""
         self.tree.delete(*self.tree.get_children())

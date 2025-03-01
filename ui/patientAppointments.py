@@ -35,6 +35,13 @@ class PatientAppointments(ctk.CTkFrame):
         for col in columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
         self.tree.pack(expand=True, fill='both')
+        
+        # Disable column resizing by capturing and canceling the resize events
+        def block_column_resize(event):
+            if self.tree.identify_region(event.x, event.y) == "separator":
+                return "break"
+
+        self.tree.bind('<Button-1>', block_column_resize)
 
         # Initialize sort order tracking
         self.sort_order = {col: False for col in columns}  # False = Ascending, True = Descending
@@ -54,14 +61,43 @@ class PatientAppointments(ctk.CTkFrame):
         items = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
         
         # Determine sorting key based on column type
-        if col == "ID" or col == "Room" or col == "Doctor":
+        if col == "ID":
+            # Simple integer sorting for ID
             items.sort(key=lambda x: int(x[0]), reverse=self.sort_order[col])
+        elif col == "Room":
+            # Special handling for Room column with possible N/A values
+            def room_sort_key(x):
+                if x[0] == "N/A":
+                    return -999999 if self.sort_order[col] else 999999
+                try:
+                    return int(x[0])
+                except ValueError:
+                    return 0
+            items.sort(key=room_sort_key, reverse=self.sort_order[col])
+        elif col == "Doctor":
+            # Doctor IDs are integers
+            try:
+                items.sort(key=lambda x: int(x[0]), reverse=self.sort_order[col])
+            except ValueError:
+                # Fallback to string sorting if conversion fails
+                items.sort(key=lambda x: str(x[0]).lower(), reverse=self.sort_order[col])
         elif col == "Date":
-            items.sort(key=lambda x: dt.datetime.strptime(x[0], "%Y-%m-%d"), reverse=self.sort_order[col])
+            # Date sorting
+            def date_sort_key(x):
+                if x[0] == "N/A":
+                    return dt.datetime.min if self.sort_order[col] else dt.datetime.max
+                return dt.datetime.strptime(x[0], "%Y-%m-%d")
+            items.sort(key=date_sort_key, reverse=self.sort_order[col])
         elif col == "Time":
-            items.sort(key=lambda x: x[0].split(" - ")[0], reverse=self.sort_order[col])
-        else: # Default to string sorting (Status)
-            items.sort(key=lambda x: x[0].lower(), reverse=self.sort_order[col])
+            # Time sorting
+            def time_sort_key(x):
+                if x[0] == "N/A":
+                    return "" if self.sort_order[col] else "zzz"
+                return x[0].split(" - ")[0]
+            items.sort(key=time_sort_key, reverse=self.sort_order[col])
+        else:
+            # Default string sorting for other columns
+            items.sort(key=lambda x: str(x[0]).lower(), reverse=self.sort_order[col])
         
         # Rearrange items in Treeview
         for index, (value, item) in enumerate(items):
@@ -105,9 +141,10 @@ class PatientAppointments(ctk.CTkFrame):
                 appointment = self.controller.hospital.appointments.get(appointment_id)
                 appt_id = appointment.get("appointment_id")
                 date = appointment.get("date") if appointment.get("date") else "N/A"
-                time = self.process_time_tuples(appointment.get("timeframe")) if appointment.get("timeframe") else "N/A"
+                time = self.process_time_tuples(appointment.get("timeframe")) if appointment.get("timeframe") and appointment.get("timeframe") != 'N/A' else "N/A"
                 doc = appointment.get("doctor_hid")
-                room = appointment.get("room_number") if appointment.get("room_number") else "N/A"
+                room = appointment.get("room_number")
+                # print("Room:", room)
                 status = appointment.get("status")
                 # print("Appointment Data:", appt_id, date, time, doc, room, status)
                 self.tree.insert("", "end", values=(appt_id, date, time, doc, room, status))

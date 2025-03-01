@@ -32,6 +32,13 @@ class PatientNotifications(ctk.CTkFrame):
         for col in columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
         self.tree.pack(expand=True, fill='both')
+        
+        # Disable column resizing by capturing and canceling the resize events
+        def block_column_resize(event):
+            if self.tree.identify_region(event.x, event.y) == "separator":
+                return "break"
+
+        self.tree.bind('<Button-1>', block_column_resize)
 
         # Initialize sort order tracking
         self.sort_order = {col: False for col in columns}  # False = Ascending, True = Descending
@@ -52,7 +59,7 @@ class PatientNotifications(ctk.CTkFrame):
         if col == "ID" or col == "Sender":
             items.sort(key=lambda x: int(x[0]), reverse=self.sort_order[col])
         elif col == "Sent at":
-            items.sort(key=lambda x: dt.datetime.strftime(x, '%Y-%m-%d %H:%M:%S'), reverse=self.sort_order[col])
+            items.sort(key=lambda x: dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S'), reverse=self.sort_order[col])
         else: # Default to string sorting (Status)
             items.sort(key=lambda x: x[0].lower(), reverse=self.sort_order[col])
         

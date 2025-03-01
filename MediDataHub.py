@@ -8,32 +8,6 @@ from notification import Notification
 from utilities import Utilities
 
 class Hospital:
-    """
-    The Hospital class represents a hospital management system that handles patients, doctors, appointments, rooms, drugs, and notifications.
-    Attributes:
-        __admin_username (str): The admin username.
-        __admin_password (str): The admin password.
-        patients (dict): A dictionary to store patient objects.
-        doctors (dict): A dictionary to store doctor objects.
-        appointments (dict): A dictionary to store appointment objects.
-        rooms (dict): A dictionary to store room objects.
-        drugs (dict): A dictionary to store drug objects.
-        notifications (dict): A dictionary to store notification objects.
-        utility (Utilities): Utility object for various operations.
-    Methods:
-        __init__(username: str, password: str, utility: Utilities) -> None:
-        change_admin_credentials(username: str, password: str) -> None:
-        checkadmin(username: str, password: str) -> bool:
-        load_data() -> None:
-        add_patient(**kwargs) -> bool:
-        remove_patient(patient_hospital_id: Union[int, str]) -> str:
-        add_doctor(**kwargs) -> None:
-        remove_doctor(doctor_id: Union[int, str]) -> None:
-        schedule_appointment(patient_hid: int, doctor_hid: int, date: dt.date, timeframe: tuple) -> None:
-        cancel_appointment(appointment_id: int) -> str:
-        send_notification(receiver_hid: int, sender_hid: int, title: str, type: str, message: str) -> None:
-        search_appointments(search_term: str) -> list:
-    """
 
     def __init__(self, username: str, password: str, utility: Utilities) -> None:
         """
@@ -112,6 +86,10 @@ class Hospital:
 
         try:
             for appointment in self.utility.load_from_csv('./database/appointments.csv'):
+                try:
+                    appointment['room_number'] = int(appointment['room_number'])
+                except TypeError:
+                    appointment['room_number'] = 'N/A'
                 new_appointment = Appointment(**appointment)
                 self.appointments[new_appointment.get('appointment_id')] = new_appointment
         except FileNotFoundError as exc:
@@ -229,6 +207,9 @@ class Hospital:
             return
 
         raise ValueError('Doctor not found.')
+    
+    def add_diagnosis(self, patient_hid: int, doctor_hid: int, title: str, description:str, ) -> None:
+        pass
         
     def request_appointment(self, patient_hid: int, doctor_hid: int) -> None:
         doctor = self.doctors[doctor_hid]
@@ -240,7 +221,7 @@ class Hospital:
             raise ValueError('Patient not found')
 
         appointment_id = max(self.appointments.keys(), default=0) + 1
-        appointment = Appointment(appointment_id=appointment_id, patient_hid=patient_hid, doctor_hid=doctor_hid, date = None, timeframe=None, room_number=None, status='Pending')
+        appointment = Appointment(appointment_id=appointment_id, patient_hid=patient_hid, doctor_hid=doctor_hid, date = 'N/A', timeframe='N/A', room_number='N/A', status='Pending')
         self.appointments[appointment.get('appointment_id')] = appointment
         doctor.add_appointment(appointment.get('appointment_id'))
         patient.add_appointment(appointment.get('appointment_id'))
@@ -275,8 +256,8 @@ class Hospital:
                     room.change_availability(date, timeframe)
                     appointment.change_status('Scheduled')
                     appointment.change_datetime(date, timeframe)
-                    appointment.set('room_number', room.get('number'), int)
-                    print(room.get('number'))
+                    appointment.change_room(room.get('number'))
+                    # print(room.get('number'))
                     self.send_notification(patient, doctor, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {self.doctors[doctor].get_protected_attribute("surname")} has been scheduled for {str(date)} at {str(timeframe[0])}')
                     return
                 else:
@@ -343,7 +324,6 @@ class Hospital:
             self.doctors[receiver_hid].add_notification(notification_id)
         else:
             raise ValueError('Receiver not found')
-        
 
     def search_appointments(self, search_term: str) -> list: # Unfinished
         """

@@ -36,6 +36,13 @@ class DoctorAppointments(ctk.CTkFrame):
         for col in columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
         self.tree.pack(expand=True, fill='both')
+        
+        # Disable column resizing by capturing and canceling the resize events
+        def block_column_resize(event):
+            if self.tree.identify_region(event.x, event.y) == "separator":
+                return "break"
+
+        self.tree.bind('<Button-1>', block_column_resize)
 
         # Initialize sort order tracking
         self.sort_order = {col: False for col in columns}  # False = Ascending, True = Descending
@@ -52,14 +59,49 @@ class DoctorAppointments(ctk.CTkFrame):
         items = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
         
         # Determine sorting key based on column type
-        if col == "ID" or col == "Room" or col == "Patient":
+        if col == "ID":
+            # Simple integer sorting for ID
             items.sort(key=lambda x: int(x[0]), reverse=self.sort_order[col])
+        elif col == "Room":
+            # Special handling for Room column with possible N/A values
+            def room_sort_key(x):
+                if x[0] == "N/A":
+                    return -999999 if self.sort_order[col] else 999999
+                try:
+                    return int(x[0])
+                except ValueError:
+                    return 0
+            items.sort(key=room_sort_key, reverse=self.sort_order[col])
+        elif col == "Patient":
+            # Patient IDs are integers, but handle potential N/A values
+            def patient_sort_key(x):
+                if x[0] == "N/A":
+                    return -999999 if self.sort_order[col] else 999999
+                try:
+                    return int(x[0])
+                except ValueError:
+                    return 0
+            items.sort(key=patient_sort_key, reverse=self.sort_order[col])
         elif col == "Date":
-            items.sort(key=lambda x: dt.datetime.strptime(x[0], "%Y-%m-%d"), reverse=self.sort_order[col])
+            # Date sorting with N/A handling
+            def date_sort_key(x):
+                if x[0] == "N/A":
+                    return dt.datetime.min if self.sort_order[col] else dt.datetime.max
+                try:
+                    return dt.datetime.strptime(x[0], "%Y-%m-%d")
+                except ValueError:
+                    return dt.datetime.min
+            items.sort(key=date_sort_key, reverse=self.sort_order[col])
         elif col == "Time":
-            items.sort(key=lambda x: x[0].split(" - ")[0], reverse=self.sort_order[col])
-        else: # Default to string sorting (Status)
-            items.sort(key=lambda x: x[0].lower(), reverse=self.sort_order[col])
+            # Time sorting with N/A handling
+            def time_sort_key(x):
+                if x[0] == "N/A":
+                    return "" if self.sort_order[col] else "zzz"
+                return x[0].split(" - ")[0]
+            items.sort(key=time_sort_key, reverse=self.sort_order[col])
+        else:
+            # Default string sorting for other columns (like Status)
+            items.sort(key=lambda x: str(x[0]).lower(), reverse=self.sort_order[col])
         
         # Rearrange items in Treeview
         for index, (value, item) in enumerate(items):
@@ -83,23 +125,21 @@ class DoctorAppointments(ctk.CTkFrame):
 
     def load_appointments(self):
         """Load the appointments from the controller's patient data."""
-        self.tree.delete(*self.tree.get_children())
+        self.tree.delete(*self.tree.get_children(''))
         doctor_data = self.controller.current_user_data
         if not doctor_data or doctor_data.get_protected_attribute("appointments") == "[]" or doctor_data.get_protected_attribute("appointments") == None:
             messagebox.showinfo("No Appointments", "You have no appointments scheduled.")
-            # print("No appointments found.")
             return
         for appointment_id in doctor_data.get_protected_attribute("appointments"):
             if not isinstance(appointment_id, int):
-                # print("app type", type(appointment_id)) # Debugging purposes
                 continue
             if isinstance(appointment_id, list) and len(appointment_id) == 1:
                 appointment_id = appointment_id[0]
             try:
                 appointment = self.controller.hospital.appointments.get(appointment_id)
                 appt_id = appointment.get("appointment_id")
-                date = appointment.get("date")
-                time = self.process_time_tuples(appointment.get("timeframe"))
+                date = appointment.get("date") if appointment.get("date") else "N/A"
+                time = self.process_time_tuples(appointment.get("timeframe")) if appointment.get("timeframe") and appointment.get("timeframe") != 'N/A' else "N/A"
                 pat = appointment.get("patient_hid")
                 room = appointment.get("room_number")
                 status = appointment.get("status")
@@ -135,8 +175,6 @@ class DoctorAppointments(ctk.CTkFrame):
         if ans:
             appointment_values = self.tree.item(selected_item[0], "values")
             try:
-                # print("appointment_values[0]:", appointment_values[0])
-                # print("appointment_values_type:", type(appointment_values[0]))
                 self.controller.hospital.cancel_appointment(int(appointment_values[0]), "doctor")
                 messagebox.showinfo("Appointment Canceled", "The appointment has been canceled.")
                 self.load_appointments()
@@ -146,5 +184,3 @@ class DoctorAppointments(ctk.CTkFrame):
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_appointments()
-        # print("Appointments loaded.")
-        

@@ -94,7 +94,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             available_slots = self.controller.current_user_data.get("availability")
             if available_slots:
                 dates_proc = [date.strftime("%Y-%m-%d") for date in available_slots.keys()]
-                print(dates_proc)
+                # print(dates_proc)
                 dates = sorted(dates_proc)
                 self.date_select.configure(values=dates)
                 if dates:
@@ -154,7 +154,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             start_time = dt.time(start_hour, start_minute)
             end_time = dt.time(start_hour + 1, start_minute)
             appt = self.controller.selected_notification.get("appointment_id")
-            print(appt)
+            # print(appt)
             # Schedule the appointment
             self.controller.hospital.schedule_appointment(
                 appointment_id = appt,
@@ -163,6 +163,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             )
             
             messagebox.showinfo("Success", "Appointment accepted.")
+            self.controller.show_frame("DoctorNotifications")
             
         except ValueError as e:
             messagebox.showerror("Error", f"Invalid time format: {e}")
@@ -180,6 +181,7 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         appt = self.controller.selected_notification.get("appointment_id")
         self.controller.hospital.appointments[appt].change_status("Rejected")
         messagebox.showinfo("Info", "Appointment rejected.")
+        self.controller.show_frame("DoctorNotifications")
         
     def go_back(self):
         self.controller.selected_notification = None

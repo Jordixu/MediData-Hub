@@ -21,14 +21,14 @@ class PatientRequestAppointment(ctk.CTkFrame):
         self.department_label.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         self.department_menu = ctk.CTkComboBox(self.menu_frame, values=[
             "Select Department", "ER", "Surgery", "Internal Medicine", "Pediatrics", "Psychiatry", "Oncology", "Cardiology", "Neurology", "Gynecology", "Urology"
-            ], state='readonly')
+            ], state='readonly', command=self.filter_doctors)
         self.department_menu.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
         self.specialty_label = ctk.CTkLabel(self.menu_frame, text="Select Specialty")
         self.specialty_label.grid(row=0, column=1, padx=10, pady=20, sticky="ew")
         self.specialty_menu = ctk.CTkComboBox(self.menu_frame, values=[
             "Select Specialty", "Cardiology", "Dermatology", "Endocrinology", "Gastroenterology", "Hematology", "Infectious Disease", "Nephrology", "Neurology", "Oncology", "Pulmonology", "Rheumatology", "Urology"
-            ], state='readonly')
+            ], state='readonly', command=self.filter_doctors)
         self.specialty_menu.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
         
         self.selected_doctor_label = ctk.CTkLabel(self.menu_frame, text="Select Doctor")
@@ -36,9 +36,6 @@ class PatientRequestAppointment(ctk.CTkFrame):
         
         self.doctor_menu = ctk.CTkComboBox(self.menu_frame, state='readonly', values=["Select Doctor"])
         self.doctor_menu.grid(row=1, column=2, padx=10, pady=10, sticky="ew")
-        
-        self.update_button = ctk.CTkButton(self.menu_frame, text="Search Doctor", command=lambda: self.selected_doctors())
-        self.update_button.grid(row=1, column=3, padx=10, pady=10, sticky="ew")
         
         # Text frame (title and description)
         self.text_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
@@ -66,27 +63,44 @@ class PatientRequestAppointment(ctk.CTkFrame):
         self.send_button = ctk.CTkButton(self.buttons_frame, text="Send", width=200, height=40, command=lambda: self.send_request())
         self.send_button.grid(row=0, column=1, sticky="e")
         
-    def selected_doctors(self):
+    def filter_doctors(self, *args):
+        """Filter doctors based on department and specialty selections"""
+        department = self.department_menu.get()
+        specialty = self.specialty_menu.get()
+        
+        # Reset doctor menu
         self.doctor_menu.set("Select Doctor")
-        doctors = []
-        print("Updating doctors")
-        for doctor in self.controller.hospital.doctors.values():
-            department = doctor.get("department")
-            specialty = doctor.get("speciality")
+        
+        # Only update if meaningful selections are made
+        if (department == "Select Department" or specialty == "Select Specialty"):
+            self.doctor_menu.configure(values=["Select Doctor"])
+            return
             
-            if (department == self.department_menu.get() and 
-                specialty == self.specialty_menu.get()):
+        doctors = []
+        for doctor in self.controller.hospital.doctors.values():
+            doctor_department = doctor.get("department")
+            doctor_specialty = doctor.get("speciality")
+            
+            if (doctor_department == department and 
+                doctor_specialty == specialty):
                 doctors.append(
                     f"{doctor.get_protected_attribute('name')} "
                     f"{doctor.get_protected_attribute('surname')}"
                 )
-        self.doctor_menu.configure(values=doctors)
-        return
+                
+        if doctors:
+            self.doctor_menu.configure(values=doctors)
+        else:
+            self.doctor_menu.configure(values=["No doctors available"])
     
     def send_request(self):
         """Handle appointment request submission"""
         selected_doctor_name = self.doctor_menu.get()
         
+        if selected_doctor_name == "Select Doctor" or selected_doctor_name == "No doctors available":
+            messagebox.showerror("Error", "Please select a doctor")
+            return
+            
         # Proper access through hospital object
         for doctor in self.controller.hospital.doctors.values():
             full_name = (f"{doctor.get_protected_attribute('name')} "

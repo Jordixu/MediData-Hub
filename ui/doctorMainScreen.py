@@ -14,8 +14,8 @@ class DoctorMainScreen(ctk.CTkFrame):
 
         ctk.CTkButton(button_frame, text="Personal Data", width=220, height=40,
             command=lambda: self.controller.show_frame("DoctorInformation")).grid(row=0, column=0, padx=20, pady=20)
-        ctk.CTkButton(button_frame, text="Prescriptions", width=220, height=40,
-            command=lambda: self.not_implemented()).grid(row=0, column=1, padx=20, pady=20)
+        ctk.CTkButton(button_frame, text="Consultations", width=220, height=40,
+            command=lambda: self.controller.show_frame("DoctorConsultation")).grid(row=0, column=1, padx=20, pady=20)
         ctk.CTkButton(button_frame, text="Notifications", width=220, height=40,
             command=lambda: self.controller.show_frame("DoctorNotifications")).grid(row=1, column=0, padx=20, pady=20)
         ctk.CTkButton(button_frame, text="Appointments", width=220, height=40,

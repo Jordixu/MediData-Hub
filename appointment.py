@@ -1,5 +1,6 @@
 from datetime import date, time, datetime
 from foundation import Foundation
+import numpy as np
 
 class Appointment(Foundation):
     """
@@ -22,7 +23,7 @@ class Appointment(Foundation):
         change_datetime(date, timeframe): Changes the date and time of the appointment.
         change_doctor(doctor_hid): Changes the doctor assigned to the appointment.
     """
-    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor_hid: int, patient_hid: int, room_number: int, status: str, diagnosis_id: int = None, medication_id: int = None) -> None:
+    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor_hid: int, patient_hid: int, status: str, room_number: int = None, diagnosis_id: int = None, medication_id: int = None) -> None:
         """
         Initialize an Appointment instance.
         
@@ -97,3 +98,15 @@ class Appointment(Foundation):
         self.__timeframe = timeframe
         return
     
+    def change_room(self, room_number: int) -> str:
+        """
+        Changes the room number of the appointment.
+        
+        Args:
+            room_number (int): The new room number for the appointment.
+        
+        Returns:
+            str: A message indicating the new room number of the appointment.
+        """
+        self.__room_number = room_number
+        return

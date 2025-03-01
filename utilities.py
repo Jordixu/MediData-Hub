@@ -89,6 +89,10 @@ class Utilities:
                 df[column] = df[column].apply(self.process_availability)
             elif column == 'datetime':
                 df[column] = pd.to_datetime(df[column], format='%Y-%m-%d %H:%M:%S')
+            elif column == 'room_number':
+                # print("Utilities, 93:", df[column])
+                # print(type(df[column]))
+                continue
             else:
                 df[column] = df[column].apply(self.auto_convert)
         return df.to_dict('records') # 'records' is used to return a list of dictionaries (one for each row)
@@ -305,6 +309,8 @@ class Utilities:
         number_of_appointments: int = 10000, 
         number_of_drugs: int = 100
     ) -> None:
+        with open("./database/notifications.csv", "w", encoding="utf-8") as f:
+            f.write("notification_id;sender;recipient;message;datetime;is_read\n")
         # Generate patients
         patients = []
         patient_personal_ids = set() # To avoid duplicates
