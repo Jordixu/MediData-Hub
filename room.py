@@ -19,10 +19,9 @@ class Room(Foundation):
         change_number(number): Changes the number of the room.
         get_all_attributes(): Returns all the attributes
     """
-    def __init__(self, number, floor, department, availability = None):
+    def __init__(self, number, floor, availability = None):
         self.__number = number # int
         self.__floor = floor # int
-        self.__department = department # string
         self.__availability = availability if availability is not None else {}
     
     def display_schedule(self):
@@ -38,11 +37,6 @@ class Room(Foundation):
         if date in self.__availability and timeframe in self.__availability[date]:
             self.__availability[date][timeframe] = not self.__availability[date][timeframe]
 
-    def change_department(self, department):
-        if self.__department == department:
-            return f'The room {self.__number} is already in the {self.__department} department'
-        self.__department = department
-        return f'The room {self.__number} is now in the {self.__department} department'
         
     def change_number(self, number):
         previous_number = self.__number

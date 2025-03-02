@@ -41,7 +41,7 @@ class Foundation:
         except ValueError as exc:
             raise ValueError('An error occurred in setting the attribute') from exc
 
-    def get(self, attribute):
+    def get(self, attribute, default=None):
         """
         Get the value of a private attribute.
         
@@ -64,9 +64,9 @@ class Foundation:
         except TypeError as exc:
             raise TypeError('Invalid value') from exc
         except Exception as exc:
-            raise ValueError('An error occurred in getting the attribute') from exc
+            return default
         
-    def get_protected_attribute(self, attribute):
+    def get_protected_attribute(self, attribute, default=None):
         """
         Get the value of a protected attribute.
         
@@ -88,7 +88,7 @@ class Foundation:
         except TypeError as exc:
             raise TypeError('Invalid value') from exc
         except Exception as exc:
-            raise ValueError('An error occurred in getting the attribute') from exc
+            return default
         
     def set_protected_info(self, attribute, value, type):
         """
@@ -143,6 +143,8 @@ class Foundation:
                 return {serialize(k): serialize(v) for k, v in value.items()}
             elif isinstance(value, list):
                 return [serialize(item) for item in value]
+            elif isinstance(value, set):
+                return {serialize(item) for item in value}
             else:
                 return value
 

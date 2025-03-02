@@ -1,43 +1,9 @@
-from datetime import date, time, datetime
+import datetime as dt
 from foundation import Foundation
 import numpy as np
 
 class Appointment(Foundation):
-    """
-    Represents an appointment in a hospital.
-    
-    Attributes:
-        appointment_id (int): The ID of the appointment.
-        date (date): The date of the appointment.
-        timeframe (tuple): The time slot for the appointment (start_time, end_time).
-        doctor_hid (int): The ID of the doctor assigned to the appointment.
-        patient_hid (int): The ID of the patient scheduled for the appointment.
-        room_number (int): The number of the room assigned for the appointment.
-        status (str): The current status of the appointment.
-        diagnosis_id (str): The diagnosis ID of the patient.
-        medication_id (str): The medication ID prescribed to the patient.
-        
-    Methods:
-        change_status(status): Changes the status of the appointment.
-        autocomplete(): Automatically changes the status of the appointment to completed if the date and time have passed.
-        change_datetime(date, timeframe): Changes the date and time of the appointment.
-        change_doctor(doctor_hid): Changes the doctor assigned to the appointment.
-    """
-    def __init__(self, appointment_id: int, date: date, timeframe: tuple, doctor_hid: int, patient_hid: int, status: str, room_number: int = None, diagnosis_id: int = None, medication_id: int = None) -> None:
-        """
-        Initialize an Appointment instance.
-        
-        Args:
-            appointment_id (int): The ID of the appointment.
-            date (date): The date of the appointment.
-            timeframe (tuple): The time slot for the appointment (start_time, end_time).
-            doctor_hid (int): The ID of the doctor assigned to the appointment.
-            patient_hid (int): The ID of the patient scheduled for the appointment.
-            room_number (int): The number of the room assigned for the appointment.
-            status (str): The current status of the appointment.
-            diagnosis_id (int, optional): The diagnosis ID of the patient. Defaults to None.
-            medication_id (int, optional): The medication ID prescribed to the patient. Defaults to None.
-        """
+    def __init__(self, appointment_id: int, date: dt.date, timeframe: tuple, doctor_hid: int, patient_hid: int, status: str, room_number: int = None, diagnosis_id: int = None, medication_id: int = None) -> None:
         self.__appointment_id = appointment_id
         self.__date = date
         self.__timeframe = timeframe
@@ -79,11 +45,11 @@ class Appointment(Foundation):
         """
         Automatically changes the status of the appointment to completed if the date and time have passed.
         """
-        if self.__date < datetime.now().date():
-            if self.__timeframe[1] < datetime.now().time():
+        if self.__date < dt.datetime.now().date():
+            if self.__timeframe[1] < dt.datetime.now().time():
                 self.__status = 'completed'
     
-    def change_datetime(self, date: date, timeframe: tuple) -> str: # Change
+    def change_datetime(self, date: dt.date, timeframe: tuple) -> str: # Change
         """
         Changes the date and time of the appointment.
         
@@ -94,6 +60,9 @@ class Appointment(Foundation):
         Returns:
             str: A message indicating the new date and time of the appointment.
         """
+        if not isinstance(date, dt.date) or not isinstance(timeframe, tuple):
+            raise ValueError('The date and timeframe must be of type date and tuple')
+        
         self.__date = date
         self.__timeframe = timeframe
         return
@@ -108,5 +77,5 @@ class Appointment(Foundation):
         Returns:
             str: A message indicating the new room number of the appointment.
         """
-        self.__room_number = room_number
+        self.__room_number = int(room_number)
         return

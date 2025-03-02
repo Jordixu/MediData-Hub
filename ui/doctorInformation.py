@@ -2,139 +2,257 @@ from tkinter import messagebox
 import tkinter as tk
 import datetime as dt
 import customtkinter as ctk
-from tkcalendar import DateEntry
-from tkinter import ttk  # Importing ttk
+from tkinter import ttk
 
 class DoctorInformation(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.title = "Personal Data"
-
-        # Main container
-        container_frame = ctk.CTkFrame(self, fg_color="transparent")
-        container_frame.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # Center Frame to hold info and modify frames
-        center_frame = ctk.CTkFrame(container_frame, fg_color="transparent")
-        center_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        self.title = "Doctor Information"
         
-        # Info Frame
-        info_frame = ctk.CTkFrame(center_frame, fg_color="transparent")
-        info_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        # Configure the main layout
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)  # Title
+        self.grid_rowconfigure(1, weight=1)  # Form content
+        self.grid_rowconfigure(2, weight=0)  # Buttons
         
-        top_spacer = ctk.CTkFrame(info_frame, height=140, fg_color="transparent")
-        top_spacer.pack()
-
-        ctk.CTkLabel(info_frame, text="User Personal ID").pack(pady=2)
-        self.personal_id_entry = ctk.CTkEntry(info_frame, state="readonly")
-        self.personal_id_entry.pack(pady=2)
-        ctk.CTkLabel(info_frame, text="User Hospital ID").pack(pady=2)
-        self.hospital_id_entry = ctk.CTkEntry(info_frame, state="readonly")
-        self.hospital_id_entry.pack(pady=2)
-        ctk.CTkLabel(info_frame, text="Social Security Number").pack(pady=2)
-        self.ssn_entry = ctk.CTkEntry(info_frame, state="readonly")
-        self.ssn_entry.pack(pady=2)
-
-        # Vertical Separator
-        separator = ttk.Separator(center_frame, orient='vertical')
-        separator.grid(row=0, column=1, rowspan=2, sticky="ns", padx=10)
-
-        # Modify Frame
-        modify_frame = ctk.CTkFrame(center_frame, fg_color="transparent")
-        modify_frame.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
+        # Title
+        title_label = ctk.CTkLabel(
+            self, 
+            text="Doctor Information", 
+            font=ctk.CTkFont(size=24, weight="bold")
+        )
+        title_label.grid(row=0, column=0, pady=(30, 20))
         
-        top_spacer = ctk.CTkFrame(modify_frame, height=140, fg_color="transparent")
-        top_spacer.pack()
-
-        ctk.CTkLabel(modify_frame, text="Name").pack(pady=2)
-        self.name_entry = ctk.CTkEntry(modify_frame, state="readonly")
-        self.name_entry.pack(pady=2)
-
-        ctk.CTkLabel(modify_frame, text="Surname").pack(pady=2)
-        self.surname_entry = ctk.CTkEntry(modify_frame, state="readonly")
-        self.surname_entry.pack(pady=2)
-
-        ctk.CTkLabel(modify_frame, text="Gender").pack(pady=2)
-        gender_frame = ctk.CTkFrame(modify_frame)
-        gender_frame.pack(pady=2)
-        self.gender_var = tk.StringVar()
-        self.male_check = ctk.CTkRadioButton(gender_frame, text="Male", variable=self.gender_var, value="Male", state="readonly").grid(row=0, column=0)
-        self.female_check = ctk.CTkRadioButton(gender_frame, text="Female", variable=self.gender_var, value="Female", state="readonly").grid(row=0, column=1)
-
-        ctk.CTkLabel(modify_frame, text="Birthday").pack(pady=2)
-        self.birthday_entry = DateEntry(modify_frame, width=20, borderwidth=2, font=('Helvetica', 12), date_pattern='dd/MM/yyyy', state="readonly")
-        self.birthday_entry.pack(pady=2)
-
-
-        spacer_frame = ctk.CTkFrame(modify_frame, height=10, fg_color="transparent")
-        spacer_frame.pack()
-
-        ctk.CTkButton(modify_frame, text="Go Back", command=lambda: controller.show_frame("DoctorMainScreen")).pack(pady=10)
-
-        # Configure grid weights for centering
-        container_frame.grid_columnconfigure(0, weight=1)
-        container_frame.grid_columnconfigure(1, weight=1)
-        container_frame.grid_columnconfigure(2, weight=1)
-        container_frame.grid_rowconfigure(0, weight=1)
-        container_frame.grid_rowconfigure(1, weight=1)
-        container_frame.grid_rowconfigure(2, weight=1)
-
-        center_frame.grid_rowconfigure(0, weight=1)
-        center_frame.grid_rowconfigure(1, weight=1)
-        center_frame.grid_columnconfigure(0, weight=1)
-        center_frame.grid_columnconfigure(1, weight=1)
-        center_frame.grid_columnconfigure(2, weight=1)
+        # Main content container
+        content_frame = ctk.CTkFrame(self, fg_color="transparent")
+        content_frame.grid(row=1, column=0, padx=20, sticky="n")
+        
+        # Configure columns for the two sections
+        content_frame.grid_columnconfigure(0, weight=1)  # Left section
+        content_frame.grid_columnconfigure(1, weight=0)  # Divider
+        content_frame.grid_columnconfigure(2, weight=1)  # Right section
+        
+        # Left section - Account Information
+        left_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        left_frame.grid(row=0, column=0, padx=20, pady=10, sticky="n")
+        
+        ctk.CTkLabel(
+            left_frame, 
+            text="Account Information", 
+            font=ctk.CTkFont(size=16, weight="bold")
+        ).pack(anchor="w", pady=(0, 15))
+        
+        # Name field
+        ctk.CTkLabel(left_frame, text="Name", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.name_label = ctk.CTkLabel(
+            left_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.name_label.pack(pady=(0, 10), fill="x")
+        
+        # Surname field
+        ctk.CTkLabel(left_frame, text="Surname", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.surname_label = ctk.CTkLabel(
+            left_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.surname_label.pack(pady=(0, 10), fill="x")
+        
+        # Social Security Number field
+        ctk.CTkLabel(left_frame, text="Social Security Number", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.ssn_label = ctk.CTkLabel(
+            left_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.ssn_label.pack(pady=(0, 10), fill="x")
+        
+        # Gender selection
+        ctk.CTkLabel(left_frame, text="Gender", anchor="w").pack(anchor="w", pady=(5, 2))
+        gender_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
+        gender_frame.pack(pady=(0, 10), fill="x")
+        
+        self.gender_var = tk.StringVar(value="")
+        male_radio = ctk.CTkRadioButton(
+            gender_frame, 
+            text="Male", 
+            variable=self.gender_var, 
+            value="Male",
+            state="disabled"
+        )
+        male_radio.pack(side="left", padx=(0, 20))
+        
+        female_radio = ctk.CTkRadioButton(
+            gender_frame, 
+            text="Female", 
+            variable=self.gender_var, 
+            value="Female",
+            state="disabled"
+        )
+        female_radio.pack(side="left")
+        
+        # Birthday field
+        ctk.CTkLabel(left_frame, text="Birthday", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.birthday_label = ctk.CTkLabel(
+            left_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.birthday_label.pack(pady=(0, 10), fill="x")
+        
+        # Vertical line separator
+        separator = ctk.CTkFrame(content_frame, width=1, fg_color="gray80")
+        separator.grid(row=0, column=1, sticky="ns", padx=10, pady=10)
+        
+        # Right section - Professional Information
+        right_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        right_frame.grid(row=0, column=2, padx=20, pady=10, sticky="n")
+        
+        ctk.CTkLabel(
+            right_frame, 
+            text="Professional Information", 
+            font=ctk.CTkFont(size=16, weight="bold")
+        ).pack(anchor="w", pady=(0, 15))
+        
+        # Personal ID field
+        ctk.CTkLabel(right_frame, text="Personal ID", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.personal_id_label = ctk.CTkLabel(
+            right_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.personal_id_label.pack(pady=(0, 10), fill="x")
+        
+        # Hospital ID field
+        ctk.CTkLabel(right_frame, text="Hospital ID", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.hospital_id_label = ctk.CTkLabel(
+            right_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.hospital_id_label.pack(pady=(0, 10), fill="x")
+        
+        # Department field
+        ctk.CTkLabel(right_frame, text="Department", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.department_label = ctk.CTkLabel(
+            right_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.department_label.pack(pady=(0, 10), fill="x")
+        
+        # Specialty field
+        ctk.CTkLabel(right_frame, text="Specialty", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.specialty_label = ctk.CTkLabel(
+            right_frame,
+            text="",
+            anchor="w",
+            height=30,
+            fg_color="#F0F0F0",
+            corner_radius=6
+        )
+        self.specialty_label.pack(pady=(0, 10), fill="x")
+        
+        # Change Password button
+        change_pass_btn = ctk.CTkButton(
+            right_frame, 
+            text="Change Password",
+            width=200,
+            height=35,
+            fg_color="#003366",
+            hover_color="#004080",
+            command=lambda: controller.show_frame("ChangePassword")
+        )
+        change_pass_btn.pack(pady=(15, 5))
+        
+        # Buttons frame
+        buttons_frame = ctk.CTkFrame(self, fg_color="transparent")
+        buttons_frame.grid(row=2, column=0, pady=(20, 30))
+        
+        # Go Back button
+        back_btn = ctk.CTkButton(
+            buttons_frame, 
+            text="Go Back", 
+            command=lambda: controller.show_frame("DoctorMainScreen"),
+            width=150,
+            height=35,
+            fg_color="#555555",
+            hover_color="#666666"
+        )
+        back_btn.pack(side="left", padx=5)
 
     def load_data(self):
-        self.gender_var.set("")
-        self.birthday_entry.set_date(dt.datetime.now())
-
-        
         try:
-            self.personal_id_entry.configure(state="normal")
-            self.personal_id_entry.delete(0, tk.END)
-            self.personal_id_entry.insert(0, self.controller.current_user_data.get_protected_attribute("personal_id"))
-            self.personal_id_entry.configure(state="readonly")
+            # Load Name
+            name = self.controller.current_user_data.get_protected_attribute("name")
+            self.name_label.configure(text=name)
             
-            self.hospital_id_entry.configure(state="normal")
-            self.hospital_id_entry.delete(0, tk.END)
-            self.hospital_id_entry.insert(0, self.controller.current_user_data.get_protected_attribute("hospital_id"))
-            self.hospital_id_entry.configure(state="readonly")
+            # Load Surname
+            surname = self.controller.current_user_data.get_protected_attribute("surname")
+            self.surname_label.configure(text=surname)
             
-            self.name_entry.configure(state="normal")
-            self.name_entry.delete(0, tk.END)
-            self.name_entry.insert(0, self.controller.current_user_data.get_protected_attribute("name"))
-            self.name_entry.configure(state="readonly")
+            # Load SSN
+            ssn = self.controller.current_user_data.get("socialsecurity")
+            self.ssn_label.configure(text=ssn)
             
-            self.surname_entry.configure(state="normal")
-            self.surname_entry.delete(0, tk.END)
-            self.surname_entry.insert(0, self.controller.current_user_data.get_protected_attribute("surname"))
-            self.surname_entry.configure(state="readonly")
-            
+            # Set Gender
             self.gender_var.set(self.controller.current_user_data.get_protected_attribute("gender"))
-            birthday_str = self.controller.current_user_data.get_protected_attribute("birthday")
-            birthday_date = dt.datetime.strptime(birthday_str, "%Y-%m-%d").date() if isinstance(birthday_str, str) else birthday_str
-            self.birthday_entry.set_date(birthday_date)
             
-            self.ssn_entry.configure(state="normal")
-            self.ssn_entry.delete(0, tk.END)
-            self.ssn_entry.insert(0, self.controller.current_user_data.get("socialsecurity"))
-            self.ssn_entry.configure(state="readonly")
+            # Set Birthday
+            birthday_str = self.controller.current_user_data.get_protected_attribute("birthday")
+            if isinstance(birthday_str, str):
+                birthday_date = dt.datetime.strptime(birthday_str, "%Y-%m-%d").date()
+                formatted_birthday = birthday_date.strftime("%d/%m/%Y")
+            elif isinstance(birthday_str, dt.date):
+                formatted_birthday = birthday_str.strftime("%d/%m/%Y")
+            else:
+                formatted_birthday = "Not specified"
+                
+            self.birthday_label.configure(text=formatted_birthday)
+            
+            # Load Personal ID
+            personal_id = self.controller.current_user_data.get_protected_attribute("personal_id")
+            self.personal_id_label.configure(text=personal_id)
+            
+            # Load Hospital ID
+            hospital_id = self.controller.current_user_data.get_protected_attribute("hospital_id")
+            self.hospital_id_label.configure(text=hospital_id)
+            
+            # Load Department
+            department = self.controller.current_user_data.get("department", "Not assigned")
+            self.department_label.configure(text=department)
+            
+            # Load Specialty
+            specialty = self.controller.current_user_data.get("speciality", "Not specified")
+            self.specialty_label.configure(text=specialty)
 
         except AttributeError as exc:
-            messagebox.showerror("Error", exc)
+            messagebox.showerror("Error", str(exc))
             
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_data()
-        
-    def not_implemented(self):
-        messagebox.showinfo("Info", "Not implemented yet.")
-
-if __name__ == "__main__":
-    root = ctk.CTk()
-    ctk.set_appearance_mode("light")
-    container = DoctorInformation(root, None)
-    container.pack(expand=True, fill="both")
-    root.mainloop()

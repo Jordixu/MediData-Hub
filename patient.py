@@ -66,10 +66,8 @@ class Patient(Person):
         super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, appointments, notifications)
         self.__weight = weight
         self.__height = height
-        self.__assigned_doctor_hid = assigned_doctor_hid
         self.__status = status # Inpatient, Outpatient, Emergency
-        self.__medications = medications if medications is not None else []
-        self.__allergies = allergies if allergies is not None else []
+        self.__prescriptions = medications if medications is not None else []
         self.__diagnoses = diagnoses if diagnoses is not None else []
 
         
@@ -79,7 +77,7 @@ class Patient(Person):
         Returns:
             str: The string representation of the patient.
         """
-        return f'Patient {self._name} {self._surname} {self._personal_id} {self._password} {self._birthday} {self.__medications} {self.__allergies} {self.__diagnoses} {self._notifications} {self.__weight} {self.__height} {self.__assigned_doctor_hid} {self.__status} {self._appointments}'
+        return f'Patient {self._name} {self._surname} {self._personal_id} {self._password} {self._birthday} {self.__prescriptions} {self.__diagnoses} {self._notifications} {self.__weight} {self.__height} {self.__status} {self._appointments}'
         
     def add_diagnosis(self, diagnosis_id) -> None:
         """Adds a diagnosis to the patient.
@@ -89,57 +87,25 @@ class Patient(Person):
         """
         self.__diagnoses.append(diagnosis_id)
         
-    def remove_diagnosis(self, diagnosis_id, last_diagnosis: bool) -> None:
+    def remove_diagnosis(self, diagnosis_id) -> None:
         """Removes a diagnosis from the patient.
         
         Args:
-            diagnosis_id (date): The date of the diagnosis to remove.
-            last_diagnosis (bool): Whether to remove the last diagnosis.
+            diagnosis_id (int): The diagnosis ID to remove.
         """
-        if last_diagnosis:
-            self.__diagnoses.pop()
+        try:
+            del self.__diagnoses[diagnosis_id]
+        except IndexError:
+            print('Diagnosis not found')
+        
+    def add_presciption(self, prescription_id) -> None:
+        if prescription_id not in self.__prescriptions.keys():
+            self.__prescriptions.append(prescription_id)
         else:
-            self.__diagnoses = [diag for diag in self.__diagnoses if diag != diagnosis_id]
+            raise ValueError('Prescription already exists')
         
-    def add_medication(self, medication_id) -> None:
-        """Adds a medication to the patient.
-        
-        Args:
-            medication (int): The medication ID to add.
-        """
-        self.__medications.append(medication_id) # Falta verificar si el medicamento ya existe, quizas usamos un set o dict en vez de lista
-        
-    def remove_medication(self, medication_id, last_medication: bool) -> None:
-        """Removes a medication from the patient.
-        
-        Args:
-            medication (str): The medication to remove.
-            last_medication (bool): Whether to remove the last medication.
-        """
-        # Falta mirar si existe el medicamento
-        if last_medication:
-            self.__medications.pop()
-        else:
-            self.__medications = [med for med in self.__medications if med != medication_id]
-        
-    def add_allergy(self, allergy) -> None:
-        """Adds an allergy to the patient.
-        
-        Args:
-            allergy (str): The allergy to add.
-        """
-        self.__allergies.append(allergy)
-        
-    def remove_allergy(self, allergy, last_allergy: bool) -> None:
-        """Removes an allergy from the patient.
-        
-        Args:
-            allergy (str): The allergy to remove.
-            last_allergy (bool): Whether to remove the last allergy.
-        """
-        if last_allergy:
-            self.__allergies.pop()
-        else:
-            self.__allergies = [al for al in self.__allergies if al != allergy]
-            
-    # Falta: añadir/mod doctor, añadir/mod notificaciones, añadir/mod citas, añadir/mod medicamentos, añadir/mod diagnósticos, algunos de estos quizas estan en hospital
+    def remove_prescription(self, prescription_id) -> None:
+        try:
+            del self.__prescriptions[prescription_id]
+        except IndexError:
+            print('Prescription not found')

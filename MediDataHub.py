@@ -6,6 +6,8 @@ from appointment import Appointment
 from room import Room
 from notification import Notification
 from utilities import Utilities
+from drug import Drug
+from diagnosis import Diagnosis
 
 class Hospital:
 
@@ -26,6 +28,8 @@ class Hospital:
         self.rooms = {}
         self.drugs = {}
         self.notifications = {}
+        self.diagnoses = {}
+        self.prescriptions = {}
         self.utility = utility
         
     def change_admin_credentials(self, username: str, password: str) -> None:
@@ -117,6 +121,32 @@ class Hospital:
             raise FileNotFoundError('No notifications found in the database') from exc
         except TypeError as e:
             print(f"Incorrect type: {e}")
+            
+        try:
+            for drug in self.utility.load_from_csv('./database/drugs.csv'):
+                new_drug = Drug(**drug)
+                self.drugs[new_drug.get('drug_id')] = new_drug
+        except FileNotFoundError as exc:
+            raise FileNotFoundError('No drugs found in the database') from exc
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
+            
+        try:
+            for diagnosis in self.utility.load_from_csv('./database/diagnoses.csv'):
+                new_diagnosis = Diagnosis(**diagnosis)
+                self.diagnoses[new_diagnosis.get('diagnosis_id')] = new_diagnosis
+        except FileNotFoundError as exc:
+            raise FileNotFoundError('No diagnoses found in the database') from exc
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
+        
+        try:
+            for prescription in self.utility.load_from_csv('./database/prescriptions.csv'):
+                self.prescriptions[prescription['prescription_id']] = prescription
+        except FileNotFoundError as exc:
+            raise FileNotFoundError('No prescriptions found in the database') from exc
+        except TypeError as e:
+            print(f"Incorrect type: {e}")
 
     def add_patient(self, **kwargs) -> bool:
         """
@@ -159,7 +189,7 @@ class Hospital:
         """
         patient_hospital_id = self.utility.validate_and_cast_value(patient_hospital_id, int, custom_message_incorrect_type="The ID must be a number.")
         
-        if patient_hospital_id in self.patients:
+        if patient_hospital_id in self.patients.keys():
             del self.patients[patient_hospital_id]
             return
     
@@ -176,12 +206,15 @@ class Hospital:
             ValueError: If a doctor with the same ID already exists or the validation fails.
         """
         kwargs['personal_id'] = self.utility.validate_and_cast_value(kwargs['personal_id'], int, 0)
-        kwargs['hospital_id'] = self.utility.validate_and_cast_value(kwargs['hospital_id'], int, 0)
-        kwargs['birthday'] = self.utility.validate_and_cast_value(kwargs['birthday'], dt.date, 0, 150)
-        kwargs['socialsecurity'] = self.utility.validate_and_cast_value(kwargs['socialsecurity'], int)
+        if 'hospital_id' in kwargs:
+            kwargs['hospital_id'] = self.utility.validate_and_cast_value(kwargs['hospital_id'], int, 0)
+        kwargs['socialsecurity'] = self.utility.validate_and_cast_value(kwargs['socialsecurity'], str)
         kwargs['salary'] = self.utility.validate_and_cast_value(kwargs['salary'], float, 0)
         
-        if any(d.get_protected_info("personal_id") == kwargs['personal_id'] for d in self.doctors.values()):
+        if not (dt.date(1900, 1, 1) <= kwargs['birthday'] <= dt.date(2005, 1, 1)):
+            raise ValueError("You must be born between 1900 and 2005 to work here.")
+        
+        if any(d.get_protected_attribute("personal_id") == kwargs['personal_id'] for d in self.doctors.values()):
             raise ValueError('Doctor already exists.')
         
         if 'hospital_id' not in kwargs:
@@ -202,14 +235,167 @@ class Hospital:
         """
         doctor_id = self.utility.validate_and_cast_value(doctor_id, int, custom_message_incorrect_type="The ID must be a number.")
 
-        if doctor_id in self.doctors:
+        if doctor_id in self.doctors.keys():
             del self.doctors[doctor_id]
             return
 
         raise ValueError('Doctor not found.')
     
-    def add_diagnosis(self, patient_hid: int, doctor_hid: int, title: str, description:str, ) -> None:
-        pass
+    def add_drug(self, **kwargs) -> None:
+        """
+        Adds a new drug to the system.
+        
+        Args:
+            name (str): The name of the drug.
+            commercial_name (str): The commercial name of the drug.
+            price (float): The price of the drug.
+            company (str): The company that produces the drug.
+            prescription (bool): Whether the drug requires a prescription.
+        """
+        for drug in self.drugs.values():
+            if drug.get('name') == kwargs['name']:
+                raise ValueError('Drug already exists.')
+            
+        for key in ['name', 'commercial_name', 'price', 'company', 'prescription']:
+            if key not in kwargs:
+                raise ValueError(f"Missing required field: {key}")
+        
+        kwargs['price'] = self.utility.validate_and_cast_value(kwargs['price'], float, 0)
+        kwargs['prescription'] = self.utility.validate_and_cast_value(kwargs['prescription'], bool)
+        
+        if 'drug_id' not in kwargs:
+            drug_id = max(self.drugs.keys(), default=0) + 1
+            kwargs['drug_id'] = drug_id
+            
+        new_drug = Drug(**kwargs)
+        self.drugs[drug_id] = new_drug
+    
+    def remove_drug(self, drug_id: int) -> None:
+        """
+        Removes a drug from the system.
+        
+        Args:
+            drug_id (int): The ID of the drug to remove.
+        """
+        drug_id = self.utility.validate_and_cast_value(drug_id, int, custom_message_incorrect_type="The ID must be a number.")
+        
+        if drug_id in self.drugs.keys():
+            del self.drugs[drug_id]
+            return
+        
+        raise ValueError('Drug not found.')
+
+    def close_room(self, room_number: int) -> None:
+        """
+        Closes a room and reschedules all its appointments to available rooms.
+        
+        Args:
+            room_number (int): The number of the room to close.
+            
+        Raises:
+            ValueError: If the room does not exist.
+        """
+        # Check if the room exists
+        room = self.rooms.get(room_number)
+        if not room:
+            raise ValueError(f"Room {room_number} not found.")
+        
+        # Get all appointments associated with this room
+        affected_appointments = []
+        for appointment in self.appointments.values():
+            if appointment.get('room_number') == room_number and appointment.get('status') == 'Scheduled':
+                affected_appointments.append(appointment)
+        
+        # Close the room by setting all availability to False
+        for date in room.display_schedule():
+            for timeframe in room.display_schedule()[date]:
+                if room.check_availability(date, timeframe):
+                    room.change_availability(date, timeframe)
+        
+        # Reschedule all affected appointments
+        for appointment in affected_appointments:
+            appt_id = appointment.get('appointment_id')
+            doctor_id = appointment.get('doctor_hid')
+            patient_id = appointment.get('patient_hid')
+            date = appointment.get('date')
+            timeframe = appointment.get('timeframe')
+            
+            # Try to find an available room
+            new_room_found = False
+            for new_room in self.rooms.values():
+                # Skip the closed room and check others
+                if new_room.get('number') == room_number:
+                    continue
+                    
+                # If an available room is found, reschedule the appointment
+                if new_room.check_availability(date, timeframe):
+                    appointment.change_room(new_room.get('number'))
+                    new_room.change_availability(date, timeframe)
+                    new_room_found = True
+                    
+                    # Notify patient and doctor about room change
+                    self.send_notification(
+                        patient_id, 
+                        0,  # System notification
+                        'Room Change', 
+                        'Information', 
+                        f"Your appointment on {date} at {timeframe[0]} has been moved to room {new_room.get('number')} due to maintenance."
+                    )
+                    
+                    self.send_notification(
+                        doctor_id, 
+                        0,  # System notification
+                        'Room Change', 
+                        'Information', 
+                        f"Your appointment with patient {patient_id} on {date} at {timeframe[0]} has been moved to room {new_room.get('number')} due to maintenance."
+                    )
+                    
+                    break
+            
+            # If no available room is found, cancel the appointment
+            if not new_room_found:
+                appointment.change_status('Cancelled')
+                
+                # Notify patient and doctor about cancellation
+                self.send_notification(
+                    patient_id, 
+                    0,  # System notification
+                    'Appointment Cancelled', 
+                    'Cancellation', 
+                    f"Your appointment on {date} at {timeframe[0]} has been cancelled due to room {room_number} closure and no available alternatives."
+                )
+                
+                self.send_notification(
+                    doctor_id, 
+                    0,  # System notification
+                    'Appointment Cancelled', 
+                    'Cancellation', 
+                    f"Your appointment with patient {patient_id} on {date} at {timeframe[0]} has been cancelled due to room {room_number} closure."
+                )
+        
+    def open_room(self, room_number: int) -> None:
+        """
+        Opens a room and sets all its availability to True.
+        
+        Args:
+            room_number (int): The number of the room to open.
+            
+        Raises:
+            ValueError: If the room does not exist.
+        """
+        room = self.rooms.get(room_number)
+        if not room:
+            raise ValueError(f"Room {room_number} not found.")
+        
+        # Check if the room already has any available time slots
+        for date in room.display_schedule():
+            for timeframe in room.display_schedule()[date]:
+                if room.check_availability(date, timeframe):
+                    raise ValueError(f"Room {room_number} is already open with available time slots.")
+        
+        for date in room.display_schedule():
+            for timeframe in room.display_schedule()[date]:
+                room.change_availability(date, timeframe)
         
     def request_appointment(self, patient_hid: int, doctor_hid: int) -> None:
         doctor = self.doctors[doctor_hid]
@@ -221,7 +407,7 @@ class Hospital:
             raise ValueError('Patient not found')
 
         appointment_id = max(self.appointments.keys(), default=0) + 1
-        appointment = Appointment(appointment_id=appointment_id, patient_hid=patient_hid, doctor_hid=doctor_hid, date = 'N/A', timeframe='N/A', room_number='N/A', status='Pending')
+        appointment = Appointment(appointment_id=int(appointment_id), patient_hid=patient_hid, doctor_hid=doctor_hid, date = 'N/A', timeframe='N/A', room_number='N/A', status='Pending')
         self.appointments[appointment.get('appointment_id')] = appointment
         doctor.add_appointment(appointment.get('appointment_id'))
         patient.add_appointment(appointment.get('appointment_id'))
@@ -256,7 +442,7 @@ class Hospital:
                     room.change_availability(date, timeframe)
                     appointment.change_status('Scheduled')
                     appointment.change_datetime(date, timeframe)
-                    appointment.change_room(room.get('number'))
+                    appointment.change_room(int(room.get('number')))
                     # print(room.get('number'))
                     self.send_notification(patient, doctor, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {self.doctors[doctor].get_protected_attribute("surname")} has been scheduled for {str(date)} at {str(timeframe[0])}')
                     return
@@ -265,6 +451,46 @@ class Hospital:
             raise ValueError('No available rooms for the appointment')
         except Exception as exc:
             print(exc)
+
+    def reschedule_appoitment(self, appointment_id: int, date: dt.date, timeframe: tuple, room_number: int = None) -> None:
+        """
+        Reschedules an appointment between a patient and a doctor.
+        
+        Args:
+            appointment_id (int): The ID of the appointment to reschedule.
+            date (dt.date): The new date of the appointment.
+            timeframe (tuple): The new timeframe of the appointment.
+            room_number (int): The new room number for the appointment.
+        """
+        appointment = self.appointments.get(appointment_id)
+        if not appointment:
+            raise ValueError(f"Appointment with ID {appointment_id} not found.")
+        
+        doctor = self.doctors.get(appointment.get("doctor_hid"))
+        if not doctor:
+            raise ValueError(f"Doctor associated with appointment ID {appointment_id} not found.")
+        
+        patient = self.patients.get(appointment.get("patient_hid"))
+        if not patient:
+            raise ValueError(f"Patient associated with appointment ID {appointment_id} not found.")
+        
+        if not doctor.check_availability(date, timeframe):
+            raise ValueError('Doctor not available at that time.')
+        
+        if room_number:
+            room = self.rooms.get(room_number)
+            if not room:
+                raise ValueError(f"Room {room_number} not found.")
+            
+            if not room.check_availability(date, timeframe):
+                raise ValueError(f"Room {room_number} not available at that time.")
+        
+        appointment.change_datetime(date, timeframe)
+        if room_number:
+            appointment.change_room(room_number)
+        
+        self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Rescheduled', 'Appointment', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been rescheduled for {str(date)} at {str(timeframe[0])}')
+        return
 
     def cancel_appointment(self, appointment_id: int, sender: str) -> str:
         """
@@ -276,6 +502,8 @@ class Hospital:
         Returns:
             str: A confirmation message or an error message.
         """
+        appointment_id = self.utility.validate_and_cast_value(appointment_id, int, custom_message_incorrect_type="The ID must be a number.")
+        
         appointment = self.appointments.get(appointment_id)
         if not appointment:
             raise ValueError(f"Appointment with ID {appointment_id} not found.")
@@ -295,6 +523,9 @@ class Hospital:
             return
         elif sender == 'patient':
             self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
+            return
+        elif sender == 'admin':
+            self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been cancelled.')
             return
         else:
             raise ValueError('Sender not found')
@@ -324,15 +555,77 @@ class Hospital:
             self.doctors[receiver_hid].add_notification(notification_id)
         else:
             raise ValueError('Receiver not found')
-
-    def search_appointments(self, search_term: str) -> list: # Unfinished
+    
+    def remove_notification(self, notification_id):
         """
-        Searches for appointments based on the given search term.
+        Removes a notification from the system.
         
         Args:
-            search_term (str): The term to search for in the appointments.
-        
-        Returns:
-            list: A list of appointments that match the search term.
+            notification_id (int): The ID of the notification to remove.
         """
-        return [appointment for appointment in self.appointments.values() if search_term in str(appointment)]
+        notification_id = self.utility.validate_and_cast_value(notification_id, int, custom_message_incorrect_type="The ID must be a number.")
+        
+        if notification_id in self.notifications.keys():
+            del self.notifications[notification_id]
+            return
+        
+        raise ValueError('Notification not found.')
+
+    def create_diagnosis(self, title: str, description: str, treatment: str, appointment_id: int, doctor_id: int, patient_id: int) -> None:
+        try:                
+            # Generate a new diagnosis ID
+            diagnosis_id = max(self.diagnoses.keys(), default=0) + 1
+            
+            # Create diagnosis
+            diagnosis = {
+                "diagnosis_id": diagnosis_id,
+                "title": title,
+                "description": description,
+                "treatment": treatment,
+                "appointment_id": appointment_id,
+                "doctor_hid": doctor_id,
+                "patient_hid": patient_id,
+            }
+            
+            # Add to hospital diagnoses
+            self.diagnoses[diagnosis_id] = diagnosis
+            
+            # Add diagnosis to patient's record
+            patient = self.patients[patient_id]
+            patient.add_diagnosis(diagnosis_id)
+            
+            return diagnosis_id
+            
+        except Exception as e:
+            print(f"Error creating diagnosis: {e}")
+            raise
+    
+    def prescribe_medications(self, patient_id, doctor_id, diagnosis_id, medications, dosage_instructions):
+        try:
+            # Create a prescription for each medication
+            for medication in medications:
+                # Generate a new prescription ID
+                prescription_id = max(self.prescriptions.keys(), default=0) + 1
+                
+                # Create prescription
+                prescription = { # Instead of a class, we use a dictionary since we won't use it for anything else except for storing data
+                    "prescription_id": prescription_id,
+                    "drug_id": medication["id"],
+                    "patient_hid": patient_id,
+                    "doctor_hid": doctor_id,
+                    "diagnosis_id": diagnosis_id,
+                    "dosage_instructions": dosage_instructions,
+                    "date_prescribed": dt.datetime.now().strftime("%Y-%m-%d"),
+                    "status": "Active"
+                }
+                
+                # Add to hospital prescriptions
+                self.prescriptions[prescription_id] = prescription
+                
+                # Add prescription to patient's record
+                patient = self.patients[patient_id]
+                patient.add_prescription(prescription_id)
+                
+        except Exception as e:
+            print(f"Error creating prescriptions: {e}")
+            raise

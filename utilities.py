@@ -254,6 +254,18 @@ class Utilities:
             [notification.get_all_attributes() for notification in hospital.notifications.values()],
             './database/notifications.csv'
             )
+        self.save_to_csv(
+            [drug.get_all_attributes() for drug in hospital.drugs.values()],
+            './database/drugs.csv'
+            )
+        self.save_to_csv(
+            [diagnosis.get_all_attributes() for diagnosis in hospital.diagnoses.values()],
+            './database/diagnoses.csv'
+            )
+        self.save_to_csv(
+            [prescription for prescription in hospital.prescriptions.values()],
+            './database/prescriptions.csv'
+            )
         
     def create_timeframe(self):
         """
@@ -278,12 +290,13 @@ class Utilities:
         Creates a list of dates for a week.
         
         Returns:
-            list: A list of date objects for the week.
+            list: A list of date strings for the week.
         """
         week = []
         today = dt.date.today() # Get the current date (to create a week starting from today)
         for i in range(7): # Create a list of dates for the week
-            week.append(today + dt.timedelta(days=i)) # Add each day (as string) to the list
+            date_obj = today + dt.timedelta(days=i)
+            week.append(date_obj.strftime('%Y-%m-%d')) # Convert date object to string format
         return week
     
     def create_schedule(self):
@@ -302,12 +315,11 @@ class Utilities:
 
     def random_datas(
         self, 
-        number_of_patients: int = 100, 
-        number_of_doctors: int = 100, 
-        number_of_floors: int = 6, 
-        rooms_per_floor: int = 20, 
-        number_of_appointments: int = 10000, 
-        number_of_drugs: int = 100
+        number_of_patients: int, 
+        number_of_doctors: int, 
+        number_of_floors: int, 
+        rooms_per_floor: int, 
+        number_of_appointments: int
     ) -> None:
         with open("./database/notifications.csv", "w", encoding="utf-8") as f:
             f.write("notification_id;sender;recipient;message;datetime;is_read\n")
@@ -328,12 +340,11 @@ class Utilities:
                     "gender": rd.choice(["Male", "Female"]),
                     "weight": rd.randint(50, 150) + round(rd.uniform(0, 1), 2),
                     "height": rd.randint(150, 200) + round(rd.uniform(0, 1), 2),
-                    "assigned_doctor_hid": None,
                     "status": rd.choices(["Inpatient", "Outpatient", "Emergency"], weights=(0.15, 0.8, 0.05), k=1)[0],
                     "appointments": [],
                 })
 
-        # Generate doctors
+        # Generate doctors 
         doctors = []
         for x in range(number_of_doctors):
             doctors.append({
@@ -364,10 +375,6 @@ class Utilities:
                 rooms.append({
                     "number": floor * 100 + number,
                     "floor": floor,
-                    "department": rd.choice([
-                        "ER","Surgery","Internal Medicine","Pediatrics","Psychiatry",
-                        "Oncology","Cardiology","Neurology","Gynecology","Urology"
-                    ]),
                     "availability": self.create_schedule()
                 })
 
@@ -407,17 +414,6 @@ class Utilities:
             doctorss[doc["hospital_id"]]["availability"][day][time] = False
             roomss[room["number"]]["availability"][day][time] = False
 
-        # Generate drugs
-        drugs = []
-        for x in range(number_of_drugs):
-            drugs.append({
-                "medication_id": x,
-                "name": self.__fake.word(),
-                "description": self.__fake.text(max_nb_chars=200),
-                "side_effects": self.__fake.text(max_nb_chars=200),
-                "dosage": self.__fake.text(max_nb_chars=200),
-                "prescription": None,
-            })
             
         for doctor in doctors:
             doctor["availability"] = str(doctor["availability"])
@@ -429,7 +425,6 @@ class Utilities:
         self.save_to_csv(doctors, "./database/doctors.csv")
         self.save_to_csv(rooms, "./database/rooms.csv")
         self.save_to_csv(appointments, "./database/appointments.csv")
-        self.save_to_csv(drugs, "./database/drugs.csv")
         
         
     def validate_and_cast_value(self, value: any,value_type: object, lower: Union[int, float] = None, upper: Union[int, float] = None, custom_message_incorrect_type: str = None, custom_message_lower: str = None, custom_message_upper: str = None) -> object:

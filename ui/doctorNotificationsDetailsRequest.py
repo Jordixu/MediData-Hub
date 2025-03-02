@@ -6,95 +6,205 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.title = "Doctor Notifications Details"
+        self.title = "Appointment Request Details"
         
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=4)
-        self.rowconfigure(2, weight=1)
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=4)
-        self.columnconfigure(2, weight=1)
-
-        self.top_frame = ctk.CTkFrame(self, fg_color="transparent", height=10)
-        self.top_frame.grid(row=0, column=0, columnspan=3, sticky="n")
-
-        self.left_frame = ctk.CTkFrame(self, fg_color="transparent", width=10)
-        self.left_frame.grid(row=1, column=0, sticky="w")
-
-        self.container_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.container_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
-
-        self.right_frame = ctk.CTkFrame(self, fg_color="transparent", width=10)
-        self.right_frame.grid(row=1, column=2, sticky="e")
-
-        self.bottom_frame = ctk.CTkFrame(self, fg_color="transparent", height=10)
-        self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="s")
+        # Configure the main layout
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)  # Header
+        self.grid_rowconfigure(1, weight=1)  # Content
+        self.grid_rowconfigure(2, weight=0)  # Footer/buttons
         
-        self.text_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
-        self.text_frame.pack(expand=True, fill="both", padx=10, pady=10)
+        # Header with title
+        header_frame = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        header_frame.grid(row=0, column=0, sticky="ew", pady=(20, 0))
         
-        self.title_label = ctk.CTkLabel(self.text_frame, text="Title", font=("Helvetica", 24))
-        self.title_label.pack(pady=20)
+        title_label = ctk.CTkLabel(
+            header_frame, 
+            text="Appointment Request", 
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color="#262850"
+        )
+        title_label.pack(pady=15)
         
-        self.title_entry = ctk.CTkEntry(self.text_frame, width=50, state='disabled')
-        self.title_entry.pack(pady=10, expand=True, fill="both")
+        # Main content area
+        content_frame = ctk.CTkFrame(self, fg_color="transparent")
+        content_frame.grid(row=1, column=0, padx=30, pady=20, sticky="nsew")
         
-        self.description_label = ctk.CTkLabel(self.text_frame, text="Description", font=("Helvetica", 24))
-        self.description_label.pack(pady=20)
+        # Notification title section
+        title_section = ctk.CTkFrame(content_frame, fg_color="transparent")
+        title_section.pack(fill="x", pady=(0, 20))
         
-        self.description_entry = ctk.CTkTextbox(self.text_frame, height=180, width=50, wrap="word", border_width=2, state='disabled')
-        self.description_entry.pack(pady=20, expand=True, fill="both")
+        title_header = ctk.CTkLabel(
+            title_section, 
+            text="Title", 
+            font=ctk.CTkFont(size=16, weight="bold"),
+            anchor="w"
+        )
+        title_header.pack(anchor="w", pady=(0, 5))
         
-        self.time_selection_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
-        self.time_selection_frame.pack(padx=10, pady=10)
+        self.title_entry = ctk.CTkEntry(
+            title_section, 
+            height=40,
+            font=ctk.CTkFont(size=14),
+            state='disabled',
+            border_width=1,
+            corner_radius=6
+        )
+        self.title_entry.pack(fill="x")
         
-        self.date_label = ctk.CTkLabel(self.time_selection_frame, text="Date")
-        self.date_label.grid(row=0, column=0, padx=10, pady=10)
+        # Notification message section
+        message_section = ctk.CTkFrame(content_frame, fg_color="transparent")
+        message_section.pack(fill="x", expand=False, pady=(0, 20))
+        
+        message_header = ctk.CTkLabel(
+            message_section, 
+            text="Message", 
+            font=ctk.CTkFont(size=16, weight="bold"),
+            anchor="w"
+        )
+        message_header.pack(anchor="w", pady=(0, 5))
+        
+        self.description_entry = ctk.CTkTextbox(
+            message_section, 
+            font=ctk.CTkFont(size=14),
+            corner_radius=6,
+            border_width=1,
+            wrap="word",
+            height=150,
+            state='disabled'
+        )
+        self.description_entry.pack(fill="x")
+        
+        # Time selection section
+        time_selection_section = ctk.CTkFrame(content_frame, fg_color="#f0f5fa", corner_radius=6)
+        time_selection_section.pack(fill="x", pady=(0, 20), padx=0)
+        
+        time_selection_header = ctk.CTkLabel(
+            time_selection_section, 
+            text="Select Appointment Time", 
+            font=ctk.CTkFont(size=16, weight="bold"),
+            text_color="#262850"
+        )
+        time_selection_header.pack(anchor="w", padx=15, pady=(15, 10))
+        
+        # Date and time selection
+        selection_container = ctk.CTkFrame(time_selection_section, fg_color="transparent")
+        selection_container.pack(fill="x", padx=15, pady=(0, 15))
+        
+        # Date selection
+        date_frame = ctk.CTkFrame(selection_container, fg_color="transparent")
+        date_frame.pack(side="left", fill="y", padx=(0, 10))
+        
+        date_label = ctk.CTkLabel(
+            date_frame, 
+            text="Available Date",
+            font=ctk.CTkFont(size=14),
+            anchor="w"
+        )
+        date_label.pack(anchor="w", pady=(0, 5))
         
         self.date_select = ctk.CTkComboBox(
-            self.time_selection_frame, 
+            date_frame, 
             values=["Select Date"], 
             width=200, 
             height=40,
-            command=self.update_times
+            font=ctk.CTkFont(size=14),
+            command=self.update_times,
+            dropdown_font=ctk.CTkFont(size=14)
         )
-        self.date_select.grid(row=1, column=0, padx=10, pady=10)
+        self.date_select.pack()
         
-        self.time_label = ctk.CTkLabel(self.time_selection_frame, text="Time")
-        self.time_label.grid(row=0, column=1, padx=10, pady=10)
+        # Time selection
+        time_frame = ctk.CTkFrame(selection_container, fg_color="transparent")
+        time_frame.pack(side="left", fill="y")
         
-        self.time_select = ctk.CTkComboBox(self.time_selection_frame, values=["Select Time"], width=200, height=40)
-        self.time_select.grid(row=1, column=1, padx=10, pady=10)       
+        time_label = ctk.CTkLabel(
+            time_frame, 
+            text="Available Time",
+            font=ctk.CTkFont(size=14),
+            anchor="w"
+        )
+        time_label.pack(anchor="w", pady=(0, 5))
         
-        self.buttons_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
-        self.buttons_frame.pack(padx=10, pady=10)
+        self.time_select = ctk.CTkComboBox(
+            time_frame, 
+            values=["Select Time"], 
+            width=200, 
+            height=40,
+            font=ctk.CTkFont(size=14),
+            dropdown_font=ctk.CTkFont(size=14)
+        )
+        self.time_select.pack()
         
-        self.accept_button = ctk.CTkButton(self.buttons_frame, text="Accept", command=lambda: self.accept_appointment(), height=40, width=200)
-        self.accept_button.grid(row=0, column=0, padx=10, pady=10)
+        # Button section
+        button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        button_frame.grid(row=2, column=0, pady=20)
         
-        self.reject_button = ctk.CTkButton(self.buttons_frame, text="Reject", command=lambda: self.reject_appointment(), height=40, width=200)
-        self.reject_button.grid(row=0, column=1, padx=10, pady=10)
-                
-        self.back_button = ctk.CTkButton(self.buttons_frame, text="Go Back", command=lambda: self.go_back(), height=40, width=200)
-        self.back_button.grid(row=0, column=2, padx=10, pady=10)
+        # Accept button
+        self.accept_button = ctk.CTkButton(
+            button_frame,
+            text="Accept Request",
+            command=self.accept_appointment,
+            width=180,
+            height=40,
+            fg_color="#4CAF50",
+            hover_color="#45a049",
+            font=ctk.CTkFont(size=14)
+        )
+        self.accept_button.pack(side="left", padx=10)
+        
+        # Reject button
+        self.reject_button = ctk.CTkButton(
+            button_frame,
+            text="Reject Request",
+            command=self.reject_appointment,
+            width=180,
+            height=40,
+            fg_color="#e74c3c",
+            hover_color="#c0392b",
+            font=ctk.CTkFont(size=14)
+        )
+        self.reject_button.pack(side="left", padx=10)
+        
+        # Back button
+        back_button = ctk.CTkButton(
+            button_frame,
+            text="Go Back",
+            command=self.go_back,
+            width=150,
+            height=40,
+            fg_color="#555555",
+            hover_color="#666666",
+            font=ctk.CTkFont(size=14)
+        )
+        back_button.pack(side="left", padx=10)
         
     def load_data(self):
+        if not hasattr(self.controller, "selected_notification") or self.controller.selected_notification is None:
+            self.go_back()
+            return
+            
+        # Enable widgets for editing
         self.title_entry.configure(state='normal')
         self.description_entry.configure(state='normal')
         
+        # Clear previous content
         self.title_entry.delete(0, "end")
-        self.description_entry.delete(1.0, "end")
+        self.description_entry.delete("1.0", "end")
         
-        self.title_entry.insert(0, self.controller.selected_notification.get("title"))
-        self.description_entry.insert(1.0, self.controller.selected_notification.get("message"))
+        # Insert new content
+        self.title_entry.insert(0, self.controller.selected_notification.get("title", "Appointment Request"))
+        self.description_entry.insert("1.0", self.controller.selected_notification.get("message", "No additional details provided."))
+        
+        # Disable editing
         self.title_entry.configure(state='disabled')
         self.description_entry.configure(state='disabled')
         
+        # Load available slots
         if hasattr(self.controller, 'current_user_data') and self.controller.current_user_data:
             available_slots = self.controller.current_user_data.get("availability")
             if available_slots:
                 dates_proc = [date.strftime("%Y-%m-%d") for date in available_slots.keys()]
-                # print(dates_proc)
                 dates = sorted(dates_proc)
                 self.date_select.configure(values=dates)
                 if dates:
@@ -146,6 +256,11 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         # Get selected time string from ComboBox
         selected_time_str = self.time_select.get()  # e.g., "09:00"
         
+        # Check if valid time is selected
+        if selected_time_str == "No available times" or selected_time_str == "Select Time":
+            messagebox.showwarning("Warning", "Please select a valid time slot.")
+            return
+            
         try:
             # Parse hours and minutes from the string
             start_hour, start_minute = map(int, selected_time_str.split(':'))
@@ -154,33 +269,45 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             start_time = dt.time(start_hour, start_minute)
             end_time = dt.time(start_hour + 1, start_minute)
             appt = self.controller.selected_notification.get("appointment_id")
-            # print(appt)
+            
             # Schedule the appointment
             self.controller.hospital.schedule_appointment(
-                appointment_id = appt,
+                appointment_id=appt,
                 date=dt.datetime.strptime(self.date_select.get(), "%Y-%m-%d").date(),
                 timeframe=(start_time, end_time)
             )
             
-            messagebox.showinfo("Success", "Appointment accepted.")
+            # Mark notification as read
+            self.controller.selected_notification.set("read", True, "bool")
+            self.controller.selected_notification = None
+            
+            messagebox.showinfo("Success", "Appointment has been accepted and scheduled successfully.")
             self.controller.show_frame("DoctorNotifications")
             
         except ValueError as e:
             messagebox.showerror("Error", f"Invalid time format: {e}")
-        # except Exception as e:
-        #     messagebox.showerror("Error", f"Failed to schedule: {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to schedule appointment: {e}")
         
     def reject_appointment(self):
+        # Send rejection notification to patient
         self.controller.hospital.send_notification(
             sender_hid=self.controller.current_user_data.get("hospital_id"),
             receiver_hid=self.controller.selected_notification.get("sender_hid"),
-            title="Appointment Rejected",
-            message="Your appointment request has been rejected.",
+            title="Appointment Request Rejected",
+            message="Your appointment request has been rejected by the doctor.",
             notif_type="Appointment Rejected"
         )
+        
+        # Update appointment status
         appt = self.controller.selected_notification.get("appointment_id")
         self.controller.hospital.appointments[appt].change_status("Rejected")
-        messagebox.showinfo("Info", "Appointment rejected.")
+        
+        # Mark notification as read
+        self.controller.selected_notification.set("read", True, "bool")
+        self.controller.selected_notification = None
+        
+        messagebox.showinfo("Success", "Appointment request has been rejected and the patient has been notified.")
         self.controller.show_frame("DoctorNotifications")
         
     def go_back(self):
@@ -190,11 +317,3 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_data()
-
-if __name__ == "__main__":
-    root = ctk.CTk()
-    ctk.set_appearance_mode("light")
-    container = DoctorNotificationsDetailsRequest(root, None)
-    container.pack(expand=True, fill="both")
-    container.load_data()
-    root.mainloop()

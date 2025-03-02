@@ -1,0 +1,501 @@
+drug_id;name;commercial_name;price;company;prescription
+1;Acetaminophen;Tylenol;8.99;Johnson & Johnson;False
+2;Ibuprofen;Advil;7.49;Pfizer;False
+3;Aspirin;Bayer Aspirin;6.99;Bayer;False
+4;Naproxen;Aleve;9.49;Bayer;False
+5;Loratadine;Claritin;12.99;Bayer;False
+6;Cetirizine;Zyrtec;14.99;Johnson & Johnson;False
+7;Fexofenadine;Allegra;16.99;Sanofi;False
+8;Diphenhydramine;Benadryl;7.99;Johnson & Johnson;False
+9;Amoxicillin;Amoxil;22.5;GlaxoSmithKline;True
+10;Azithromycin;Zithromax;35.75;Pfizer;True
+11;Ciprofloxacin;Cipro;42.99;Bayer;True
+12;Metformin;Glucophage;15.5;Bristol Myers Squibb;True
+13;Lisinopril;Prinivil;18.75;Merck;True
+14;Atorvastatin;Lipitor;45.99;Pfizer;True
+15;Simvastatin;Zocor;32.5;Merck;True
+16;Omeprazole;Prilosec;24.99;AstraZeneca;False
+17;Esomeprazole;Nexium;28.75;AstraZeneca;True
+18;Fluoxetine;Prozac;37.5;Eli Lilly;True
+19;Sertraline;Zoloft;42.25;Pfizer;True
+20;Escitalopram;Lexapro;48.99;Forest Laboratories;True
+21;Alprazolam;Xanax;29.99;Pfizer;True
+22;Diazepam;Valium;27.5;Roche;True
+23;Zolpidem;Ambien;36.25;Sanofi;True
+24;Levothyroxine;Synthroid;19.99;AbbVie;True
+25;Amlodipine;Norvasc;22.75;Pfizer;True
+26;Hydrochlorothiazide;Microzide;14.25;Watson Pharmaceuticals;True
+27;Metoprolol;Lopressor;17.99;Novartis;True
+28;Losartan;Cozaar;32.75;Merck;True
+29;Prednisone;Deltasone;12.5;Pfizer;True
+30;Albuterol;Ventolin;25.99;GlaxoSmithKline;True
+31;Fluticasone;Flonase;21.99;GlaxoSmithKline;False
+32;Montelukast;Singulair;47.75;Merck;True
+33;Gabapentin;Neurontin;38.5;Pfizer;True
+34;Pregabalin;Lyrica;52.99;Pfizer;True
+35;Duloxetine;Cymbalta;54.75;Eli Lilly;True
+36;Venlafaxine;Effexor;49.99;Pfizer;True
+37;Citalopram;Celexa;29.75;Forest Laboratories;True
+38;Warfarin;Coumadin;15.25;Bristol Myers Squibb;True
+39;Clopidogrel;Plavix;45.5;Sanofi;True
+40;Methotrexate;Trexall;67.99;Teva Pharmaceuticals;True
+41;Cyclobenzaprine;Flexeril;18.25;McNeil Consumer;True
+42;Meloxicam;Mobic;24.5;Boehringer Ingelheim;True
+43;Tramadol;Ultram;26.75;Johnson & Johnson;True
+44;Oxycodone;OxyContin;58.99;Purdue Pharma;True
+45;Hydrocodone;Vicodin;47.25;AbbVie;True
+46;Morphine;MS Contin;62.5;Purdue Pharma;True
+47;Sumatriptan;Imitrex;89.99;GlaxoSmithKline;True
+48;Ondansetron;Zofran;72.5;GlaxoSmithKline;True
+49;Promethazine;Phenergan;19.75;Wyeth;True
+50;Metoclopramide;Reglan;23.99;ANI Pharmaceuticals;True
+51;Pantoprazole;Protonix;32.25;Pfizer;True
+52;Ranitidine;Zantac;14.99;GlaxoSmithKline;False
+53;Famotidine;Pepcid;13.75;Johnson & Johnson;False
+54;Clonazepam;Klonopin;31.5;Roche;True
+55;Lorazepam;Ativan;28.99;Wyeth;True
+56;Trazodone;Desyrel;21.25;Sanofi;True
+57;Bupropion;Wellbutrin;46.5;GlaxoSmithKline;True
+58;Methylphenidate;Ritalin;39.99;Novartis;True
+59;Amphetamine;Adderall;57.25;Teva Pharmaceuticals;True
+60;Lisdexamfetamine;Vyvanse;85.99;Takeda;True
+61;Atomoxetine;Strattera;74.5;Eli Lilly;True
+62;Levetiracetam;Keppra;63.75;UCB;True
+63;Lamotrigine;Lamictal;52.25;GlaxoSmithKline;True
+64;Valproic Acid;Depakote;44.99;AbbVie;True
+65;Carbamazepine;Tegretol;37.25;Novartis;True
+66;Phenytoin;Dilantin;21.5;Pfizer;True
+67;Rosuvastatin;Crestor;58.75;AstraZeneca;True
+68;Pravastatin;Pravachol;42.99;Bristol Myers Squibb;True
+69;Lovastatin;Mevacor;36.25;Merck;True
+70;Fenofibrate;TriCor;49.5;AbbVie;True
+71;Gemfibrozil;Lopid;32.99;Pfizer;True
+72;Glipizide;Glucotrol;19.25;Pfizer;True
+73;Glyburide;DiaBeta;21.75;Sanofi;True
+74;Sitagliptin;Januvia;67.5;Merck;True
+75;Pioglitazone;Actos;56.99;Takeda;True
+76;Empagliflozin;Jardiance;89.25;Boehringer Ingelheim;True
+77;Canagliflozin;Invokana;92.5;Johnson & Johnson;True
+78;Dapagliflozin;Farxiga;87.99;AstraZeneca;True
+79;Liraglutide;Victoza;125.75;Novo Nordisk;True
+80;Dulaglutide;Trulicity;132.99;Eli Lilly;True
+81;Semaglutide;Ozempic;142.5;Novo Nordisk;True
+82;Insulin Glargine;Lantus;95.75;Sanofi;True
+83;Insulin Detemir;Levemir;98.99;Novo Nordisk;True
+84;Insulin Lispro;Humalog;88.25;Eli Lilly;True
+85;Insulin Aspart;NovoLog;91.5;Novo Nordisk;True
+86;Furosemide;Lasix;12.75;Sanofi;True
+87;Spironolactone;Aldactone;24.25;Pfizer;True
+88;Bumetanide;Bumex;19.99;Roche;True
+89;Triamterene;Dyrenium;27.75;WellSpring Pharmaceutical;True
+90;Valsartan;Diovan;42.25;Novartis;True
+91;Olmesartan;Benicar;47.99;Daiichi Sankyo;True
+92;Irbesartan;Avapro;39.5;Sanofi;True
+93;Candesartan;Atacand;44.75;AstraZeneca;True
+94;Enalapril;Vasotec;22.99;Merck;True
+95;Ramipril;Altace;26.25;Pfizer;True
+96;Benazepril;Lotensin;21.5;Novartis;True
+97;Quinapril;Accupril;23.75;Pfizer;True
+98;Diltiazem;Cardizem;31.25;Valeant;True
+99;Verapamil;Calan;27.99;Pfizer;True
+100;Nifedipine;Procardia;34.5;Pfizer;True
+101;Carvedilol;Coreg;36.75;GlaxoSmithKline;True
+102;Bisoprolol;Zebeta;29.25;Merck;True
+103;Propranolol;Inderal;19.99;Pfizer;True
+104;Atenolol;Tenormin;15.75;AstraZeneca;True
+105;Nebivolol;Bystolic;52.99;Forest Laboratories;True
+106;Digoxin;Lanoxin;13.25;Concordia;True
+107;Amiodarone;Pacerone;47.5;Upsher-Smith;True
+108;Sotalol;Betapace;39.25;Pfizer;True
+109;Flecainide;Tambocor;45.99;3M;True
+110;Propafenone;Rythmol;51.75;GlaxoSmithKline;True
+111;Rivaroxaban;Xarelto;112.5;Johnson & Johnson;True
+112;Apixaban;Eliquis;108.99;Bristol Myers Squibb;True
+113;Dabigatran;Pradaxa;115.25;Boehringer Ingelheim;True
+114;Edoxaban;Savaysa;105.75;Daiichi Sankyo;True
+115;Enoxaparin;Lovenox;87.5;Sanofi;True
+116;Heparin;Heparin;42.25;Pfizer;True
+117;Simethicone;Gas-X;8.25;GlaxoSmithKline;False
+118;Bismuth Subsalicylate;Pepto-Bismol;7.75;Procter & Gamble;False
+119;Loperamide;Imodium;9.99;Johnson & Johnson;False
+120;Docusate;Colace;11.25;Purdue Pharma;False
+121;Polyethylene Glycol;MiraLAX;17.99;Bayer;False
+122;Psyllium;Metamucil;14.5;Procter & Gamble;False
+123;Methylcellulose;Citrucel;15.75;GlaxoSmithKline;False
+124;Senna;Senokot;10.25;Purdue Pharma;False
+125;Bisacodyl;Dulcolax;9.75;Sanofi;False
+126;Lubiprostone;Amitiza;78.5;Takeda;True
+127;Linaclotide;Linzess;92.99;Allergan;True
+128;Plecanatide;Trulance;88.75;Synergy Pharmaceuticals;True
+129;Mesalamine;Asacol;67.25;Warner Chilcott;True
+130;Sulfasalazine;Azulfidine;43.99;Pfizer;True
+131;Budesonide;Entocort;82.5;AstraZeneca;True
+132;Prucalopride;Motegrity;94.25;Shire;True
+133;Infliximab;Remicade;1250.0;Johnson & Johnson;True
+134;Adalimumab;Humira;1450.75;AbbVie;True
+135;Etanercept;Enbrel;1350.5;Amgen;True
+136;Ustekinumab;Stelara;1550.25;Johnson & Johnson;True
+137;Secukinumab;Cosentyx;1650.99;Novartis;True
+138;Guselkumab;Tremfya;1750.75;Johnson & Johnson;True
+139;Tildrakizumab;Ilumya;1650.5;Sun Pharma;True
+140;Risankizumab;Skyrizi;1850.25;AbbVie;True
+141;Metronidazole;Flagyl;18.99;Pfizer;True
+142;Vancomycin;Vancocin;85.5;ANI Pharmaceuticals;True
+143;Clindamycin;Cleocin;32.75;Pfizer;True
+144;Nitrofurantoin;Macrobid;27.99;Norwich;True
+145;Sulfamethoxazole;Bactrim;21.25;Sun Pharma;True
+146;Doxycycline;Vibramycin;24.5;Pfizer;True
+147;Minocycline;Minocin;29.99;Bausch Health;True
+148;Levofloxacin;Levaquin;47.75;Johnson & Johnson;True
+149;Moxifloxacin;Avelox;52.5;Bayer;True
+150;Cefdinir;Omnicef;38.25;AbbVie;True
+151;Cefuroxime;Ceftin;35.99;GlaxoSmithKline;True
+152;Cephalexin;Keflex;22.75;Advancis Pharmaceutical;True
+153;Amoxicillin-Clavulanate;Augmentin;29.5;GlaxoSmithKline;True
+154;Acyclovir;Zovirax;32.25;GlaxoSmithKline;True
+155;Valacyclovir;Valtrex;45.99;GlaxoSmithKline;True
+156;Famciclovir;Famvir;52.75;Novartis;True
+157;Oseltamivir;Tamiflu;75.5;Roche;True
+158;Zanamivir;Relenza;67.25;GlaxoSmithKline;True
+159;Fluconazole;Diflucan;31.99;Pfizer;True
+160;Itraconazole;Sporanox;49.75;Johnson & Johnson;True
+161;Ketoconazole;Nizoral;27.5;Johnson & Johnson;True
+162;Terbinafine;Lamisil;35.25;Novartis;True
+163;Nystatin;Mycostatin;19.99;Bristol Myers Squibb;True
+164;Clotrimazole;Lotrimin;12.75;Bayer;False
+165;Miconazole;Monistat;14.99;Johnson & Johnson;False
+166;Ciclopirox;Loprox;22.5;Medicis;True
+167;Econazole;Spectazole;19.75;Baker Cummins;True
+168;Oxiconazole;Oxistat;24.99;Pharmedica;True
+169;Butenafine;Mentax;18.25;Mylan;True
+170;Tolnaftate;Tinactin;10.99;Bayer;False
+171;Levonorgestrel;Plan B;42.75;Teva Pharmaceuticals;False
+172;Ethinyl Estradiol;Alesse;29.99;Wyeth;True
+173;Norethindrone;Ortho Micronor;32.5;Johnson & Johnson;True
+174;Desogestrel;Cerazette;35.75;Merck;True
+175;Drospirenone;Yasmin;38.99;Bayer;True
+176;Etonogestrel;NuvaRing;75.5;Merck;True
+177;Medroxyprogesterone;Depo-Provera;65.25;Pfizer;True
+178;Ulipristal;Ella;52.99;HRA Pharma;True
+179;Sildenafil;Viagra;74.5;Pfizer;True
+180;Tadalafil;Cialis;82.75;Eli Lilly;True
+181;Vardenafil;Levitra;78.99;Bayer;True
+182;Avanafil;Stendra;89.25;Metuchen Pharmaceuticals;True
+183;Finasteride;Proscar;45.5;Merck;True
+184;Dutasteride;Avodart;52.75;GlaxoSmithKline;True
+185;Tamsulosin;Flomax;38.99;Boehringer Ingelheim;True
+186;Alfuzosin;Uroxatral;42.25;Sanofi;True
+187;Silodosin;Rapaflo;59.99;Watson Pharmaceuticals;True
+188;Terazosin;Hytrin;29.75;Abbott Laboratories;True
+189;Doxazosin;Cardura;32.5;Pfizer;True
+190;Oxybutynin;Ditropan;27.99;Johnson & Johnson;True
+191;Tolterodine;Detrol;45.75;Pfizer;True
+192;Solifenacin;VESIcare;62.5;Astellas Pharma;True
+193;Darifenacin;Enablex;58.25;Novartis;True
+194;Fesoterodine;Toviaz;65.99;Pfizer;True
+195;Mirabegron;Myrbetriq;72.75;Astellas Pharma;True
+196;Trospium;Sanctura;49.5;Allergan;True
+197;Levothyroxine;Synthroid;24.99;AbbVie;True
+198;Liothyronine;Cytomel;32.75;Pfizer;True
+199;Methimazole;Tapazole;18.5;Pfizer;True
+200;Propylthiouracil;PTU;22.25;Paladin Labs;True
+201;Alendronate;Fosamax;52.99;Merck;True
+202;Risedronate;Actonel;57.75;Warner Chilcott;True
+203;Ibandronate;Boniva;65.5;Roche;True
+204;Zoledronic Acid;Reclast;125.25;Novartis;True
+205;Denosumab;Prolia;895.99;Amgen;True
+206;Teriparatide;Forteo;1250.5;Eli Lilly;True
+207;Abaloparatide;Tymlos;1150.75;Radius Health;True
+208;Raloxifene;Evista;75.25;Eli Lilly;True
+209;Calcitonin;Miacalcin;82.99;Novartis;True
+210;Testosterone;AndroGel;145.5;AbbVie;True
+211;Estradiol;Estrace;32.75;Warner Chilcott;True
+212;Progesterone;Prometrium;42.5;Merck;True
+213;Conjugated Estrogens;Premarin;57.99;Pfizer;True
+214;Prasterone;Intrarosa;68.25;Endoceutics;True
+215;Ospemifene;Osphena;92.5;Shionogi;True
+216;Leuprolide;Lupron;245.75;AbbVie;True
+217;Goserelin;Zoladex;275.99;AstraZeneca;True
+218;Triptorelin;Trelstar;320.5;Allergan;True
+219;Histrelin;Vantas;425.25;Endo Pharmaceuticals;True
+220;Degarelix;Firmagon;375.99;Ferring Pharmaceuticals;True
+221;Flutamide;Eulexin;95.5;Schering-Plough;True
+222;Bicalutamide;Casodex;112.75;AstraZeneca;True
+223;Nilutamide;Nilandron;135.25;Sanofi;True
+224;Enzalutamide;Xtandi;3250.99;Astellas Pharma;True
+225;Abiraterone;Zytiga;2950.5;Johnson & Johnson;True
+226;Anastrozole;Arimidex;125.75;AstraZeneca;True
+227;Letrozole;Femara;142.5;Novartis;True
+228;Exemestane;Aromasin;135.99;Pfizer;True
+229;Fulvestrant;Faslodex;975.25;AstraZeneca;True
+230;Tamoxifen;Nolvadex;85.5;AstraZeneca;True
+231;Toremifene;Fareston;110.75;Kyowa Kirin;True
+232;Methylprednisolone;Medrol;22.5;Pfizer;True
+233;Dexamethasone;Decadron;17.99;Merck;True
+234;Betamethasone;Celestone;24.75;Merck;True
+235;Triamcinolone;Kenalog;19.5;Bristol Myers Squibb;True
+236;Fluticasone;Flovent;45.99;GlaxoSmithKline;True
+237;Budesonide;Pulmicort;52.75;AstraZeneca;True
+238;Mometasone;Asmanex;48.5;Merck;True
+239;Ciclesonide;Alvesco;55.25;Covis Pharma;True
+240;Beclomethasone;QVAR;42.99;Teva Pharmaceuticals;True
+241;Hydrocortisone;Cortef;15.75;Pfizer;True
+242;Fludrocortisone;Florinef;21.5;Bristol Myers Squibb;True
+243;Cortisone;Cortone;18.25;Merck;True
+244;Colchicine;Colcrys;62.99;Takeda;True
+245;Allopurinol;Zyloprim;15.5;Prometheus Laboratories;True
+246;Febuxostat;Uloric;75.25;Takeda;True
+247;Indomethacin;Indocin;22.99;Iroko Pharmaceuticals;True
+248;Diclofenac;Voltaren;19.75;Novartis;True
+249;Celecoxib;Celebrex;45.5;Pfizer;True
+250;Etodolac;Lodine;32.25;Wyeth;True
+251;Ketorolac;Toradol;28.99;Roche;True
+252;Nabumetone;Relafen;26.75;GlaxoSmithKline;True
+253;Piroxicam;Feldene;24.5;Pfizer;True
+254;Oxaprozin;Daypro;29.25;Pfizer;True
+255;Sulindac;Clinoril;21.99;Merck;True
+256;Fenoprofen;Nalfon;27.5;Perrigo;True
+257;Ketoprofen;Orudis;25.75;Sanofi;True
+258;Flurbiprofen;Ansaid;23.99;Pfizer;True
+259;Mefenamic Acid;Ponstel;31.5;Pfizer;True
+260;Acetaminophen/Codeine;Tylenol #3;35.75;Johnson & Johnson;True
+261;Hydrocodone/Acetaminophen;Norco;42.5;AbbVie;True
+262;Oxycodone/Acetaminophen;Percocet;48.99;Endo Pharmaceuticals;True
+263;Propoxyphene/Acetaminophen;Darvocet;38.75;Xanodyne Pharmaceuticals;True
+264;Tramadol/Acetaminophen;Ultracet;37.5;Johnson & Johnson;True
+265;Hydromorphone;Dilaudid;65.25;Purdue Pharma;True
+266;Fentanyl;Duragesic;85.99;Johnson & Johnson;True
+267;Methadone;Dolophine;42.75;Mallinckrodt;True
+268;Buprenorphine;Subutex;72.5;Indivior;True
+269;Buprenorphine/Naloxone;Suboxone;95.25;Indivior;True
+270;Naltrexone;ReVia;65.99;Duramed;True
+271;Naloxone;Narcan;75.5;Adapt Pharma;True
+272;Diphenoxylate/Atropine;Lomotil;28.75;Pfizer;True
+273;Dicyclomine;Bentyl;24.99;Axcan Pharma;True
+274;Hyoscyamine;Levsin;21.5;Meda Pharmaceuticals;True
+275;Glycopyrrolate;Robinul;32.25;Baxter;True
+276;Methscopolamine;Pamine;27.99;Alaven Pharmaceutical;True
+277;Clidinium/Chlordiazepoxide;Librax;45.75;Valeant;True
+278;Propantheline;Pro-Banthine;35.5;Roxane Laboratories;True
+279;Atropine;AtroPen;19.99;Meridian Medical Technologies;True
+280;Scopolamine;Transderm Scop;52.75;Novartis;True
+281;Benztropine;Cogentin;18.25;Merck;True
+282;Trihexyphenidyl;Artane;15.99;Lederle;True
+283;Carbidopa/Levodopa;Sinemet;42.5;Merck;True
+284;Entacapone;Comtan;65.75;Novartis;True
+285;Tolcapone;Tasmar;72.99;Valeant;True
+286;Rasagiline;Azilect;89.5;Teva Pharmaceuticals;True
+287;Selegiline;Eldepryl;55.25;Somerset Pharmaceuticals;True
+288;Safinamide;Xadago;95.99;US WorldMeds;True
+289;Ropinirole;Requip;62.5;GlaxoSmithKline;True
+290;Pramipexole;Mirapex;68.75;Boehringer Ingelheim;True
+291;Rotigotine;Neupro;78.5;UCB;True
+292;Apomorphine;Apokyn;125.25;Britannia Pharmaceuticals;True
+293;Amantadine;Symmetrel;35.99;Endo Pharmaceuticals;True
+294;Bromocriptine;Parlodel;49.75;Novartis;True
+295;Dipyridamole;Persantine;29.5;Boehringer Ingelheim;True
+296;Cilostazol;Pletal;45.25;Otsuka Pharmaceutical;True
+297;Pentoxifylline;Trental;32.99;Sanofi;True
+298;Ticlopidine;Ticlid;38.75;Roche;True
+299;Prasugrel;Effient;92.5;Eli Lilly;True
+300;Ticagrelor;Brilinta;105.75;AstraZeneca;True
+301;Ivabradine;Corlanor;87.5;Amgen;True
+302;Ranolazine;Ranexa;79.99;Gilead Sciences;True
+303;Sacubitril/Valsartan;Entresto;112.75;Novartis;True
+304;Ezetimibe;Zetia;68.5;Merck;True
+305;Alirocumab;Praluent;525.25;Sanofi;True
+306;Evolocumab;Repatha;495.99;Amgen;True
+307;Lomitapide;Juxtapid;1250.5;Aegerion Pharmaceuticals;True
+308;Icosapent Ethyl;Vascepa;145.75;Amarin;True
+309;Niacin;Niaspan;42.99;AbbVie;True
+310;Colestipol;Colestid;38.25;Pfizer;True
+311;Cholestyramine;Questran;35.5;Bristol Myers Squibb;True
+312;Colesevelam;Welchol;72.75;Daiichi Sankyo;True
+313;Sirolimus;Rapamune;245.99;Pfizer;True
+314;Tacrolimus;Prograf;195.5;Astellas Pharma;True
+315;Cyclosporine;Neoral;175.25;Novartis;True
+316;Mycophenolate;CellCept;162.99;Roche;True
+317;Azathioprine;Imuran;89.75;Prometheus Laboratories;True
+318;Belimumab;Benlysta;1850.5;GlaxoSmithKline;True
+319;Rituximab;Rituxan;2150.25;Genentech;True
+320;Abatacept;Orencia;1950.99;Bristol Myers Squibb;True
+321;Tofacitinib;Xeljanz;1650.75;Pfizer;True
+322;Baricitinib;Olumiant;1750.5;Eli Lilly;True
+323;Upadacitinib;Rinvoq;1850.25;AbbVie;True
+324;Tocilizumab;Actemra;1550.99;Roche;True
+325;Sarilumab;Kevzara;1650.75;Sanofi;True
+326;Anakinra;Kineret;1250.5;Swedish Orphan Biovitrum;True
+327;Canakinumab;Ilaris;2350.25;Novartis;True
+328;Certolizumab;Cimzia;1750.99;UCB;True
+329;Golimumab;Simponi;1850.75;Johnson & Johnson;True
+330;Vedolizumab;Entyvio;2050.5;Takeda;True
+331;Natalizumab;Tysabri;2250.25;Biogen;True
+332;Ocrelizumab;Ocrevus;2450.99;Roche;True
+333;Alemtuzumab;Lemtrada;2650.75;Sanofi;True
+334;Fingolimod;Gilenya;2150.5;Novartis;True
+335;Siponimod;Mayzent;2350.25;Novartis;True
+336;Dimethyl Fumarate;Tecfidera;1950.99;Biogen;True
+337;Glatiramer Acetate;Copaxone;1850.75;Teva Pharmaceuticals;True
+338;Interferon Beta-1a;Avonex;1750.5;Biogen;True
+339;Interferon Beta-1b;Betaseron;1650.25;Bayer;True
+340;Peginterferon Beta-1a;Plegridy;1950.99;Biogen;True
+341;Teriflunomide;Aubagio;1850.75;Sanofi;True
+342;Cladribine;Mavenclad;2050.5;EMD Serono;True
+343;Dalfampridine;Ampyra;950.25;Acorda Therapeutics;True
+344;Pegvisomant;Somavert;2450.99;Pfizer;True
+345;Octreotide;Sandostatin;1250.75;Novartis;True
+346;Lanreotide;Somatuline;1450.5;Ipsen;True
+347;Pasireotide;Signifor;1650.25;Novartis;True
+348;Somatropin;Genotropin;1350.99;Pfizer;True
+349;Mecasermin;Increlex;1550.75;Ipsen;True
+350;Desmopressin;DDAVP;85.5;Ferring Pharmaceuticals;True
+351;Vasopressin;Vasostrict;125.25;Par Pharmaceutical;True
+352;Tolvaptan;Samsca;450.99;Otsuka Pharmaceutical;True
+353;Conivaptan;Vaprisol;375.75;Cumberland Pharmaceuticals;True
+354;Lixisenatide;Adlyxin;145.5;Sanofi;True
+355;Exenatide;Byetta;165.25;AstraZeneca;True
+356;Pramlintide;Symlin;155.99;AstraZeneca;True
+357;Albiglutide;Tanzeum;175.75;GlaxoSmithKline;True
+358;Cinacalcet;Sensipar;245.5;Amgen;True
+359;Etelcalcetide;Parsabiv;295.25;Amgen;True
+360;Paricalcitol;Zemplar;175.99;AbbVie;True
+361;Doxercalciferol;Hectorol;165.75;Sanofi;True
+362;Calcifediol;Rayaldee;145.5;OPKO Health;True
+363;Calcitriol;Rocaltrol;95.25;Roche;True
+364;Ergocalciferol;Drisdol;45.99;Sanofi;True
+365;Cholecalciferol;Vitamin D3;12.75;Nature Made;False
+366;Cyanocobalamin;Vitamin B12;9.99;Nature's Bounty;False
+367;Folic Acid;Folate;7.5;NOW Foods;False
+368;Thiamine;Vitamin B1;8.25;Solgar;False
+369;Riboflavin;Vitamin B2;8.99;Thorne Research;False
+370;Niacinamide;Vitamin B3;9.5;Pure Encapsulations;False
+371;Pyridoxine;Vitamin B6;8.75;Life Extension;False
+372;Biotin;Vitamin B7;10.5;Garden of Life;False
+373;Pantothenic Acid;Vitamin B5;9.25;Source Naturals;False
+374;Ascorbic Acid;Vitamin C;11.99;Bronson Vitamins;False
+375;Tocopherol;Vitamin E;13.5;GNC;False
+376;Phytonadione;Vitamin K;12.25;Jarrow Formulas;False
+377;Mecobalamin;Active B12;15.99;Doctor's Best;False
+378;Methylfolate;Active Folate;17.5;Thorne Research;False
+379;Pyridoxal-5-Phosphate;Active B6;16.25;Pure Encapsulations;False
+380;Ubiquinol;CoQ10;22.99;Life Extension;False
+381;Alpha-Lipoic Acid;Thioctic Acid;19.5;NOW Foods;False
+382;Acetyl-L-Carnitine;ALCAR;21.25;Jarrow Formulas;False
+383;N-Acetylcysteine;NAC;18.99;Thorne Research;False
+384;Glutathione;GSH;24.5;Jarrow Formulas;False
+385;Lutein;Ocuvite;16.75;Bausch & Lomb;False
+386;Zeaxanthin;MacuShield;17.5;Alliance Pharma;False
+387;Astaxanthin;AstaReal;19.99;AstaReal;False
+388;Lycopene;Lyc-O-Mato;14.5;LycoRed;False
+389;Resveratrol;Resvida;22.75;DSM;False
+390;Curcumin;Meriva;24.99;Thorne Research;False
+391;Quercetin;Quercefit;18.5;Thorne Research;False
+392;Berberine;GlucoGold;21.75;PharmaNord;False
+393;Boswellia;5-Loxin;19.25;PL Thomas;False
+394;Ashwagandha;KSM-66;23.5;Ixoreal Biomed;False
+395;Rhodiola;RhodioLife;20.99;Nektium;False
+396;Ginseng;Cereboost;22.25;Naturex;False
+397;Bacopa;Synapsa;21.5;Soho Flordis International;False
+398;Ginkgo;EGb 761;18.75;;False
+399;Lion's Mane;Hericium;25.99;Host Defense;False
+400;Probiotics;Culturelle;24.5;i-Health;False
+401;Digestive Enzymes;Enzymedica;22.25;Enzymedica;False
+402;Psyllium Husk;Metamucil;14.99;Procter & Gamble;False
+403;Glucosamine;Cosamin;19.75;Nutramax Laboratories;False
+404;Chondroitin;Osteo Bi-Flex;21.5;Reckitt Benckiser;False
+405;MSM;OptiMSM;17.25;Bergstrom Nutrition;False
+406;Collagen;Verisol;26.99;Gelita;False
+407;Hyaluronic Acid;Injuv;23.5;Soft Gel Technologies;False
+408;Melatonin;Natrol;8.99;Natrol;False
+409;Valerian;SleepWell;12.5;Nature's Way;False
+410;L-Theanine;Suntheanine;15.75;Taiyo;False
+411;GABA;Pharma GABA;17.99;Natural Factors;False
+412;5-HTP;Griffonia;16.5;Source Naturals;False
+413;Inositol;Myo-Inositol;14.25;Jarrow Formulas;False
+414;Choline;Alpha GPC;19.99;Double Wood Supplements;False
+415;Phosphatidylserine;Sharp-PS;22.75;Enzymotec;False
+416;DHA;Life's DHA;21.5;DSM;False
+417;EPA;OmegaVia;23.99;OmegaVia;False
+418;Fish Oil;Nordic Naturals;25.75;Nordic Naturals;False
+419;Krill Oil;Neptune Krill;28.5;Neptune Wellness;False
+420;Flaxseed Oil;Barlean's;18.25;Barlean's;False
+421;Borage Oil;GLA-240;20.99;Nature's Way;False
+422;Evening Primrose;EPO;19.5;Solgar;False
+423;Black Cohosh;Remifemin;16.75;Enzymatic Therapy;False
+424;Red Clover;Promensil;17.99;PharmaCare;False
+425;Dong Quai;Angelica;15.5;Nature's Answer;False
+426;Maca;Maca-XP;22.25;Gaia Herbs;False
+427;Saw Palmetto;Prosta-Strong;18.99;Nature's Way;False
+428;Pygeum;Prostaplex;20.5;Solgar;False
+429;Stinging Nettle;Urtica;16.25;Nature's Herbs;False
+430;Beta-Sitosterol;Prostaril;21.75;Life Extension;False
+431;Cranberry;Cran-Max;14.99;Proprietary Nutritionals;False
+432;D-Mannose;UTI-Clear;19.5;NOW Foods;False
+433;Uva Ursi;Arctostaphylos;15.75;Nature's Way;False
+434;Tribulus;Tribestan;22.99;Sopharma;False
+435;Fenugreek;Testofen;21.25;Gencor Pacific;False
+436;Tongkat Ali;LJ100;25.5;HP Ingredients;False
+437;Maitake;D-Fraction;24.75;Mushroom Wisdom;False
+438;Reishi;Ganoderma;23.5;Nammex;False
+439;Shiitake;Lentinula;22.25;Aloha Medicinals;False
+440;Turkey Tail;Trametes;21.99;Host Defense;False
+441;Cordyceps;Cs-4;26.5;Aloha Medicinals;False
+442;Chaga;Inonotus;27.25;North American Herb & Spice;False
+443;Spirulina;Earthrise;18.99;Earthrise;False
+444;Chlorella;Sun Chlorella;20.5;Sun Chlorella;False
+445;Wheatgrass;Amazing Grass;17.75;Amazing Grass;False
+446;Moringa;Zija;19.25;Zija International;False
+447;Acai;Sambazon;21.99;Sambazon;False
+448;Goji;Himalayan Goji;18.5;Navitas Organics;False
+449;Camu Camu;Pure Camu;22.25;Navitas Organics;False
+450;Maqui;Patagonia Maqui;23.99;Maqui New Life;False
+451;Amantadine;Symmetrel;42.5;Endo Pharmaceuticals;True
+452;Rimantadine;Flumadine;48.75;Forest Pharmaceuticals;True
+453;Memantine;Namenda;65.99;Forest Pharmaceuticals;True
+454;Donepezil;Aricept;72.5;Eisai;True
+455;Rivastigmine;Exelon;68.25;Novartis;True
+456;Galantamine;Razadyne;75.99;Johnson & Johnson;True
+457;Tacrine;Cognex;55.5;Sciele Pharma;True
+458;Suvorexant;Belsomra;82.75;Merck;True
+459;Ramelteon;Rozerem;75.99;Takeda;True
+460;Eszopiclone;Lunesta;68.5;Sunovion;True
+461;Zaleplon;Sonata;59.25;Wyeth;True
+462;Lemborexant;Dayvigo;89.99;Eisai;True
+463;Doxepin;Silenor;62.75;Pernix Therapeutics;True
+464;Tasimelteon;Hetlioz;125.5;Vanda Pharmaceuticals;True
+465;Aripiprazole;Abilify;225.99;Otsuka Pharmaceutical;True
+466;Brexpiprazole;Rexulti;245.75;Otsuka Pharmaceutical;True
+467;Cariprazine;Vraylar;235.5;Allergan;True
+468;Lurasidone;Latuda;255.25;Sunovion;True
+469;Iloperidone;Fanapt;225.99;Vanda Pharmaceuticals;True
+470;Asenapine;Saphris;215.75;Allergan;True
+471;Paliperidone;Invega;245.5;Johnson & Johnson;True
+472;Risperidone;Risperdal;125.25;Johnson & Johnson;True
+473;Olanzapine;Zyprexa;175.99;Eli Lilly;True
+474;Quetiapine;Seroquel;155.75;AstraZeneca;True
+475;Ziprasidone;Geodon;165.5;Pfizer;True
+476;Clozapine;Clozaril;95.25;Novartis;True
+477;Chlorpromazine;Thorazine;45.99;GlaxoSmithKline;True
+478;Fluphenazine;Prolixin;55.75;Bristol Myers Squibb;True
+479;Perphenazine;Trilafon;52.5;Schering-Plough;True
+480;Thioridazine;Mellaril;48.25;Novartis;True
+481;Thiothixene;Navane;57.99;Pfizer;True
+482;Haloperidol;Haldol;42.75;Johnson & Johnson;True
+483;Loxapine;Loxitane;62.5;Watson Pharmaceuticals;True
+484;Molindone;Moban;59.25;Endo Pharmaceuticals;True
+485;Pimozide;Orap;65.99;Teva Pharmaceuticals;True
+486;Lumateperone;Caplyta;275.75;Intra-Cellular Therapies;True
+487;Vortioxetine;Trintellix;175.5;Takeda;True
+488;Vilazodone;Viibryd;155.25;Allergan;True
+489;Levomilnacipran;Fetzima;165.99;Allergan;True
+490;Desvenlafaxine;Pristiq;145.75;Pfizer;True
+491;Milnacipran;Savella;135.5;Allergan;True
+492;Reboxetine;Edronax;115.25;Pfizer;True
+493;Amoxapine;Asendin;75.99;Lederle;True
+494;Maprotiline;Ludiomil;82.75;Novartis;True
+495;Nefazodone;Serzone;95.5;Bristol Myers Squibb;True
+496;Mirtazapine;Remeron;65.25;Merck;True
+497;Isocarboxazid;Marplan;85.99;Validus Pharmaceuticals;True
+498;Phenelzine;Nardil;75.75;Pfizer;True
+499;Tranylcypromine;Parnate;82.5;GlaxoSmithKline;True
+500;Selegiline Transdermal;Emsam;125.25;Somerset Pharmaceuticals;True

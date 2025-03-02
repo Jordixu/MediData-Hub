@@ -1,99 +1,208 @@
 from tkinter import messagebox
+import customtkinter as ctk
 import tkinter as tk
 import datetime as dt
-import customtkinter as ctk
 from tkcalendar import DateEntry
-from tkinter import ttk  # Importing ttk
 
 class PatientInformation(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.title = "Personal Data"
-
-        # Main container
-        container_frame = ctk.CTkFrame(self, fg_color="transparent")
-        container_frame.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # Center Frame to hold info and modify frames
-        center_frame = ctk.CTkFrame(container_frame, fg_color="transparent")
-        center_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        self.title = "Patient Information"
         
-        # Info Frame
-        info_frame = ctk.CTkFrame(center_frame, fg_color="transparent")
-        info_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        # Configure the main layout
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)  # Title
+        self.grid_rowconfigure(1, weight=1)  # Form content
+        self.grid_rowconfigure(2, weight=0)  # Buttons
         
-        top_spacer = ctk.CTkFrame(info_frame, height=140, fg_color="transparent")
-        top_spacer.pack()
-
-        ctk.CTkLabel(info_frame, text="User Personal ID").pack(pady=2)
-        self.personal_id_entry = ctk.CTkEntry(info_frame, state="readonly")
-        self.personal_id_entry.pack(pady=2)
-        ctk.CTkLabel(info_frame, text="User Hospital ID").pack(pady=2)
-        self.hospital_id_entry = ctk.CTkEntry(info_frame, state="readonly")
-        self.hospital_id_entry.pack(pady=2)
-
-        # Password Frame
-        password_frame = ctk.CTkFrame(info_frame, fg_color="transparent")
-        password_frame.pack(pady=10)
-        ctk.CTkButton(password_frame, text="Change Password", command=lambda: controller.show_frame("PatientChangePassword")).pack(pady=5)
-
-        # Vertical Separator
-        separator = ttk.Separator(center_frame, orient='vertical')
-        separator.grid(row=0, column=1, rowspan=2, sticky="ns", padx=10)
-
-        # Modify Frame
-        modify_frame = ctk.CTkFrame(center_frame, fg_color="transparent")
-        modify_frame.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
-
-        ctk.CTkLabel(modify_frame, text="Name").pack(pady=2)
-        self.name_entry = ctk.CTkEntry(modify_frame)
-        self.name_entry.pack(pady=2)
-
-        ctk.CTkLabel(modify_frame, text="Surname").pack(pady=2)
-        self.surname_entry = ctk.CTkEntry(modify_frame)
-        self.surname_entry.pack(pady=2)
-
-        ctk.CTkLabel(modify_frame, text="Gender").pack(pady=2)
-        gender_frame = ctk.CTkFrame(modify_frame)
-        gender_frame.pack(pady=2)
-        self.gender_var = tk.StringVar()
-        self.male_check = ctk.CTkRadioButton(gender_frame, text="Male", variable=self.gender_var, value="Male").grid(row=0, column=0)
-        self.female_check = ctk.CTkRadioButton(gender_frame, text="Female", variable=self.gender_var, value="Female").grid(row=0, column=1)
-
-        ctk.CTkLabel(modify_frame, text="Birthday").pack(pady=2)
-        self.birthday_entry = DateEntry(modify_frame, width=20, borderwidth=2, font=('Helvetica', 12), date_pattern='dd/MM/yyyy')
-        self.birthday_entry.pack(pady=2)
-
-        ctk.CTkLabel(modify_frame, text="Weight (in kg)").pack(pady=2)
-        self.weight_entry = ctk.CTkEntry(modify_frame)
-        self.weight_entry.pack(pady=2)
-
-        ctk.CTkLabel(modify_frame, text="Height (in cm)").pack(pady=2)
-        self.height_entry = ctk.CTkEntry(modify_frame)
-        self.height_entry.pack(pady=2)
-
-        spacer_frame = ctk.CTkFrame(modify_frame, height=10, fg_color="transparent")
-        spacer_frame.pack()
-
-        ctk.CTkButton(modify_frame, text="Modify", command=self.modify_data).pack(pady=5)
-        ctk.CTkButton(modify_frame, text="Go Back", command=lambda: controller.show_frame("PatientMainScreen")).pack(pady=10)
-        delete_button = ctk.CTkButton(modify_frame, text="Delete User", fg_color="#8B0000", command=self.delete_patient)
-        delete_button.pack(pady=5)
-
-        # Configure grid weights for centering
-        container_frame.grid_columnconfigure(0, weight=1)
-        container_frame.grid_columnconfigure(1, weight=1)
-        container_frame.grid_columnconfigure(2, weight=1)
-        container_frame.grid_rowconfigure(0, weight=1)
-        container_frame.grid_rowconfigure(1, weight=1)
-        container_frame.grid_rowconfigure(2, weight=1)
-
-        center_frame.grid_rowconfigure(0, weight=1)
-        center_frame.grid_rowconfigure(1, weight=1)
-        center_frame.grid_columnconfigure(0, weight=1)
-        center_frame.grid_columnconfigure(1, weight=1)
-        center_frame.grid_columnconfigure(2, weight=1)
+        # Title
+        title_label = ctk.CTkLabel(
+            self, 
+            text="Patient Information", 
+            font=ctk.CTkFont(size=24, weight="bold")
+        )
+        title_label.grid(row=0, column=0, pady=(30, 20))
+        
+        # Main content container
+        content_frame = ctk.CTkFrame(self, fg_color="transparent")
+        content_frame.grid(row=1, column=0, padx=20, sticky="n")
+        
+        # Configure columns for the two sections
+        content_frame.grid_columnconfigure(0, weight=1)  # Left section
+        content_frame.grid_columnconfigure(1, weight=0)  # Divider
+        content_frame.grid_columnconfigure(2, weight=1)  # Right section
+        
+        # Left section - Account Information
+        left_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        left_frame.grid(row=0, column=0, padx=20, pady=10, sticky="n")
+        
+        ctk.CTkLabel(
+            left_frame, 
+            text="Account Information", 
+            font=ctk.CTkFont(size=16, weight="bold")
+        ).pack(anchor="w", pady=(0, 15))
+        
+        # Personal ID field
+        ctk.CTkLabel(left_frame, text="Personal ID", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.personal_id_entry = ctk.CTkEntry(
+            left_frame, 
+            width=250, 
+            height=30,
+            state="readonly"
+        )
+        self.personal_id_entry.pack(pady=(0, 10), fill="x")
+        
+        # Hospital ID field
+        ctk.CTkLabel(left_frame, text="Hospital ID", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.hospital_id_entry = ctk.CTkEntry(
+            left_frame, 
+            width=250, 
+            height=30,
+            state="readonly"
+        )
+        self.hospital_id_entry.pack(pady=(0, 10), fill="x")
+        
+        # Change Password button
+        change_pass_btn = ctk.CTkButton(
+            left_frame, 
+            text="Change Password",
+            width=200,
+            height=35,
+            fg_color="#003366",
+            hover_color="#004080",
+            command=lambda: controller.show_frame("ChangePassword")
+        )
+        change_pass_btn.pack(pady=(15, 5))
+        
+        # Vertical line separator
+        separator = ctk.CTkFrame(content_frame, width=1, fg_color="gray80")
+        separator.grid(row=0, column=1, sticky="ns", padx=10, pady=10)
+        
+        # Right section - Personal Information
+        right_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        right_frame.grid(row=0, column=2, padx=20, pady=10, sticky="n")
+        
+        ctk.CTkLabel(
+            right_frame, 
+            text="Personal Information", 
+            font=ctk.CTkFont(size=16, weight="bold")
+        ).pack(anchor="w", pady=(0, 15))
+        
+        # Name field
+        ctk.CTkLabel(right_frame, text="Name", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.name_entry = ctk.CTkEntry(
+            right_frame, 
+            width=250, 
+            height=30
+        )
+        self.name_entry.pack(pady=(0, 10), fill="x")
+        
+        # Surname field
+        ctk.CTkLabel(right_frame, text="Surname", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.surname_entry = ctk.CTkEntry(
+            right_frame, 
+            width=250, 
+            height=30
+        )
+        self.surname_entry.pack(pady=(0, 10), fill="x")
+        
+        # Gender selection
+        ctk.CTkLabel(right_frame, text="Gender", anchor="w").pack(anchor="w", pady=(5, 2))
+        gender_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
+        gender_frame.pack(pady=(0, 10), fill="x")
+        
+        self.gender_var = tk.StringVar(value="")
+        male_radio = ctk.CTkRadioButton(
+            gender_frame, 
+            text="Male", 
+            variable=self.gender_var, 
+            value="Male"
+        )
+        male_radio.pack(side="left", padx=(0, 20))
+        
+        female_radio = ctk.CTkRadioButton(
+            gender_frame, 
+            text="Female", 
+            variable=self.gender_var, 
+            value="Female"
+        )
+        female_radio.pack(side="left")
+        
+        # Birthday field
+        ctk.CTkLabel(right_frame, text="Birthday", anchor="w").pack(anchor="w", pady=(5, 2))
+        
+        date_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
+        date_frame.pack(pady=(0, 10), fill="x")
+        
+        self.birthday_entry = DateEntry(
+            date_frame, 
+            width=12, 
+            background='white', 
+            foreground='black', 
+            borderwidth=1, 
+            font=('Helvetica', 12), 
+            date_pattern='dd/MM/yyyy'
+        )
+        self.birthday_entry.pack(fill="x", ipady=3)
+        
+        # Weight field
+        ctk.CTkLabel(right_frame, text="Weight (kg)", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.weight_entry = ctk.CTkEntry(
+            right_frame, 
+            width=250, 
+            height=30
+        )
+        self.weight_entry.pack(pady=(0, 10), fill="x")
+        
+        # Height field
+        ctk.CTkLabel(right_frame, text="Height (cm)", anchor="w").pack(anchor="w", pady=(5, 2))
+        self.height_entry = ctk.CTkEntry(
+            right_frame, 
+            width=250, 
+            height=30
+        )
+        self.height_entry.pack(pady=(0, 10), fill="x")
+        
+        # Buttons frame
+        buttons_frame = ctk.CTkFrame(self, fg_color="transparent")
+        buttons_frame.grid(row=2, column=0, pady=(20, 30))
+        
+        # Modify button
+        modify_btn = ctk.CTkButton(
+            buttons_frame, 
+            text="Save Changes", 
+            command=self.modify_data,
+            width=150,
+            height=35,
+            fg_color="#003366",
+            hover_color="#004080"
+        )
+        modify_btn.pack(side="left", padx=5)
+        
+        # Go Back button
+        back_btn = ctk.CTkButton(
+            buttons_frame, 
+            text="Go Back", 
+            command=lambda: controller.show_frame("PatientMainScreen"),
+            width=150,
+            height=35,
+            fg_color="#555555",
+            hover_color="#666666"
+        )
+        back_btn.pack(side="left", padx=5)
+        
+        # Delete User button (separate from other buttons for visual distinction)
+        delete_btn = ctk.CTkButton(
+            self, 
+            text="Delete Account", 
+            command=self.delete_patient,
+            width=150,
+            height=35,
+            fg_color="#8B0000",
+            hover_color="#B22222"
+        )
+        delete_btn.grid(row=3, column=0, pady=(0, 20))
 
     def load_data(self):
         self.name_entry.delete(0, tk.END)
@@ -123,7 +232,7 @@ class PatientInformation(ctk.CTkFrame):
             self.height_entry.insert(0, self.controller.current_user_data.get("height"))
 
         except AttributeError as exc:
-            messagebox.showerror("Error", exc)
+            messagebox.showerror("Error", str(exc))
 
     def modify_data(self):
         if self.controller.current_user_data is None:
@@ -137,45 +246,34 @@ class PatientInformation(ctk.CTkFrame):
             if not (dt.date(1900, 1, 1) <= self.birthday_entry.get_date() <= dt.date.today()):
                 raise ValueError("I don't think you were born in the future or in the 19th century...")
             patient.set_protected_info("birthday", self.birthday_entry.get_date(), 'date')
-            patient.set_private_info("weight", self.controller.hospital.validate_value(
+            patient.set("weight", self.controller.hospital.validate_value(
                 self.weight_entry.get(), float, 0, 1000,
                 custom_message_incorrect_type="The weight must be a number...",
                 custom_message_lower="The weight must be a positive number.",
                 custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?"), 'float')
-            patient.set_private_info("height", self.controller.hospital.validate_value(
+            patient.set("height", self.controller.hospital.validate_value(
                 self.height_entry.get(), float, 0, 300,
                 custom_message_incorrect_type="The height must be a number...",
                 custom_message_lower="The height must be a positive number.",
                 custom_message_upper="Are you human or giraffe?"), 'float')
 
-            messagebox.showinfo("Info", "Data updated successfully")
+            messagebox.showinfo("Success", "Information updated successfully!")
             self.controller.show_frame("PatientMainScreen")
         except ValueError as e:
-            messagebox.showerror("Error", e)
+            messagebox.showerror("Error", str(e))
         
     def delete_patient(self):
-        message = "Are you sure you want to delete your account?"
+        message = "Are you sure you want to delete your account? This action cannot be undone."
         if messagebox.askyesno("Warning", message):
             try:
                 self.controller.hospital.remove_patient(self.controller.current_user)
-                messagebox.showinfo("Info", "Account deleted successfully")
+                messagebox.showinfo("Success", "Account deleted successfully")
                 self.controller.show_frame("RoleSelectionScreen")
             except TypeError:
                 messagebox.showerror("Error", "There is no data to delete since you are using a test account.")
             except ValueError as e:
-                messagebox.showerror("Error", e)
+                messagebox.showerror("Error", str(e))
             
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_data()
-        
-    def not_implemented(self):
-        messagebox.showinfo("Info", "Not implemented yet.")
-
-
-# if __name__ == "__main__":
-#     root = ctk.CTk()
-#     ctk.set_appearance_mode("light")
-#     container = PatientInformation(root, None)
-#     container.pack(expand=True, fill="both")
-#     root.mainloop()

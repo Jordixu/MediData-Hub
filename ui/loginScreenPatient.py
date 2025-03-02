@@ -7,48 +7,100 @@ class LoginScreenPatient(ctk.CTkFrame):
         super().__init__(parent)
         self.controller = controller
         self.title = "Login Screen"
-
-        # Test Frame (DELETE)
-        title_frame = ctk.CTkFrame(self, height=20, fg_color="transparent")
-        title_frame.pack(pady=10)
-        bypass_label = ctk.CTkLabel(title_frame, text="Direct Navigation (Test Only)", font=("Helvetica", 16, "bold"))
-        bypass_label.pack()
-        ctk.CTkButton(
-            title_frame, text="Go to Patient Main Screen",
-            command=lambda: self.controller.show_frame("PatientMainScreen"), width=180, height=35
-        ).pack(pady=5)
-
-        # Divider
-        line_frame = ctk.CTkFrame(self, height=2, fg_color="grey")
-        line_frame.pack(fill="x", pady=20)
-
-        # Credentials frame
-        credentials_frame = ctk.CTkFrame(self, height=50, fg_color="transparent")
-        credentials_frame.pack(pady=5)
-        self.user_entry = ctk.CTkEntry(credentials_frame, width=240, height=35, placeholder_text="User (Personal ID)")
-        self.user_entry.grid(row=0, column=0, padx=10, pady=10)
-
-        self.pass_entry = ctk.CTkEntry(credentials_frame, show="*", width=240, height=35,  placeholder_text="Password")
-        self.pass_entry.grid(row=1, column=0, padx=10, pady=10)
-
-        # Action frame
-        action_frame = ctk.CTkFrame(self, fg_color="transparent", height=50)
-        action_frame.pack(pady=5)
-        ctk.CTkButton(
-            action_frame, text="Login", command=self.login_action, width=160, height=35
-        ).grid(row=0, column=0, padx=5, pady=5)
-        ctk.CTkButton(
-            action_frame, text="Register", command=lambda: self.controller.show_frame("RegisterScreenPatient"), 
-            width=160, height=35
-        ).grid(row=0, column=1, padx=5, pady=5)
-
-        # Go Back frame
-        back_frame = ctk.CTkFrame(self, fg_color="transparent")
-        back_frame.pack(pady=20, fill="x")
-        ctk.CTkButton(
-            back_frame, text="Go Back", command=lambda: self.controller.show_frame("RoleSelectionScreen"),
-            width=320, height=35
-        ).pack()
+        
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=2)
+        self.grid_rowconfigure(1, weight=6)
+        self.grid_rowconfigure(2, weight=2)
+        
+        header_label = ctk.CTkLabel(
+            self, 
+            text="Patient Login", 
+            font=ctk.CTkFont(size=28, weight="bold")
+        )
+        header_label.grid(row=0, column=0, sticky="s", pady=(80, 20))
+        
+        content_frame = ctk.CTkFrame(self, fg_color="transparent")
+        content_frame.grid(row=1, column=0, sticky="n")
+        
+        id_label = ctk.CTkLabel(
+            content_frame, 
+            text="Personal ID:", 
+            anchor="w",
+            font=ctk.CTkFont(size=16)
+        )
+        id_label.grid(row=0, column=0, sticky="w", pady=(0, 5))
+        
+        self.user_entry = ctk.CTkEntry(
+            content_frame, 
+            width=400,
+            height=40,
+            font=ctk.CTkFont(size=16)
+        )
+        self.user_entry.grid(row=1, column=0, pady=(0, 25))
+        
+        pass_label = ctk.CTkLabel(
+            content_frame, 
+            text="Password:", 
+            anchor="w",
+            font=ctk.CTkFont(size=16)
+        )
+        pass_label.grid(row=2, column=0, sticky="w", pady=(0, 5))
+        
+        self.pass_entry = ctk.CTkEntry(
+            content_frame, 
+            width=400,
+            height=40,
+            show="•",
+            font=ctk.CTkFont(size=16)
+        )
+        self.pass_entry.grid(row=3, column=0, pady=(0, 35))
+        
+        buttons_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        buttons_frame.grid(row=4, column=0)
+        buttons_frame.grid_columnconfigure(0, weight=1)
+        buttons_frame.grid_columnconfigure(1, weight=1)
+        
+        login_btn = ctk.CTkButton(
+            buttons_frame, 
+            text="Login", 
+            command=self.login_action, 
+            width=190,
+            height=45,
+            fg_color="#003366",
+            hover_color="#004080",
+            font=ctk.CTkFont(size=16, weight="bold")
+        )
+        login_btn.grid(row=0, column=0, padx=5)
+        
+        register_btn = ctk.CTkButton(
+            buttons_frame, 
+            text="Register", 
+            command=lambda: self.controller.show_frame("RegisterScreenPatient"), 
+            width=190,
+            height=45,
+            fg_color="#003366",
+            hover_color="#004080",
+            font=ctk.CTkFont(size=16)
+        )
+        register_btn.grid(row=0, column=1, padx=5)
+        
+        content_frame.grid_rowconfigure(5, minsize=40)
+        
+        back_btn = ctk.CTkButton(
+            content_frame, 
+            text="← Back to Role Selection", 
+            command=lambda: self.controller.show_frame("RoleSelectionScreen"),
+            width=400,
+            height=40,
+            fg_color="transparent", 
+            border_width=1,
+            border_color="#aaaaaa",
+            text_color="#555555",
+            hover_color="#eeeeee",
+            font=ctk.CTkFont(size=16)
+        )
+        back_btn.grid(row=6, column=0, pady=(10, 0))
 
     def clear_entries(self):
         self.user_entry.delete(0, tk.END)

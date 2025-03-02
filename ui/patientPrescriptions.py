@@ -1,27 +1,198 @@
-from tkinter import messagebox
+import tkinter as tk
 import customtkinter as ctk
+from tkinter import ttk, messagebox
+import datetime as dt
 
-class Prescriptions(ctk.CTkFrame):
+class PatientPrescriptions(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.title = "Prescriptions"
+        self.title = "Patient Prescriptions"
+        
+        # Configure the main layout
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)  # Header
+        self.grid_rowconfigure(1, weight=1)  # Treeview
+        self.grid_rowconfigure(2, weight=0)  # Buttons
+        
+        # Header
+        header_frame = ctk.CTkFrame(self, fg_color="transparent")
+        header_frame.grid(row=0, column=0, sticky="ew", pady=(20, 10))
+        
+        header_label = ctk.CTkLabel(
+            header_frame, 
+            text="Your Prescriptions", 
+            font=ctk.CTkFont(size=24, weight="bold")
+        )
+        header_label.pack(pady=10)
 
-        ctk.CTkLabel(self, text="Patient: Prescriptions", font=("Helvetica", 16)).pack(pady=10)
+        # Treeview Frame
+        frame = ctk.CTkFrame(self)
+        frame.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
 
-        table_frame = ctk.CTkFrame(self)
-        table_frame.pack(pady=10)
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
 
-        headers = ["Name", "Dosage", "Duration", "By Doctor (name)"]
-        for i, header in enumerate(headers):
-            ctk.CTkLabel(table_frame, text=header, font=("Helvetica", 10, "bold"), width=100).grid(row=0, column=i, padx=1, pady=1)
+        # Treeview Style
+        style = ttk.Style()
+        style.configure('Treeview', rowheight=30, font=('Helvetica', 12))
+        style.configure('Treeview.Heading', font=('Helvetica', 13, 'bold'))
+        
+        # Define tag styles
+        style.map('Treeview', background=[('selected', '#4a6984')])
+        
+        # Treeview setup
+        columns = ("ID", "Date", "Doctor", "Medication", "Dosage", "Status")
+        self.tree = ttk.Treeview(frame, columns=columns, show='headings', yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.tree.yview)
 
-        for row in range(1, 6):
-            for col in range(len(headers)):
-                ctk.CTkLabel(table_frame, text="", width=100).grid(row=row, column=col, padx=1, pady=1)
+        # Configure columns width and alignment
+        self.tree.column("ID", width=50, anchor="center")
+        self.tree.column("Date", width=100, anchor="center")
+        self.tree.column("Doctor", width=150, anchor="center")
+        self.tree.column("Medication", width=180, anchor="w")
+        self.tree.column("Dosage", width=250, anchor="w")
+        self.tree.column("Status", width=120, anchor="center")
 
-        ctk.CTkButton(self, text="Go Back", command=lambda: controller.show_frame("PatientMainScreen")).pack(side="left", pady=20, padx=20)
-        ctk.CTkButton(self, text="More", command=self.not_implemented).pack(side="right", pady=20, padx=20)
+        # Configure headings with sort commands
+        for col in columns:
+            self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
+            
+        self.tree.pack(expand=True, fill="both")
+        
+        # Store sort order state
+        self.sort_order = {col: False for col in columns}
+        
+        # Event bindings
+        self.tree.bind("<<TreeviewSelect>>", self.on_prescription_select)
+        self.tree.bind('<Button-1>', self.block_column_resize)
 
-    def not_implemented(self):
-        messagebox.showinfo("Info", "Not implemented yet.")
+        # Button frame
+        button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        button_frame.grid(row=2, column=0, padx=20, pady=(10, 20), sticky="ew")
+        
+        # Back button (left side)
+        self.back_button = ctk.CTkButton(
+            button_frame, 
+            text="Go Back", 
+            command=lambda: self.controller.show_frame("PatientMainScreen"),
+            width=150,
+            height=40,
+            fg_color="#555555",
+            hover_color="#666666"
+        )
+        self.back_button.pack(side=tk.LEFT, padx=10)
+        
+        # Action buttons (right side)
+        action_buttons = ctk.CTkFrame(button_frame, fg_color="transparent")
+        action_buttons.pack(side=tk.RIGHT)
+        
+        self.view_button = ctk.CTkButton(
+            action_buttons, 
+            text="View Details", 
+            command=self.view_prescription_details,
+            width=180,
+            height=40,
+            fg_color="#3498db",
+            hover_color="#2980b9"
+        )
+        self.view_button.pack(side=tk.LEFT, padx=10)
+
+    def block_column_resize(self, event):
+        if self.tree.identify_region(event.x, event.y) == "separator":
+            return "break"
+
+    def sort_treeview(self, col):
+        """Sort treeview by column"""
+        # Toggle sort order
+        self.sort_order[col] = not self.sort_order[col]
+        
+        # Get all items with their values
+        items = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
+        
+        # Sort items
+        items.sort(reverse=self.sort_order[col])
+        
+        # Rearrange items in the tree
+        for index, (_, item) in enumerate(items):
+            self.tree.move(item, '', index)
+            
+        # Update arrow indicators
+        self.update_heading_arrow(col)
+
+    def update_heading_arrow(self, sort_col):
+        for col in self.tree["columns"]:
+            arrow = " ↑" if col == sort_col and not self.sort_order[col] else " ↓" if col == sort_col else ""
+            self.tree.heading(col, text=f"{col}{arrow}")
+
+    def on_prescription_select(self, event):
+        """Handle prescription selection event"""
+        # Check if any item is selected
+        selected = self.tree.selection()
+        if not selected:
+            self.view_button.configure(state="disabled")
+        else:
+            self.view_button.configure(state="normal")
+
+    def view_prescription_details(self):
+        """Display detailed information about the selected prescription"""
+        selected = self.tree.selection()
+        if not selected:
+            return
+            
+        # Get prescription ID
+        prescription_id = self.tree.item(selected[0], 'values')[0]
+        
+        # In a real implementation, you would fetch the prescription details from your data model
+        # For now, we'll just show a message box with the ID
+        messagebox.showinfo(
+            "Prescription Details", 
+            f"Viewing detailed information for prescription #{prescription_id}\n\nThis feature will be implemented soon."
+        )
+
+    def load_prescriptions(self):
+        """Load prescriptions from the database for the current patient"""
+        # Clear existing items
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+            
+        if not self.controller.current_user or not self.controller.current_user_data:
+            return
+            
+        patient_id = self.controller.current_user
+        
+        # For testing, let's add some dummy data (remove this in production)
+        # In a real implementation, you would fetch from your database
+        dummy_data = [
+            {"id": 1001, "date": dt.date(2023, 10, 15), "doctor": "Dr. Smith", 
+             "medication": "Ibuprofen", "dosage": "400mg, 3 times a day for 5 days", "status": "Active"},
+            {"id": 1002, "date": dt.date(2023, 9, 28), "doctor": "Dr. Johnson", 
+             "medication": "Amoxicillin", "dosage": "500mg, twice daily for 7 days", "status": "Completed"},
+            {"id": 1003, "date": dt.date(2023, 11, 5), "doctor": "Dr. Williams", 
+             "medication": "Loratadine", "dosage": "10mg, once daily as needed", "status": "Active"},
+        ]
+        
+        # Add items to the treeview
+        for prescription in dummy_data:
+            self.tree.insert('', 'end', values=(
+                prescription["id"],
+                prescription["date"].strftime("%Y-%m-%d"),
+                prescription["doctor"],
+                prescription["medication"],
+                prescription["dosage"],
+                prescription["status"]
+            ))
+            
+        # Select the first item
+        if self.tree.get_children():
+            first_item = self.tree.get_children()[0]
+            self.tree.selection_set(first_item)
+            self.tree.focus(first_item)
+        else:
+            self.view_button.configure(state="disabled")
+
+    def tkraise(self, *args, **kwargs):
+        """Override tkraise to refresh data when frame is shown"""
+        super().tkraise(*args, **kwargs)
+        self.load_prescriptions()
