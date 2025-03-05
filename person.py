@@ -2,29 +2,10 @@ from foundation import Foundation
 from datetime import date
 from typing import Union
 class Person(Foundation):
-    """
-    The base class for all people in the hospital.
-    
-    Attributes:
-        personal_id (int): The personal ID of the person.
-        hospital_id (int): The hospital ID of the person.
-        password (str): The password for the person's account.
-        name (str): The first name of the person.
-        surname (str): The surname of the person.
-        birthday (date): The birth date of the person
-    
-    Methods:
-        get(attribute): Returns the value of the attribute.
-        get_private_info(attribute): Returns the value of a private attribute.
-        set_private_info(attribute, value): Changes the value of a private attribute.
-        __name__(): Returns the full name of the person.
-        check_password(password): Checks if the password is correct.
-        set_info(attribute, value, type): Changes the value of an attribute.
-        add_notification(notification_id): Adds a notification to the person.
-        display_last_notification(): Displays the last notification the person received.
-        add_appointment(appointment_id): Adds an appointment to the person.
-    """
-    def __init__(self, personal_id: int, hospital_id: int, password: str, name: str, surname: str, birthday: date, gender: str, diagnoses: list = None, prescriptions: list = None, appointments: list = None, notifications: list = None):
+
+    def __init__(self, personal_id: int, hospital_id: int, password: str, name: str, surname: str, 
+                birthday: date, gender: str, diagnoses: list = None, prescriptions: list = None, 
+                appointments: list = None, notifications: list = None):
         self._personal_id = personal_id
         self._hospital_id = hospital_id
         self._password = password
@@ -32,10 +13,38 @@ class Person(Foundation):
         self._surname = surname
         self._birthday = birthday
         self._gender = gender
-        self._appointments = appointments if appointments is not None else []
-        self._notifications = notifications if notifications is not None else []
-        self._diagnoses = diagnoses if diagnoses is not None else []
-        self._prescriptions = prescriptions if prescriptions is not None else []
+        
+        # Ensure diagnoses is a list
+        if diagnoses is None:
+            self._diagnoses = []
+        elif isinstance(diagnoses, list):
+            self._diagnoses = diagnoses
+        else:
+            self._diagnoses = []  # Handle case where non-list is passed
+        
+        # Ensure prescriptions is a list
+        if prescriptions is None:
+            self._prescriptions = []
+        elif isinstance(prescriptions, list):
+            self._prescriptions = prescriptions
+        else:
+            self._prescriptions = []  # Handle case where non-list is passed
+        
+        # Ensure appointments is a list
+        if appointments is None:
+            self._appointments = []
+        elif isinstance(appointments, list):
+            self._appointments = appointments
+        else:
+            self._appointments = []  # Handle case where non-list is passed
+        
+        # Ensure notifications is a list
+        if notifications is None:
+            self._notifications = []
+        elif isinstance(notifications, list):
+            self._notifications = notifications
+        else:
+            self._notifications = []  # Handle case where non-list is passed
         
     def __name__(self) -> str:
         return self._name + ' ' + self._surname
@@ -70,7 +79,8 @@ class Person(Foundation):
         Args:
             diagnosis_id (int): The diagnosis ID to add.
         """
-        if diagnosis_id not in self._diagnoses.keys():
+        print(f"Type of _diagnoses: {type(self._diagnoses)}, Value: {self._diagnoses}")
+        if diagnosis_id not in self._diagnoses:
             self._diagnoses.append(diagnosis_id)
         else:
             raise ValueError('Diagnosis already exists')

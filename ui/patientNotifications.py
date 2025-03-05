@@ -165,14 +165,15 @@ class PatientNotifications(ctk.CTkFrame):
         
         # Get patient data
         patient_data = self.controller.current_user_data
-        if not patient_data:
-            messagebox.showinfo("No Data", "Patient data not available.")
+        
+        if not patient_data or not hasattr(patient_data, "get_protected_attribute"):
+            messagebox.showinfo("No Notifications", "No patient data available.")
             return
             
         # Get notifications list
         notifications_list = patient_data.get_protected_attribute("notifications")
-        if not notifications_list or notifications_list == "[]":
-            messagebox.showinfo("No Notifications", "You have no notifications.")
+        if not notifications_list or notifications_list == [] or notifications_list == "[]":
+            self.tree.insert("", "end", values=("N/A", "N/A", "N/A", "N/A", "No notifications found", "N/A"))
             return
             
         # Process each notification
@@ -216,7 +217,7 @@ class PatientNotifications(ctk.CTkFrame):
                     self.tree.item(item_id, tags=('unread',))
                     
             except Exception as e:
-                print(f"Error loading notification {notification_id}: {e}")
+                messagebox.showerror("Error", f"An error occurred: {str(e)}")
                 
     def see_details(self):
         """View details of the selected notification."""

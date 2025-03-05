@@ -258,8 +258,8 @@ class DiagnosesDetails(ctk.CTkFrame):
             self.patient_data["Hospital ID"].configure(text=patient.get_protected_attribute('hospital_id'))
             self.patient_data["Gender"].configure(text=patient.get_protected_attribute('gender'))
             self.patient_data["Age"].configure(text=f"{age} years")
-            self.patient_data["Weight"].configure(text=f"{patient.get_protected_attribute('weight')} kg")
-            self.patient_data["Height"].configure(text=f"{patient.get_protected_attribute('height')} cm")
+            self.patient_data["Weight"].configure(text=f"{patient.get('weight')} kg")
+            self.patient_data["Height"].configure(text=f"{patient.get('height')} cm")
         
         # Load diagnosis details
         self.title_label.configure(text=diagnosis.get('title'))
@@ -310,7 +310,13 @@ class DiagnosesDetails(ctk.CTkFrame):
 
     def go_back(self):
         """Return to the previous screen"""
-        self.controller.show_frame("PatientDiagnoses")
+        self.controller.selected_diagnosis = None
+        if self.controller.selected_role == "doctor":
+            self.controller.show_frame("DoctorDiagnoses")
+        elif self.controller.selected_role == "patient":
+            self.controller.show_frame("PatientDiagnoses")
+        else:
+            self.controller.show_frame("roleSelectionScreen")
 
     def tkraise(self, *args, **kwargs):
         """Load data when the frame is raised"""

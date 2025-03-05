@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
-import tkinter as tk
 import datetime as dt
+import tkinter as tk
 
 class PatientDiagnoses(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -43,33 +43,22 @@ class PatientDiagnoses(ctk.CTkFrame):
         style.map('Treeview', background=[('selected', '#4a6984')])
         
         # Treeview setup
-        columns = ("ID", "Date", "Doctor", "Condition", "Status")
+        columns = ("ID", "Date", "Appointment ID", "Doctor ID", "Title")
         self.tree = ttk.Treeview(frame, columns=columns, show='headings', yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.tree.yview)
 
         # columns width and alignment
         self.tree.column("ID", width=50, anchor="center")
         self.tree.column("Date", width=100, anchor="center")
-        self.tree.column("Doctor", width=150, anchor="center")
-        self.tree.column("Condition", width=200, anchor="center")
-        self.tree.column("Status", width=100, anchor="center")
+        self.tree.column("Appointment ID", width=150, anchor="center")
+        self.tree.column("Doctor ID", width=100, anchor="center")
+        self.tree.column("Title", width=300, anchor="w")
 
         # Configure headings with sort commands
         for col in columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.sort_treeview(c))
         
         self.tree.pack(expand=True, fill='both', padx=5, pady=5)
-        
-        # Configure status tags
-        self.status_colors = {
-            'Active': '#ffebeb',    # Light red
-            'Resolved': '#ebf7eb',  # Light green
-            'Chronic': '#e6f7ff',   # Light blue
-            'Monitoring': '#fff9e6' # Light yellow
-        }
-        
-        for status, color in self.status_colors.items():
-            self.tree.tag_configure(status.lower(), background=color)
         
         # Disable column resizing
         def block_column_resize(event):
@@ -121,7 +110,7 @@ class PatientDiagnoses(ctk.CTkFrame):
         items = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
         
         # Determine sorting key based on column type
-        if col in ("ID", "Doctor"):
+        if col in ("ID", "Appointment ID", "Doctor ID"):
             # Integer sorting with N/A handling
             def int_sort_key(x):
                 if x[0] == "N/A":
@@ -142,7 +131,7 @@ class PatientDiagnoses(ctk.CTkFrame):
                     return dt.datetime.min
             items.sort(key=date_sort_key, reverse=self.sort_order[col])
         else:
-            # Default string sorting for other columns
+            # Default string sorting for other columns (like Title)
             items.sort(key=lambda x: str(x[0]).lower(), reverse=self.sort_order[col])
         
         # Rearrange items in Treeview
@@ -170,11 +159,16 @@ class PatientDiagnoses(ctk.CTkFrame):
         self.tree.delete(*self.tree.get_children())
         patient_data = self.controller.current_user_data
         
-        if not patient_data or patient_data.get_protected_attribute("diagnoses") == "[]" or patient_data.get_protected_attribute("diagnoses") == None:
-            messagebox.showinfo("No Diagnoses", "You have no diagnoses recorded.")
+        if not patient_data or not hasattr(patient_data, "get_protected_attribute"):
+            messagebox.showinfo("No Diagnoses", "No patient data available.")
             return
             
-        for diagnosis_id in patient_data.get_protected_attribute("diagnoses"):
+        diagnoses = patient_data.get_protected_attribute("diagnoses")
+        if not diagnoses or diagnoses == [] or diagnoses == "[]":
+            self.tree.insert("", "end", values=("N/A", "N/A", "N/A", "N/A", "No diagnoses found"))
+            return
+            
+        for diagnosis_id in diagnoses:
             if not isinstance(diagnosis_id, int):
                 continue
                 
@@ -195,35 +189,24 @@ class PatientDiagnoses(ctk.CTkFrame):
                 else:
                     date = "N/A"
                 
-                doctor = diagnosis.get("doctor_hid", "N/A")
-                condition = diagnosis.get("condition", "N/A")
-                status = diagnosis.get("status", "N/A")
+                appointment_id = diagnosis.get("appointment_id", "N/A")
+                doctor_id = diagnosis.get("doctor_hid", "N/A")
+                title = diagnosis.get("title", "N/A")
                 
-                # Insert the row and get the item ID
-                item_id = self.tree.insert(
+                # Insert the row
+                self.tree.insert(
                     "", "end", 
-                    values=(diag_id, date, doctor, condition, status)
+                    values=(diag_id, date, appointment_id, doctor_id, title)
                 )
-                
-                # Apply tag based on status
-                if status.lower() in [s.lower() for s in self.status_colors.keys()]:
-                    self.tree.item(item_id, tags=(status.lower(),))
-                    
-            except ValueError as exc:
-                messagebox.showerror("Error", str(exc))
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def selected(self, event=None):
-        """
-        Handle selection events for the treeview.
-        """
+        """Handle selection events for the treeview."""
         _ = event  # To avoid the unused variable warning
 
     def view_diagnosis_details(self):
-        """
-        Send the user to the diagnosis details screen.
-        """
+        """View details of the selected diagnosis"""
         selected_item = self.tree.selection()
         if not selected_item:
             messagebox.showwarning("No Selection", "Please select a diagnosis to view details.")
@@ -238,13 +221,12 @@ class PatientDiagnoses(ctk.CTkFrame):
                 messagebox.showerror("Error", f"Diagnosis {diagnosis_id} not found.")
                 return
                 
-            self.controller.current_diagnosis = diagnosis
-            self.controller.show_frame("DiagnosisDetails")
-        except ValueError as exc:
-            messagebox.showerror("Error", str(exc))
+            self.controller.selected_diagnosis = diagnosis
+            self.controller.show_frame("DiagnosesDetails")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view diagnosis details: {e}")
 
     def tkraise(self, *args, **kwargs):
+        """Load data when the frame is raised"""
         super().tkraise(*args, **kwargs)
         self.load_diagnoses()

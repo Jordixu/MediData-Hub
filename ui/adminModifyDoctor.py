@@ -261,33 +261,43 @@ class AdminModifyDoctor(ctk.CTkFrame):
             # Load personal information
             self.user_entry.configure(state="normal")
             self.user_entry.delete(0, tk.END)
-            self.user_entry.insert(0, doctor.get_protected_attribute("personal_id"))
+            personal_id = doctor.get_protected_attribute("personal_id")
+            self.user_entry.insert(0, str(personal_id) if personal_id is not None else "")
             self.user_entry.configure(state="disabled")
             
             self.name_entry.delete(0, tk.END)
-            self.name_entry.insert(0, doctor.get_protected_attribute("name"))
+            name = doctor.get_protected_attribute("name")
+            self.name_entry.insert(0, str(name) if name is not None else "")
             
             self.surname_entry.delete(0, tk.END)
-            self.surname_entry.insert(0, doctor.get_protected_attribute("surname"))
+            surname = doctor.get_protected_attribute("surname")
+            self.surname_entry.insert(0, str(surname) if surname is not None else "")
             
             self.ssn_entry.configure(state="normal")
             self.ssn_entry.delete(0, tk.END)
-            self.ssn_entry.insert(0, doctor.get("socialsecurity"))
+            ssn = doctor.get("socialsecurity")
+            self.ssn_entry.insert(0, str(ssn) if ssn is not None else "")
             self.ssn_entry.configure(state="disabled")
             
-            self.gender_var.set(doctor.get_protected_attribute("gender"))
+            gender = doctor.get_protected_attribute("gender")
+            self.gender_var.set(gender if gender is not None else "")
             
             # Set birthday
             birthday = doctor.get_protected_attribute("birthday")
-            self.birthday_entry.set_date(birthday)
+            if birthday is not None:
+                self.birthday_entry.set_date(birthday)
             
             # Set specialty and department
-            self.specialty_var.set(doctor.get("speciality"))
-            self.department_var.set(doctor.get("department"))
+            specialty = doctor.get("speciality")
+            self.specialty_var.set(specialty if specialty is not None else "")
+            
+            department = doctor.get("department")
+            self.department_var.set(department if department is not None else "")
             
             # Set salary
             self.salary_entry.delete(0, tk.END)
-            self.salary_entry.insert(0, str(doctor.get("salary")))
+            salary = doctor.get("salary")
+            self.salary_entry.insert(0, str(salary) if salary is not None else "")
             
             self.pass_entry.delete(0, tk.END)
             self.confirm_pass_entry.delete(0, tk.END)

@@ -33,6 +33,7 @@ from ui.adminModifyDrugs import AdminModifyDrugs
 from ui.appointmentDetails import AppointmentDetails
 from ui.patientDiagnoses import PatientDiagnoses
 from ui.diagnosesDetails import DiagnosesDetails
+from ui.prescriptionDetails import PrescriptionDetails
 
 from tkinter import messagebox
 import customtkinter as ctk
@@ -70,6 +71,8 @@ class MedidataHubUI(ctk.CTk):
         self.selected_patient = None
         self.selected_room = None
         self.selected_drug = None
+        self.selected_prescription = None
+        self.selected_diagnosis = None
         
         self.protocol("WM_DELETE_WINDOW", self.quit)
         
@@ -86,7 +89,7 @@ class MedidataHubUI(ctk.CTk):
         
         self.frames = {}
         for F in (
-            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, PatientPrescriptions, PatientInformation, AdminMainScreen, LoginScreenAdmin, PatientAppointments, ChangePassword, PatientRequestAppointment, DoctorNotifications, DoctorNotificationsDetailsRequest, NotificationsDetails, DoctorInformation, DoctorAppointments, PatientNotifications, DoctorConsultation, AdminAppointments, AdminDoctors, AdminPatients, AdminRooms, AdminDrugs, AdminNotifications, AdminViewAppointmentsRoom, AdminAddDoctor, AdminAddDrugs, DoctorConsultationCreate, AdminModifyDoctor, AdminModifyDrugs, AppointmentDetails, PatientDiagnoses, DiagnosesDetails
+            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, PatientPrescriptions, PatientInformation, AdminMainScreen, LoginScreenAdmin, PatientAppointments, ChangePassword, PatientRequestAppointment, DoctorNotifications, DoctorNotificationsDetailsRequest, NotificationsDetails, DoctorInformation, DoctorAppointments, PatientNotifications, DoctorConsultation, AdminAppointments, AdminDoctors, AdminPatients, AdminRooms, AdminDrugs, AdminNotifications, AdminViewAppointmentsRoom, AdminAddDoctor, AdminAddDrugs, DoctorConsultationCreate, AdminModifyDoctor, AdminModifyDrugs, AppointmentDetails, PatientDiagnoses, DiagnosesDetails, PrescriptionDetails
         ):
             frame = F(container, self)
             self.frames[F.__name__] = frame

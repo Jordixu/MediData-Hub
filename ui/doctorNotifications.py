@@ -167,11 +167,16 @@ class DoctorNotifications(ctk.CTkFrame):
         self.tree.delete(*self.tree.get_children())
         doctor_data = self.controller.current_user_data
         
-        if not doctor_data or doctor_data.get_protected_attribute("notifications") == "[]" or doctor_data.get_protected_attribute("notifications") == None:
-            messagebox.showinfo("No Notifications", "You have no notifications.")
+        if not doctor_data or not hasattr(doctor_data, "get_protected_attribute"):
+            messagebox.showinfo("No Notifications", "No doctor data available.")
             return
             
-        for notification_id in doctor_data.get_protected_attribute("notifications"):
+        notifications = doctor_data.get_protected_attribute("notifications")
+        if not notifications or notifications == [] or notifications == "[]":
+            self.tree.insert("", "end", values=("N/A", "No notifications found", "N/A", "N/A", "N/A", "N/A"))
+            return
+            
+        for notification_id in notifications:
             if not isinstance(notification_id, int):
                 continue
                 
@@ -211,10 +216,9 @@ class DoctorNotifications(ctk.CTkFrame):
                 else:
                     self.tree.item(item_id, tags=('unread',))
                     
-            except ValueError as exc:
-                messagebox.showerror("Error", str(exc))
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
                 
     def see_details(self):
         """

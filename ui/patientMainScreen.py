@@ -29,15 +29,12 @@ class PatientMainScreen(ctk.CTkFrame):
         button_font = ctk.CTkFont(size=22, weight="bold")
         button_height = 80
         
-        # Create first four buttons and store one of them to get its width later
+        # Create buttons
         button1 = self.create_button(menu_frame, "Personal Data", "PatientInformation", 0, 0, button_font, button_height)
         self.create_button(menu_frame, "Prescriptions", "PatientPrescriptions", 0, 1, button_font, button_height)
         self.create_button(menu_frame, "Appointments", "PatientAppointments", 1, 0, button_font, button_height)
         self.create_button(menu_frame, "Notifications", "PatientNotifications", 1, 1, button_font, button_height)
-        
-        # Create a container frame for the Diagnoses button that will be centered
-        center_container = ctk.CTkFrame(menu_frame, fg_color="transparent")
-        center_container.grid(row=2, column=0, columnspan=2)
+        self.create_button(menu_frame, "Diagnoses", "PatientDiagnoses", 2, 0, button_font, button_height)
         
         sign_out_frame = ctk.CTkFrame(self, fg_color="transparent")
         sign_out_frame.grid(row=2, column=0, pady=(20, 30))
@@ -53,18 +50,6 @@ class PatientMainScreen(ctk.CTkFrame):
             hover_color="#e74c3c"
         )
         sign_out_button.place(relx=0.5, rely=0.85, anchor="center")
-
-
-        diagnoses_button = ctk.CTkButton(
-            menu_frame,
-            text="Diagnoses",
-            command=lambda: self.controller.show_frame("PatientDiagnoses"),
-            font=button_font,
-            height=button_height,
-            width=650, 
-            corner_radius=10
-        )
-        diagnoses_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="n")
 
     def create_button(self, parent, text, target_frame, row, column, font, height):
         button = ctk.CTkButton(

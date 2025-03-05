@@ -263,7 +263,7 @@ class Utilities:
             './database/diagnoses.csv'
             )
         self.save_to_csv(
-            [prescription for prescription in hospital.prescriptions.values()],
+            [prescription.get_all_attributes() for prescription in hospital.prescriptions.values()],
             './database/prescriptions.csv'
             )
         
@@ -321,8 +321,16 @@ class Utilities:
         rooms_per_floor: int, 
         number_of_appointments: int
     ) -> None:
+        
+        # Erase all the current data except for drugs
         with open("./database/notifications.csv", "w", encoding="utf-8") as f:
-            f.write("notification_id;sender;recipient;message;datetime;is_read\n")
+            f.write("notification_id;title;message;datetime;sender_hid;receiver_hid;notif_type;appointment_id;read\n")
+        with open("./database/prescriptions.csv", "w", encoding="utf-8") as f:
+            f.write("prescription_id;drug_id;patient_hid;doctor_hid;diagnosis_id;dosage;appointment_id;status\n")
+        with open("./database/diagnoses.csv", "w", encoding="utf-8") as f:
+            f.write("diagnosis_id;title;appointment_id;doctor_hid;patient_hid;description;treatment;date\n")
+        
+        
         # Generate patients
         patients = []
         patient_personal_ids = set() # To avoid duplicates

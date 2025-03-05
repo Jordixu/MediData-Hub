@@ -121,7 +121,6 @@ class DoctorAppointments(ctk.CTkFrame):
             height=40,
             fg_color="#3498db",
             hover_color="#2980b9",
-            state="disabled"  # Initially disabled until selection
         )
         self.details_button.pack(side=tk.LEFT, padx=10)
         
@@ -134,7 +133,6 @@ class DoctorAppointments(ctk.CTkFrame):
             height=40,
             fg_color="#e74c3c",
             hover_color="#c0392b",
-            state="disabled"  # Initially disabled until selection
         )
         self.cancel_button.pack(side=tk.LEFT, padx=10)
 
@@ -283,22 +281,6 @@ class DoctorAppointments(ctk.CTkFrame):
         Handle selection events for the treeview.
         """
         _ = event  # To avoid the unused variable warning
-        # Update button states based on selection
-        selected_item = self.tree.selection()
-        if selected_item:
-            # Enable the details button whenever an item is selected
-            self.details_button.configure(state="normal")
-            
-            # Only enable cancel button for scheduled appointments
-            items = self.tree.item(selected_item[0], "values")
-            if items and items[5] == "Scheduled":
-                self.cancel_button.configure(state="normal")
-            else:
-                self.cancel_button.configure(state="disabled")
-        else:
-            # Disable both buttons if no selection
-            self.details_button.configure(state="disabled")
-            self.cancel_button.configure(state="disabled")
 
     def view_appointment_details(self):
         """

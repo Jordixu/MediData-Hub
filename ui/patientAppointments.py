@@ -125,8 +125,8 @@ class PatientAppointments(ctk.CTkFrame):
             command=lambda: self.controller.show_frame("PatientRequestAppointment"),
             width=200,
             height=40,
-            fg_color="#3498db",
-            hover_color="#2980b9"
+            fg_color="#3b7539",
+            hover_color="#3b7539"
         )
         self.request_button.pack(side=tk.LEFT, padx=10)
         
@@ -287,18 +287,6 @@ class PatientAppointments(ctk.CTkFrame):
         Handle selection events for the treeview.
         """
         _ = event  # To avoid the unused variable warning
-        # Update button states based on selection
-        selected_item = self.tree.selection()
-        if selected_item:
-            # Get the status of the selected appointment
-            status = self.tree.item(selected_item[0], "values")[5]
-            # Only enable cancel button for scheduled appointments
-            if status == "Scheduled":
-                self.cancel_button.configure(state="normal")
-            else:
-                self.cancel_button.configure(state="disabled")
-        else:
-            self.cancel_button.configure(state="disabled")
 
     def cancel_appointment(self):
         """

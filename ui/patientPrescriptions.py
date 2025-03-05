@@ -142,41 +142,47 @@ class PatientPrescriptions(ctk.CTkFrame):
             return
             
         # Get prescription ID
-        prescription_id = self.tree.item(selected[0], 'values')[0]
-        
-        # In a real implementation, you would fetch the prescription details from your data model
-        # For now, we'll just show a message box with the ID
-        messagebox.showinfo(
-            "Prescription Details", 
-            f"Viewing detailed information for prescription #{prescription_id}\n\nThis feature will be implemented soon."
-        )
+        prescription_id = int(self.tree.item(selected[0], 'values')[0])
+        print(f"ID: {prescription_id}")
+        print(f"Prescription: {self.controller.hospital.prescriptions[prescription_id]}")
+        self.controller.selected_prescription = self.controller.hospital.prescriptions[prescription_id]
+        self.controller.show_frame("PrescriptionDetails")
 
     def load_prescriptions(self):
         """Load prescriptions from the database for the current patient"""
         # Clear existing items
-        for item in self.tree.get_children():
-            self.tree.delete(item)
+        self.tree.delete(*self.tree.get_children())
+        
+        patient_data = self.controller.current_user_data
+        
+        if not patient_data or not hasattr(patient_data, "get_protected_attribute"):
+            messagebox.showinfo("No Prescriptions", "No patient data available.")
+            return
             
-        patient = self.controller.current_user_data
-        
-        try:
-            prescriptions_ids = patient.get("prescriptions", [])
-            for prescription_id in prescriptions_ids:
+        prescriptions_ids = patient_data.get_protected_attribute("prescriptions", [])
+        if not prescriptions_ids or prescriptions_ids == [] or prescriptions_ids == "[]":
+            self.tree.insert("", "end", values=("N/A", "N/A", "N/A", "N/A", "N/A", "No prescriptions found"))
+            return
+            
+        for prescription_id in prescriptions_ids:
+            if not isinstance(prescription_id, int):
+                continue
+                
+            try:
                 prescription = self.controller.hospital.prescriptions.get(prescription_id)
-                if prescription:
-                    print(prescription)
-                    self.tree.insert("", "end", values=(
-                        prescription.get("prescription_id"),
-                        prescription.get("drug_id"),
-                        prescription.get("doctor_hid"),
-                        prescription.get("diagnosis_id"),
-                        prescription.get("dosage_instructions"),
-                        prescription.get("status")
-                    ))
-        except Exception as e:
-            print(e)
-            messagebox.showerror("Error", "An error occurred while loading prescriptions.")
-        
+                if not prescription:
+                    continue
+                    
+                self.tree.insert("", "end", values=(
+                    prescription.get("prescription_id", "N/A"),
+                    prescription.get("drug_id", "N/A"),
+                    prescription.get("doctor_hid", "N/A"),
+                    prescription.get("diagnosis_id", "N/A"),
+                    prescription.get("dosage", "N/A"),
+                    prescription.get("status", "N/A")
+                ))
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def tkraise(self, *args, **kwargs):
         """Override tkraise to refresh data when frame is shown"""

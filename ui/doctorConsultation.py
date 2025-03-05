@@ -53,20 +53,20 @@ class DoctorConsultation(ctk.CTkFrame):
         history_scrollbar = ttk.Scrollbar(self.history_frame)
         history_scrollbar.pack(side="right", fill="y")
 
-        history_columns = ("ID", "Date", "Patient", "Diagnosis", "Status")
-        self.history_tree = ttk.Treeview(self.history_frame, columns=history_columns, show='headings', yscrollcommand=history_scrollbar.set)
+        self.history_columns = ("ID", "Date", "Patient", "Title", "Appointment ID")
+        self.history_tree = ttk.Treeview(self.history_frame, columns=self.history_columns, show='headings', yscrollcommand=history_scrollbar.set)
         history_scrollbar.config(command=self.history_tree.yview)
 
-        for col in history_columns:
+        for col in self.history_columns:
             self.history_tree.heading(col, text=col, command=lambda c=col: self.sort_history_treeview(c))
             self.history_tree.column(col, width=100, anchor="center")
         
-        # Make the diagnosis column wider
-        self.history_tree.column("Diagnosis", width=200)
+        # Make the title column wider
+        self.history_tree.column("Title", width=200)
 
         self.history_tree.pack(expand=True, fill='both')
 
-        self.history_sort_order = {col: False for col in history_columns}
+        self.history_sort_order = {col: False for col in self.history_columns}
 
         self.history_tree.bind("<<TreeviewSelect>>", self.history_selected)
 
@@ -74,14 +74,40 @@ class DoctorConsultation(ctk.CTkFrame):
         self.buttons_frame = ctk.CTkFrame(self)
         self.buttons_frame.grid(row=2, column=0, columnspan=2, padx=20, pady=(10, 20), sticky="ew")
 
-        self.back_button = ctk.CTkButton(self.buttons_frame, text="Back", command=lambda: self.controller.show_frame("DoctorMainScreen"))
+        # Back button (left side)
+        self.back_button = ctk.CTkButton(
+            self.buttons_frame, 
+            text="Go Back", 
+            command=lambda: self.controller.show_frame("DoctorMainScreen"),
+            width=150,
+            height=40,
+            fg_color="#555555",
+            hover_color="#666666"
+        )
         self.back_button.pack(side="left", padx=20, pady=10)
 
-        self.view_details_button = ctk.CTkButton(self.buttons_frame, text="View Diagnosis Details", command=self.view_diagnosis_details)
-        self.view_details_button.pack(side="right", padx=20, pady=10)
-
-        self.consult_button = ctk.CTkButton(self.buttons_frame, text="Start Consultation", command=self.start_consultation)
+        # Action buttons (right side)
+        self.consult_button = ctk.CTkButton(
+            self.buttons_frame,
+            text="Start Consultation",
+            command=self.start_consultation,
+            width=180,
+            height=40,
+            fg_color="#3498db",
+            hover_color="#2980b9"
+        )
         self.consult_button.pack(side="right", padx=20, pady=10)
+
+        self.view_details_button = ctk.CTkButton(
+            self.buttons_frame,
+            text="View Diagnosis Details",
+            command=self.view_diagnosis_details,
+            width=180,
+            height=40,
+            fg_color="#2ecc71",
+            hover_color="#27ae60"
+        )
+        self.view_details_button.pack(side="right", padx=20, pady=10)
 
     def selected(self, event=None):
         selected_items = self.tree.selection()
@@ -118,11 +144,8 @@ class DoctorConsultation(ctk.CTkFrame):
             return
         
         diagnosis_id = int(self.history_tree.item(selected_items[0], "values")[0])
-        # Here you would implement the logic to show diagnosis details
-        messagebox.showinfo("View Diagnosis", f"Viewing details for diagnosis ID: {diagnosis_id}")
-        # Alternatively, you could navigate to a detailed view:
-        # self.controller.selected_diagnosis = diagnosis_id
-        # self.controller.show_frame("DiagnosisDetailView")
+        self.controller.selected_diagnosis = self.controller.hospital.diagnoses.get(diagnosis_id)
+        self.controller.show_frame("DiagnosesDetails")
 
     def sort_treeview(self, col):
         self.sort_order[col] = not self.sort_order[col]
@@ -144,8 +167,7 @@ class DoctorConsultation(ctk.CTkFrame):
         
         items = [(self.history_tree.item(item, "values"), item) for item in self.history_tree.get_children("")]
         
-        columns = ("ID", "Date", "Patient", "Diagnosis", "Status")
-        col_idx = columns.index(col)
+        col_idx = self.history_columns.index(col)
         
         items.sort(key=lambda x: x[0][col_idx], reverse=self.history_sort_order[col])
         
@@ -163,8 +185,7 @@ class DoctorConsultation(ctk.CTkFrame):
             self.tree.heading(col, text=text)
     
     def update_history_heading_arrow(self, sort_col):
-        columns = ("ID", "Date", "Patient", "Diagnosis", "Status")
-        for col in columns:
+        for col in self.history_columns:
             text = col
             if col == sort_col:
                 text = f"{col} {'   ˄' if self.history_sort_order[col] else '  ˅'}"
@@ -232,13 +253,14 @@ class DoctorConsultation(ctk.CTkFrame):
         if not doctor_data:
             return
             
-        doctor_id = doctor_data.get_protected_attribute("doctor_id")
+        doctor_id = doctor_data.get_protected_attribute("hospital_id")
         
-        # Here, you would fetch diagnoses created by this doctor
-        # This is a placeholder - you need to implement based on your data structure
-        diagnoses = self.controller.hospital.get_diagnoses_by_doctor(doctor_id) 
+        diagnoses = []
+        for diag_id, diag in self.controller.hospital.diagnoses.items():
+            if diag.get("doctor_hid") == doctor_id:
+                diagnoses.append(diag)
         
-        if not diagnoses or len(diagnoses) == 0:
+        if not diagnoses:
             return
             
         diagnosis_data = []
@@ -247,16 +269,12 @@ class DoctorConsultation(ctk.CTkFrame):
                 diag_id = diagnosis.get("diagnosis_id")
                 date = diagnosis.get("date", "N/A")
                 patient_id = diagnosis.get("patient_hid", "N/A")
-                diag_text = diagnosis.get("diagnosis_text", "N/A")
-                status = diagnosis.get("status", "Completed")
-                
-                # Truncate long diagnosis text
-                if len(diag_text) > 30:
-                    diag_text = diag_text[:27] + "..."
+                title = diagnosis.get("title", "N/A")
+                appointment_id = diagnosis.get("appointment_id", "Completed")
                     
-                diagnosis_data.append((diag_id, date, patient_id, diag_text, status))
+                diagnosis_data.append((diag_id, date, patient_id, title, appointment_id))
             except Exception as exc:
-                pass
+                print(f"Error processing diagnosis: {exc}")
         
         # Sort diagnoses by date (newest first)
         diagnosis_data.sort(key=lambda x: x[1], reverse=True)

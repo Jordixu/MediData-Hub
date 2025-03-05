@@ -144,6 +144,7 @@ class Hospital:
         try:
             for prescription in self.utility.load_from_csv('./database/prescriptions.csv'):
                 self.prescriptions[prescription['prescription_id']] = prescription
+                print(prescription)
         except FileNotFoundError as exc:
             raise FileNotFoundError('No prescriptions found in the database') from exc
         except TypeError as e:
@@ -572,29 +573,30 @@ class Hospital:
         
         raise ValueError('Notification not found.')
 
-    def create_diagnosis(self, title: str, description: str, treatment: str, appointment_id: int, doctor_id: int, patient_id: int) -> None:
-        try:                
+    def create_diagnosis(self, title: str, description: str, treatment: str, appointment_id: int, doctor_hid: int, patient_hid: int) -> None:
+        # try:                
             # Generate a new diagnosis ID
             diagnosis_id = max(self.diagnoses.keys(), default=0) + 1
+            # print(type(self.diagnoses))
             
             # Create diagnosis
-            diagnosis = Diagnosis(diagnosis_id, title, appointment_id, doctor_id, patient_id, treatment, description)
+            diagnosis = Diagnosis(diagnosis_id, title, appointment_id, doctor_hid, patient_hid, treatment, dt.date.today(), description)
             
             # Add to hospital diagnoses
             self.diagnoses[diagnosis_id] = diagnosis
             
             # Add diagnosis to patient's record
-            patient = self.patients[patient_id]
+            patient = self.patients[patient_hid]
             patient.add_diagnosis(diagnosis_id)
             
-            doctor = self.doctors[doctor_id]
+            doctor = self.doctors[doctor_hid]
             doctor.add_diagnosis(diagnosis_id)
             
             return diagnosis_id
             
-        except Exception as e:
-            print(f"Error creating diagnosis: {e}")
-            raise
+        # except Exception as e:
+        #     print(f"Error creating diagnosis: {e}")
+        #     raise
     
     def prescribe_medication(self, patient_hid, doctor_hid, diagnosis_id, medication, appointment_id) -> None:
         try:

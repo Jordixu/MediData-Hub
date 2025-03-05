@@ -436,7 +436,7 @@ class DoctorConsultationCreate(ctk.CTkFrame):
             self.prev_diagnosis_tree.delete(item)
             
         # Get diagnoses from patient data
-        diagnoses = patient.get("diagnoses")
+        diagnoses = patient.get_protected_attribute("diagnoses")
         if not diagnoses or diagnoses == []:
             # Add a placeholder row if no diagnoses
             self.prev_diagnosis_tree.insert("", "end", values=("No previous diagnoses found", "", "", ""))
@@ -802,60 +802,56 @@ class DoctorConsultationCreate(ctk.CTkFrame):
         if not confirm:
             return
             
-        try:
-            # Get the relevant IDs
-            appointment = self.controller.selected_appointment
-            patient = self.controller.selected_patient
-            doctor_id = self.controller.current_user
-            
-            appointment_id = appointment.get("appointment_id")
-            patient_id = patient.get_protected_attribute("hospital_id")
-            
-            # Create a new diagnosis
-            diagnosis_id = self.controller.hospital.create_diagnosis(
-                title=title,
-                description=description,
-                treatment=treatment,
-                appointment_id=appointment_id,
-                doctor_id=doctor_id,
-                patient_id=patient_id
-            )
+        # Get the relevant IDs
+        appointment = self.controller.selected_appointment
+        patient = self.controller.selected_patient
+        doctor_id = self.controller.current_user
+        
+        appointment_id = appointment.get("appointment_id")
+        patient_id = patient.get_protected_attribute("hospital_id")
+        
+        # Create a new diagnosis
+        diagnosis_id = self.controller.hospital.create_diagnosis(
+            title=title,
+            description=description,
+            treatment=treatment,
+            appointment_id=appointment_id,
+            doctor_hid=doctor_id,
+            patient_hid=patient_id
+        )
 
-            # Add medications if selected
-            medication = {}
-            if self.selected_drugs:
-                for drug in self.selected_drugs:
-                    medication[drug["id"]] = drug["dosage"]
+        # Create individual prescriptions for each medication
+        if self.selected_drugs:
+            for drug in self.selected_drugs:
+                # Create a single-drug medication dictionary
+                individual_medication = {drug["id"]: drug["dosage"]}
+                
+                # Create prescription for this specific drug
+                self.controller.hospital.prescribe_medication(
+                    patient_hid=patient_id,
+                    doctor_hid=doctor_id,
+                    diagnosis_id=diagnosis_id,
+                    medication=individual_medication,
+                    appointment_id=appointment_id
+                )
 
-                # Add prescriptions
-                    self.controller.hospital.prescribe_medication(
-                        patient_id=patient_id,
-                        doctor_id=doctor_id,
-                        diagnosis_id=diagnosis_id,
-                        medication=medication,
-                        appointment_id=self.controller.selected_appointment.get("appointment_id")
-                    )
+        # Update appointment status to completed
+        appointment.change_status("Completed")
 
-            # Update appointment status to completed
-            appointment.change_status("Completed")
+        # Send notification to patient
+        self.controller.hospital.send_notification(
+            receiver_hid=patient_id,
+            sender_hid=doctor_id,
+            title="Consultation Completed",
+            type="Medical",  # Using notif_type instead of type
+            message=f"Your consultation has been completed. Diagnosis: {title}. Please check your prescriptions for any medications. You can see the full report in your «diagnosis» tab."
+        )
 
-            # Send notification to patient
-            self.controller.hospital.send_notification(
-                receiver_hid=patient_id,
-                sender_hid=doctor_id,
-                title="Consultation Completed",
-                type="Medical",
-                message=f"Your consultation has been completed. Diagnosis: {title}. Please check your prescriptions for any medications."
-            )
-
-            messagebox.showinfo("Success", "Consultation completed successfully!")
-            self.controller.selected_appointment = None
-            self.controller.selected_patient = None
-            self.clear_fields()
-            self.controller.show_frame("DoctorConsultation")
-            
-        except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        messagebox.showinfo("Success", "Consultation completed successfully!")
+        self.controller.selected_appointment = None
+        self.controller.selected_patient = None
+        self.clear_fields()
+        self.controller.show_frame("DoctorConsultation")
             
     def clear_fields(self):
         """Clear all fields in the form"""
