@@ -12,16 +12,14 @@ class Diagnosis(Foundation):
         description (str): The description of the diagnosis.
         treatment (str): The treatment prescribed for the diagnosis.
     """
-    def __init__(self, id: int, title: str, appointment_id: int, doctor_hid: int, patient_hid: int, treatment, description = None):
-        self.__diagnosis_id = id
+    def __init__(self, diagnosis_id: int, title: str, appointment_id: int, doctor_hid: int, patient_hid: int, treatment, description = None):
+        self.__diagnosis_id = diagnosis_id
         self.__title = title
         self.__appointment_id = appointment_id
         self.__doctor_hid = doctor_hid
         self.__patient_hid = patient_hid
         self.__description = description
-        self.__treatment = treatment # medication, surgery, therapy, etc. POR DETERMINAR
+        self.__treatment = treatment
         
     def __str__(self):
         return f'{self.__title} {self.__description} {self.__treatment}'
-        
-    # FALTA

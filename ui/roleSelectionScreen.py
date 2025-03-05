@@ -21,7 +21,7 @@ class RoleSelectionScreen(ctk.CTkFrame):
         
         # Role selection container
         selection_container = ctk.CTkFrame(content_frame)
-        selection_container.place(relx=0.5, rely=0.4, anchor="center")
+        selection_container.place(relx=0.5, rely=0.45, anchor="center")
         
         # Welcome text
         welcome_label = ctk.CTkLabel(

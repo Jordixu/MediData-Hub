@@ -10,10 +10,12 @@ class DoctorConsultation(ctk.CTkFrame):
         self.title = "Doctor Consultation"
 
         self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=0)
 
+        # Left side: Upcoming Appointments
         self.title_label = ctk.CTkLabel(self, text="Upcoming Appointments", font=ctk.CTkFont(size=20, weight="bold"))
         self.title_label.grid(row=0, column=0, pady=(20, 10), padx=20, sticky="ew")
 
@@ -41,11 +43,42 @@ class DoctorConsultation(ctk.CTkFrame):
 
         self.tree.bind("<<TreeviewSelect>>", self.selected)
 
+        # Right side: Previous Diagnoses
+        self.history_label = ctk.CTkLabel(self, text="Previous Diagnoses", font=ctk.CTkFont(size=20, weight="bold"))
+        self.history_label.grid(row=0, column=1, pady=(20, 10), padx=20, sticky="ew")
+
+        self.history_frame = ctk.CTkFrame(self)
+        self.history_frame.grid(row=1, column=1, padx=20, pady=10, sticky="nsew")
+
+        history_scrollbar = ttk.Scrollbar(self.history_frame)
+        history_scrollbar.pack(side="right", fill="y")
+
+        history_columns = ("ID", "Date", "Patient", "Diagnosis", "Status")
+        self.history_tree = ttk.Treeview(self.history_frame, columns=history_columns, show='headings', yscrollcommand=history_scrollbar.set)
+        history_scrollbar.config(command=self.history_tree.yview)
+
+        for col in history_columns:
+            self.history_tree.heading(col, text=col, command=lambda c=col: self.sort_history_treeview(c))
+            self.history_tree.column(col, width=100, anchor="center")
+        
+        # Make the diagnosis column wider
+        self.history_tree.column("Diagnosis", width=200)
+
+        self.history_tree.pack(expand=True, fill='both')
+
+        self.history_sort_order = {col: False for col in history_columns}
+
+        self.history_tree.bind("<<TreeviewSelect>>", self.history_selected)
+
+        # Bottom buttons frame
         self.buttons_frame = ctk.CTkFrame(self)
-        self.buttons_frame.grid(row=2, column=0, padx=20, pady=(10, 20), sticky="ew")
+        self.buttons_frame.grid(row=2, column=0, columnspan=2, padx=20, pady=(10, 20), sticky="ew")
 
         self.back_button = ctk.CTkButton(self.buttons_frame, text="Back", command=lambda: self.controller.show_frame("DoctorMainScreen"))
         self.back_button.pack(side="left", padx=20, pady=10)
+
+        self.view_details_button = ctk.CTkButton(self.buttons_frame, text="View Diagnosis Details", command=self.view_diagnosis_details)
+        self.view_details_button.pack(side="right", padx=20, pady=10)
 
         self.consult_button = ctk.CTkButton(self.buttons_frame, text="Start Consultation", command=self.start_consultation)
         self.consult_button.pack(side="right", padx=20, pady=10)
@@ -55,6 +88,10 @@ class DoctorConsultation(ctk.CTkFrame):
         if not selected_items:
             return
         
+    def history_selected(self, event=None):
+        selected_items = self.history_tree.selection()
+        if not selected_items:
+            return
 
     def start_consultation(self):
         selected_items = self.tree.selection()
@@ -73,6 +110,19 @@ class DoctorConsultation(ctk.CTkFrame):
             self.controller.selected_patient = self.controller.hospital.patients.get(self.controller.selected_appointment.get("patient_hid"))
             
             self.controller.show_frame("DoctorConsultationCreate")
+    
+    def view_diagnosis_details(self):
+        selected_items = self.history_tree.selection()
+        if not selected_items:
+            messagebox.showinfo("Selection Required", "Please select a diagnosis to view details.")
+            return
+        
+        diagnosis_id = int(self.history_tree.item(selected_items[0], "values")[0])
+        # Here you would implement the logic to show diagnosis details
+        messagebox.showinfo("View Diagnosis", f"Viewing details for diagnosis ID: {diagnosis_id}")
+        # Alternatively, you could navigate to a detailed view:
+        # self.controller.selected_diagnosis = diagnosis_id
+        # self.controller.show_frame("DiagnosisDetailView")
 
     def sort_treeview(self, col):
         self.sort_order[col] = not self.sort_order[col]
@@ -89,6 +139,21 @@ class DoctorConsultation(ctk.CTkFrame):
         
         self.update_heading_arrow(col)
 
+    def sort_history_treeview(self, col):
+        self.history_sort_order[col] = not self.history_sort_order[col]
+        
+        items = [(self.history_tree.item(item, "values"), item) for item in self.history_tree.get_children("")]
+        
+        columns = ("ID", "Date", "Patient", "Diagnosis", "Status")
+        col_idx = columns.index(col)
+        
+        items.sort(key=lambda x: x[0][col_idx], reverse=self.history_sort_order[col])
+        
+        for idx, (_, item) in enumerate(items):
+            self.history_tree.move(item, "", idx)
+        
+        self.update_history_heading_arrow(col)
+
     def update_heading_arrow(self, sort_col):
         columns = ("ID", "Date", "Time", "Patient", "Room", "Status")
         for col in columns:
@@ -96,6 +161,14 @@ class DoctorConsultation(ctk.CTkFrame):
             if col == sort_col:
                 text = f"{col} {'   ˄' if self.sort_order[col] else '  ˅'}"
             self.tree.heading(col, text=text)
+    
+    def update_history_heading_arrow(self, sort_col):
+        columns = ("ID", "Date", "Patient", "Diagnosis", "Status")
+        for col in columns:
+            text = col
+            if col == sort_col:
+                text = f"{col} {'   ˄' if self.history_sort_order[col] else '  ˅'}"
+            self.history_tree.heading(col, text=text)
 
     def process_time_tuples(self, time):
         if isinstance(time, str) and time.startswith("(") and time.endswith(")"):
@@ -152,6 +225,46 @@ class DoctorConsultation(ctk.CTkFrame):
         for data in appointment_data:
             self.tree.insert("", "end", values=data)
 
+    def load_diagnoses(self):
+        self.history_tree.delete(*self.history_tree.get_children(''))
+        doctor_data = self.controller.current_user_data
+        
+        if not doctor_data:
+            return
+            
+        doctor_id = doctor_data.get_protected_attribute("doctor_id")
+        
+        # Here, you would fetch diagnoses created by this doctor
+        # This is a placeholder - you need to implement based on your data structure
+        diagnoses = self.controller.hospital.get_diagnoses_by_doctor(doctor_id) 
+        
+        if not diagnoses or len(diagnoses) == 0:
+            return
+            
+        diagnosis_data = []
+        for diagnosis in diagnoses:
+            try:
+                diag_id = diagnosis.get("diagnosis_id")
+                date = diagnosis.get("date", "N/A")
+                patient_id = diagnosis.get("patient_hid", "N/A")
+                diag_text = diagnosis.get("diagnosis_text", "N/A")
+                status = diagnosis.get("status", "Completed")
+                
+                # Truncate long diagnosis text
+                if len(diag_text) > 30:
+                    diag_text = diag_text[:27] + "..."
+                    
+                diagnosis_data.append((diag_id, date, patient_id, diag_text, status))
+            except Exception as exc:
+                pass
+        
+        # Sort diagnoses by date (newest first)
+        diagnosis_data.sort(key=lambda x: x[1], reverse=True)
+        
+        for data in diagnosis_data:
+            self.history_tree.insert("", "end", values=data)
+
     def tkraise(self, *args, **kwargs):
         super().tkraise(*args, **kwargs)
         self.load_appointments()
+        self.load_diagnoses()

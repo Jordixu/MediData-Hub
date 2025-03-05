@@ -38,7 +38,9 @@ class Doctor(Person):
             availability: dict = None, 
             assigned_patients: list = None, 
             notifications: list = None,
-            appointments: list = None
+            appointments: list = None,
+            diagnoses: list = None,
+            prescriptions: list = None
             ) -> None:
         """
         Creates a Doctor instance.
@@ -51,7 +53,7 @@ class Doctor(Person):
             surname (str): The surname of the doctor.
             birthday (date): The birth date of the doctor
         """
-        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, appointments, notifications)
+        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, diagnoses, prescriptions, appointments, notifications)
         self.__speciality = speciality
         self.__department = department
         self.__availability = availability if availability is not None else {}

@@ -34,13 +34,11 @@ class Patient(Person):
             gender: str, 
             weight: float, 
             height: float, 
-            assigned_doctor_hid: int = None, 
             status: str = 'Outpatient', 
             appointments: list = None, 
-            medications: list = None, 
-            allergies: list = None, 
             diagnoses: list = None, 
-            notifications: list = None
+            notifications: list = None,
+            prescriptions: list = None
             ) -> None:
         """
         Initialize a new Patient instance.
@@ -63,13 +61,10 @@ class Patient(Person):
             notifications (list, optional): The list of notifications for the patient. Defaults to None.
         """
         
-        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, appointments, notifications)
+        super().__init__(personal_id, hospital_id, password, name, surname, birthday, gender, diagnoses, prescriptions, appointments, notifications)
         self.__weight = weight
         self.__height = height
         self.__status = status # Inpatient, Outpatient, Emergency
-        self.__prescriptions = medications if medications is not None else []
-        self.__diagnoses = diagnoses if diagnoses is not None else []
-
         
     def __str__(self):
         """REturns a string representation of the patient.
@@ -77,35 +72,5 @@ class Patient(Person):
         Returns:
             str: The string representation of the patient.
         """
-        return f'Patient {self._name} {self._surname} {self._personal_id} {self._password} {self._birthday} {self.__prescriptions} {self.__diagnoses} {self._notifications} {self.__weight} {self.__height} {self.__status} {self._appointments}'
+        return f'Patient {self._name} {self._surname} {self._personal_id} {self._password} {self._birthday} {self._notifications} {self.__weight} {self.__height} {self.__status} {self._appointments}'
         
-    def add_diagnosis(self, diagnosis_id) -> None:
-        """Adds a diagnosis to the patient.
-        
-        Args:
-            diagnosis_id (int): The diagnosis ID to add.
-        """
-        self.__diagnoses.append(diagnosis_id)
-        
-    def remove_diagnosis(self, diagnosis_id) -> None:
-        """Removes a diagnosis from the patient.
-        
-        Args:
-            diagnosis_id (int): The diagnosis ID to remove.
-        """
-        try:
-            del self.__diagnoses[diagnosis_id]
-        except IndexError:
-            print('Diagnosis not found')
-        
-    def add_presciption(self, prescription_id) -> None:
-        if prescription_id not in self.__prescriptions.keys():
-            self.__prescriptions.append(prescription_id)
-        else:
-            raise ValueError('Prescription already exists')
-        
-    def remove_prescription(self, prescription_id) -> None:
-        try:
-            del self.__prescriptions[prescription_id]
-        except IndexError:
-            print('Prescription not found')

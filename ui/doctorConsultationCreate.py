@@ -4,15 +4,12 @@ from tkinter import messagebox
 from tkinter import ttk
 from datetime import datetime, date
 
-# Es el archivo más largo de todos, pero no es tan complicado.
-# Se puede dividir en secciones para facilitar su lectura.
-
 class DoctorConsultationCreate(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
         self.title = "Doctor Consultation"
-        self.selected_drugs = []
+        self.selected_drugs = []  # This will now store drug ID, name, commercial name, and dosage
 
         # Main container with scrollable frame
         self.container_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
@@ -357,34 +354,10 @@ class DoctorConsultationCreate(ctk.CTkFrame):
         self.selected_drugs_frame = ctk.CTkScrollableFrame(
             self.drug_selection_frame, 
             fg_color="#f0f0f0",
-            height=150,
+            height=250,  # Increased height to accommodate dosage instructions
             corner_radius=5
         )
         self.selected_drugs_frame.pack(fill="x", pady=5)
-        
-        # Dosage instructions
-        # I thought about doing it w/ dropdowns but it's too much work and I'm lazy
-        dosage_label_frame = ctk.CTkFrame(self.drug_frame, fg_color="transparent")
-        dosage_label_frame.pack(fill="x", padx=20, pady=(5, 10))
-        
-        ctk.CTkLabel(
-            dosage_label_frame, 
-            text="Dosage Instructions:", 
-            font=ctk.CTkFont(size=16, weight="bold"),
-            anchor="w"
-        ).pack(anchor="w")
-        
-        self.dosage_entry = ctk.CTkTextbox(
-            self.drug_frame, 
-            height=100, 
-            width=400, 
-            wrap="word",
-            font=ctk.CTkFont(size=16),
-            border_width=1,
-            border_color="#e0e0e0",
-            corner_radius=6
-        )
-        self.dosage_entry.pack(fill="x", padx=20, pady=(0, 20))
         
         ### BUTTONS SECTION ##########################################
         # There are not much to say about this section, just two buttons.
@@ -683,7 +656,8 @@ class DoctorConsultationCreate(ctk.CTkFrame):
         self.selected_drugs.append({
             "id": drug_id,
             "name": drug_name,
-            "commercial_name": commercial_name
+            "commercial_name": commercial_name,
+            "dosage": ""  # Initialize with empty dosage
         })
         
         # Update the UI with the selected drugs
@@ -706,18 +680,23 @@ class DoctorConsultationCreate(ctk.CTkFrame):
             ).pack(pady=15)
         else:
             for i, drug in enumerate(self.selected_drugs):
-                drug_row = ctk.CTkFrame(self.selected_drugs_frame, fg_color="transparent")
-                drug_row.pack(fill="x", pady=5, padx=10)
+                # Create a frame for each drug with its details and dosage
+                drug_container = ctk.CTkFrame(self.selected_drugs_frame, fg_color="transparent")
+                drug_container.pack(fill="x", pady=10, padx=10)
+                
+                # Drug header with name and remove button
+                drug_header = ctk.CTkFrame(drug_container, fg_color="transparent")
+                drug_header.pack(fill="x")
                 
                 drug_text = f"{drug['name']} ({drug['commercial_name']})"
                 ctk.CTkLabel(
-                    drug_row, 
+                    drug_header, 
                     text=drug_text,
-                    font=ctk.CTkFont(size=14)
+                    font=ctk.CTkFont(size=14, weight="bold")
                 ).pack(side="left", padx=5)
                 
                 remove_btn = ctk.CTkButton(
-                    drug_row, 
+                    drug_header, 
                     text="✕", 
                     width=36, 
                     height=28, 
@@ -727,6 +706,47 @@ class DoctorConsultationCreate(ctk.CTkFrame):
                     font=ctk.CTkFont(size=14)
                 )
                 remove_btn.pack(side="right", padx=5)
+                
+                # Dosage instructions for this specific drug
+                dosage_label = ctk.CTkLabel(
+                    drug_container,
+                    text="Dosage Instructions:",
+                    font=ctk.CTkFont(size=12),
+                    anchor="w"
+                )
+                dosage_label.pack(anchor="w", padx=5, pady=(5, 2))
+                
+                # Textbox for dosage instructions
+                dosage_entry = ctk.CTkTextbox(
+                    drug_container,
+                    height=60,
+                    width=400,
+                    wrap="word",
+                    font=ctk.CTkFont(size=12),
+                    border_width=1,
+                    border_color="#e0e0e0",
+                    corner_radius=4
+                )
+                dosage_entry.pack(fill="x", padx=5, pady=(0, 5))
+                
+                # Insert current dosage if it exists
+                if drug["dosage"]:
+                    dosage_entry.insert("1.0", drug["dosage"])
+                
+                # Store reference to this entry so we can update the drug's dosage when changed
+                # Use tag_bind to update the drug's dosage whenever the text changes
+                dosage_entry.bind("<KeyRelease>", lambda event, idx=i, entry=dosage_entry: self.update_drug_dosage(idx, entry))
+                
+                # Add a separator line between drugs
+                if i < len(self.selected_drugs) - 1:
+                    separator = ctk.CTkFrame(self.selected_drugs_frame, height=1, fg_color="#e0e0e0")
+                    separator.pack(fill="x", padx=15, pady=5)
+    
+    def update_drug_dosage(self, index, entry_widget):
+        """Update the dosage for a specific drug in the selected_drugs list"""
+        if 0 <= index < len(self.selected_drugs):
+            dosage_text = entry_widget.get("1.0", "end-1c").strip()
+            self.selected_drugs[index]["dosage"] = dosage_text
     
     def remove_drug(self, index):
         """Remove a drug from the selected drugs list"""
@@ -740,7 +760,7 @@ class DoctorConsultationCreate(ctk.CTkFrame):
             self.controller.selected_appointment.change_status("Cancelled")
             self.controller.selected_appointment = None
             self.controller.selected_patient = None
-            self.selected_drugs = []
+            self.clear_fields()
             self.controller.show_frame("DoctorConsultation")
             return
         return
@@ -751,7 +771,6 @@ class DoctorConsultationCreate(ctk.CTkFrame):
         title = self.title_entry.get().strip()
         description = self.description_entry.get("1.0", "end-1c").strip()
         treatment = self.treatment_entry.get("1.0", "end-1c").strip()
-        dosage = self.dosage_entry.get("1.0", "end-1c").strip()
         
         # Validate required fields
         if not title:
@@ -761,6 +780,18 @@ class DoctorConsultationCreate(ctk.CTkFrame):
         if not description:
             messagebox.showerror("Error", "Please enter a diagnosis description")
             return
+        
+        # Look if all drugs have dosage instructions
+        if self.selected_drugs:
+            missing_dosage = False
+            for drug in self.selected_drugs:
+                if not drug["dosage"].strip():
+                    missing_dosage = True
+                    break
+            
+            if missing_dosage:
+                messagebox.showerror("Error", "Please provide dosage instructions for all medications")
+                return
         
         # Confirm completion
         confirm = messagebox.askyesno(
@@ -789,20 +820,25 @@ class DoctorConsultationCreate(ctk.CTkFrame):
                 doctor_id=doctor_id,
                 patient_id=patient_id
             )
-            
+
             # Add medications if selected
+            medication = {}
             if self.selected_drugs:
-                self.controller.hospital.prescribe_medications(
-                    patient_id=patient_id,
-                    doctor_id=doctor_id,
-                    diagnosis_id=diagnosis_id,
-                    medications=self.selected_drugs,
-                    dosage_instructions=dosage
-                )
-            
+                for drug in self.selected_drugs:
+                    medication[drug["id"]] = drug["dosage"]
+
+                # Add prescriptions
+                    self.controller.hospital.prescribe_medication(
+                        patient_id=patient_id,
+                        doctor_id=doctor_id,
+                        diagnosis_id=diagnosis_id,
+                        medication=medication,
+                        appointment_id=self.controller.selected_appointment.get("appointment_id")
+                    )
+
             # Update appointment status to completed
             appointment.change_status("Completed")
-            
+
             # Send notification to patient
             self.controller.hospital.send_notification(
                 receiver_hid=patient_id,
@@ -811,16 +847,25 @@ class DoctorConsultationCreate(ctk.CTkFrame):
                 type="Medical",
                 message=f"Your consultation has been completed. Diagnosis: {title}. Please check your prescriptions for any medications."
             )
-            
+
             messagebox.showinfo("Success", "Consultation completed successfully!")
             self.controller.selected_appointment = None
             self.controller.selected_patient = None
-            self.selected_drugs = []
+            self.clear_fields()
             self.controller.show_frame("DoctorConsultation")
             
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
-    
+            
+    def clear_fields(self):
+        """Clear all fields in the form"""
+        self.title_entry.delete(0, "end")
+        self.description_entry.delete("1.0", "end")
+        self.treatment_entry.delete("1.0", "end")
+        self.drug_search.delete(0, "end")
+        self.selected_drugs = []
+        self.update_drug_list()
+
     def tkraise(self, *args, **kwargs):
         """Load data when frame is raised"""
         super().tkraise(*args, **kwargs)

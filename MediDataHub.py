@@ -8,6 +8,7 @@ from notification import Notification
 from utilities import Utilities
 from drug import Drug
 from diagnosis import Diagnosis
+from prescription import Prescription
 
 class Hospital:
 
@@ -351,7 +352,7 @@ class Hospital:
                     )
                     
                     break
-            
+
             # If no available room is found, cancel the appointment
             if not new_room_found:
                 appointment.change_status('Cancelled')
@@ -372,7 +373,7 @@ class Hospital:
                     'Cancellation', 
                     f"Your appointment with patient {patient_id} on {date} at {timeframe[0]} has been cancelled due to room {room_number} closure."
                 )
-        
+
     def open_room(self, room_number: int) -> None:
         """
         Opens a room and sets all its availability to True.
@@ -577,15 +578,7 @@ class Hospital:
             diagnosis_id = max(self.diagnoses.keys(), default=0) + 1
             
             # Create diagnosis
-            diagnosis = {
-                "diagnosis_id": diagnosis_id,
-                "title": title,
-                "description": description,
-                "treatment": treatment,
-                "appointment_id": appointment_id,
-                "doctor_hid": doctor_id,
-                "patient_hid": patient_id,
-            }
+            diagnosis = Diagnosis(diagnosis_id, title, appointment_id, doctor_id, patient_id, treatment, description)
             
             # Add to hospital diagnoses
             self.diagnoses[diagnosis_id] = diagnosis
@@ -594,37 +587,34 @@ class Hospital:
             patient = self.patients[patient_id]
             patient.add_diagnosis(diagnosis_id)
             
+            doctor = self.doctors[doctor_id]
+            doctor.add_diagnosis(diagnosis_id)
+            
             return diagnosis_id
             
         except Exception as e:
             print(f"Error creating diagnosis: {e}")
             raise
     
-    def prescribe_medications(self, patient_id, doctor_id, diagnosis_id, medications, dosage_instructions):
+    def prescribe_medication(self, patient_hid, doctor_hid, diagnosis_id, medication, appointment_id) -> None:
         try:
             # Create a prescription for each medication
-            for medication in medications:
+            for drug_id, dosage in medication.items():
                 # Generate a new prescription ID
                 prescription_id = max(self.prescriptions.keys(), default=0) + 1
                 
                 # Create prescription
-                prescription = { # Instead of a class, we use a dictionary since we won't use it for anything else except for storing data
-                    "prescription_id": prescription_id,
-                    "drug_id": medication["id"],
-                    "patient_hid": patient_id,
-                    "doctor_hid": doctor_id,
-                    "diagnosis_id": diagnosis_id,
-                    "dosage_instructions": dosage_instructions,
-                    "date_prescribed": dt.datetime.now().strftime("%Y-%m-%d"),
-                    "status": "Active"
-                }
+                new_prescription = Prescription(prescription_id, drug_id, dosage, doctor_hid, patient_hid, appointment_id, diagnosis_id)
                 
                 # Add to hospital prescriptions
-                self.prescriptions[prescription_id] = prescription
+                self.prescriptions[prescription_id] = new_prescription
                 
                 # Add prescription to patient's record
-                patient = self.patients[patient_id]
+                patient = self.patients[patient_hid]
                 patient.add_prescription(prescription_id)
+                
+                doctor = self.doctors[doctor_hid]
+                doctor.add_prescription(prescription_id)
                 
         except Exception as e:
             print(f"Error creating prescriptions: {e}")

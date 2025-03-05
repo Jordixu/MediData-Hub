@@ -31,6 +31,8 @@ from ui.doctorConsultationCreate import DoctorConsultationCreate
 from ui.adminModifyDoctor import AdminModifyDoctor
 from ui.adminModifyDrugs import AdminModifyDrugs
 from ui.appointmentDetails import AppointmentDetails
+from ui.patientDiagnoses import PatientDiagnoses
+from ui.diagnosesDetails import DiagnosesDetails
 
 from tkinter import messagebox
 import customtkinter as ctk
@@ -84,7 +86,7 @@ class MedidataHubUI(ctk.CTk):
         
         self.frames = {}
         for F in (
-            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, PatientPrescriptions, PatientInformation, AdminMainScreen, LoginScreenAdmin, PatientAppointments, ChangePassword, PatientRequestAppointment, DoctorNotifications, DoctorNotificationsDetailsRequest, NotificationsDetails, DoctorInformation, DoctorAppointments, PatientNotifications, DoctorConsultation, AdminAppointments, AdminDoctors, AdminPatients, AdminRooms, AdminDrugs, AdminNotifications, AdminViewAppointmentsRoom, AdminAddDoctor, AdminAddDrugs, DoctorConsultationCreate, AdminModifyDoctor, AdminModifyDrugs, AppointmentDetails
+            RoleSelectionScreen, LoginScreenPatient, RegisterScreenPatient, LoginScreenDoctor, PatientMainScreen,DoctorMainScreen, PatientPrescriptions, PatientInformation, AdminMainScreen, LoginScreenAdmin, PatientAppointments, ChangePassword, PatientRequestAppointment, DoctorNotifications, DoctorNotificationsDetailsRequest, NotificationsDetails, DoctorInformation, DoctorAppointments, PatientNotifications, DoctorConsultation, AdminAppointments, AdminDoctors, AdminPatients, AdminRooms, AdminDrugs, AdminNotifications, AdminViewAppointmentsRoom, AdminAddDoctor, AdminAddDrugs, DoctorConsultationCreate, AdminModifyDoctor, AdminModifyDrugs, AppointmentDetails, PatientDiagnoses, DiagnosesDetails
         ):
             frame = F(container, self)
             self.frames[F.__name__] = frame

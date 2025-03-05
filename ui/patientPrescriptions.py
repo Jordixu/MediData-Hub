@@ -43,16 +43,16 @@ class PatientPrescriptions(ctk.CTkFrame):
         style.map('Treeview', background=[('selected', '#4a6984')])
         
         # Treeview setup
-        columns = ("ID", "Date", "Doctor", "Medication", "Dosage", "Status")
+        columns = ("ID", "Drug ID", "Doctor", "Diagnosis ID", "Dosage Instructions", "Status")
         self.tree = ttk.Treeview(frame, columns=columns, show='headings', yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.tree.yview)
 
         # Configure columns width and alignment
         self.tree.column("ID", width=50, anchor="center")
-        self.tree.column("Date", width=100, anchor="center")
+        self.tree.column("Drug ID", width=100, anchor="center")
         self.tree.column("Doctor", width=150, anchor="center")
-        self.tree.column("Medication", width=180, anchor="w")
-        self.tree.column("Dosage", width=250, anchor="w")
+        self.tree.column("Diagnosis ID", width=180, anchor="w")
+        self.tree.column("Dosage Instructions", width=250, anchor="w")
         self.tree.column("Status", width=120, anchor="center")
 
         # Configure headings with sort commands
@@ -157,40 +157,26 @@ class PatientPrescriptions(ctk.CTkFrame):
         for item in self.tree.get_children():
             self.tree.delete(item)
             
-        if not self.controller.current_user or not self.controller.current_user_data:
-            return
-            
-        patient_id = self.controller.current_user
+        patient = self.controller.current_user_data
         
-        # For testing, let's add some dummy data (remove this in production)
-        # In a real implementation, you would fetch from your database
-        dummy_data = [
-            {"id": 1001, "date": dt.date(2023, 10, 15), "doctor": "Dr. Smith", 
-             "medication": "Ibuprofen", "dosage": "400mg, 3 times a day for 5 days", "status": "Active"},
-            {"id": 1002, "date": dt.date(2023, 9, 28), "doctor": "Dr. Johnson", 
-             "medication": "Amoxicillin", "dosage": "500mg, twice daily for 7 days", "status": "Completed"},
-            {"id": 1003, "date": dt.date(2023, 11, 5), "doctor": "Dr. Williams", 
-             "medication": "Loratadine", "dosage": "10mg, once daily as needed", "status": "Active"},
-        ]
+        try:
+            prescriptions_ids = patient.get("prescriptions", [])
+            for prescription_id in prescriptions_ids:
+                prescription = self.controller.hospital.prescriptions.get(prescription_id)
+                if prescription:
+                    print(prescription)
+                    self.tree.insert("", "end", values=(
+                        prescription.get("prescription_id"),
+                        prescription.get("drug_id"),
+                        prescription.get("doctor_hid"),
+                        prescription.get("diagnosis_id"),
+                        prescription.get("dosage_instructions"),
+                        prescription.get("status")
+                    ))
+        except Exception as e:
+            print(e)
+            messagebox.showerror("Error", "An error occurred while loading prescriptions.")
         
-        # Add items to the treeview
-        for prescription in dummy_data:
-            self.tree.insert('', 'end', values=(
-                prescription["id"],
-                prescription["date"].strftime("%Y-%m-%d"),
-                prescription["doctor"],
-                prescription["medication"],
-                prescription["dosage"],
-                prescription["status"]
-            ))
-            
-        # Select the first item
-        if self.tree.get_children():
-            first_item = self.tree.get_children()[0]
-            self.tree.selection_set(first_item)
-            self.tree.focus(first_item)
-        else:
-            self.view_button.configure(state="disabled")
 
     def tkraise(self, *args, **kwargs):
         """Override tkraise to refresh data when frame is shown"""

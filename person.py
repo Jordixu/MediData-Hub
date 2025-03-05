@@ -24,7 +24,7 @@ class Person(Foundation):
         display_last_notification(): Displays the last notification the person received.
         add_appointment(appointment_id): Adds an appointment to the person.
     """
-    def __init__(self, personal_id: int, hospital_id: int, password: str, name: str, surname: str, birthday: date, gender: str, appointments: list = None, notifications: list = None):
+    def __init__(self, personal_id: int, hospital_id: int, password: str, name: str, surname: str, birthday: date, gender: str, diagnoses: list = None, prescriptions: list = None, appointments: list = None, notifications: list = None):
         self._personal_id = personal_id
         self._hospital_id = hospital_id
         self._password = password
@@ -34,6 +34,8 @@ class Person(Foundation):
         self._gender = gender
         self._appointments = appointments if appointments is not None else []
         self._notifications = notifications if notifications is not None else []
+        self._diagnoses = diagnoses if diagnoses is not None else []
+        self._prescriptions = prescriptions if prescriptions is not None else []
         
     def __name__(self) -> str:
         return self._name + ' ' + self._surname
@@ -61,3 +63,37 @@ class Person(Foundation):
             else:
                 self._appointments.append(appointment_id)
                 return
+            
+    def add_diagnosis(self, diagnosis_id) -> None:
+        """Adds a diagnosis to the patient.
+        
+        Args:
+            diagnosis_id (int): The diagnosis ID to add.
+        """
+        if diagnosis_id not in self._diagnoses.keys():
+            self._diagnoses.append(diagnosis_id)
+        else:
+            raise ValueError('Diagnosis already exists')
+        
+    def remove_diagnosis(self, diagnosis_id) -> None:
+        """Removes a diagnosis from the patient.
+        
+        Args:
+            diagnosis_id (int): The diagnosis ID to remove.
+        """
+        try:
+            del self._diagnoses[diagnosis_id]
+        except IndexError:
+            print('Diagnosis not found')
+        
+    def add_prescription(self, prescription_id) -> None:
+        if prescription_id not in self._prescriptions:
+            self._prescriptions.append(prescription_id)
+        else:
+            raise ValueError('Prescription already exists')
+        
+    def remove_prescription(self, prescription_id) -> None:
+        try:
+            del self._prescriptions[prescription_id]
+        except IndexError:
+            print('Prescription not found')

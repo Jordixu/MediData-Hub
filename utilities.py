@@ -211,7 +211,7 @@ class Utilities:
                     else:
                         return [int(inside)] if inside.isdigit() else inside
             except ValueError:
-                if any(keyword in value for keyword in ["appointment", "Dr.", "Mr.", "Mrs.", "Ms."]):
+                if any(keyword in value for keyword in ["appointment", "Dr.", "Mr.", "Mrs.", "Ms.", "consultation"]):
                     return
                 print(f"Could not convert value '{value}' to int, float, or bool.") # Debugging purposes
         return value # Return the original value if it's not a string (already converted)

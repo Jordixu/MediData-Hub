@@ -1,6 +1,5 @@
 from tkinter import messagebox
 import customtkinter as ctk
-
 class PatientMainScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -23,16 +22,22 @@ class PatientMainScreen(ctk.CTkFrame):
         menu_frame = ctk.CTkFrame(self, fg_color="transparent")
         menu_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
         
+        # Configure grid for button layout
         menu_frame.grid_columnconfigure((0, 1), weight=1, uniform="column")
-        menu_frame.grid_rowconfigure((0, 1), weight=1, uniform="row")
+        menu_frame.grid_rowconfigure((0, 1, 2), weight=1, uniform="row")
         
         button_font = ctk.CTkFont(size=22, weight="bold")
         button_height = 80
         
-        self.create_button(menu_frame, "Personal Data", "PatientInformation", 0, 0, button_font, button_height)
+        # Create first four buttons and store one of them to get its width later
+        button1 = self.create_button(menu_frame, "Personal Data", "PatientInformation", 0, 0, button_font, button_height)
         self.create_button(menu_frame, "Prescriptions", "PatientPrescriptions", 0, 1, button_font, button_height)
         self.create_button(menu_frame, "Appointments", "PatientAppointments", 1, 0, button_font, button_height)
         self.create_button(menu_frame, "Notifications", "PatientNotifications", 1, 1, button_font, button_height)
+        
+        # Create a container frame for the Diagnoses button that will be centered
+        center_container = ctk.CTkFrame(menu_frame, fg_color="transparent")
+        center_container.grid(row=2, column=0, columnspan=2)
         
         sign_out_frame = ctk.CTkFrame(self, fg_color="transparent")
         sign_out_frame.grid(row=2, column=0, pady=(20, 30))
@@ -48,6 +53,18 @@ class PatientMainScreen(ctk.CTkFrame):
             hover_color="#e74c3c"
         )
         sign_out_button.place(relx=0.5, rely=0.85, anchor="center")
+
+
+        diagnoses_button = ctk.CTkButton(
+            menu_frame,
+            text="Diagnoses",
+            command=lambda: self.controller.show_frame("PatientDiagnoses"),
+            font=button_font,
+            height=button_height,
+            width=650, 
+            corner_radius=10
+        )
+        diagnoses_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="n")
 
     def create_button(self, parent, text, target_frame, row, column, font, height):
         button = ctk.CTkButton(
