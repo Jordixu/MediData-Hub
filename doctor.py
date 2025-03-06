@@ -62,7 +62,7 @@ class Doctor(Person):
         self.__assigned_patients = assigned_patients if assigned_patients is not None else []
         
     def __name__(self):
-        return 'Doctor' + super().__name__()
+        return 'Dr. ' + super().__name__()
 
     def __str__(self): # Debbugins
         return f'Dr. {self._name} {self._surname}'

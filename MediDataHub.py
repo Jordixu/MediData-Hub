@@ -144,7 +144,7 @@ class Hospital:
         try:
             for prescription in self.utility.load_from_csv('./database/prescriptions.csv'):
                 self.prescriptions[prescription['prescription_id']] = prescription
-                print(prescription)
+                # print(prescription)
         except FileNotFoundError as exc:
             raise FileNotFoundError('No prescriptions found in the database') from exc
         except TypeError as e:
@@ -446,7 +446,7 @@ class Hospital:
                     appointment.change_datetime(date, timeframe)
                     appointment.change_room(int(room.get('number')))
                     # print(room.get('number'))
-                    self.send_notification(patient, doctor, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {self.doctors[doctor].get_protected_attribute("surname")} has been scheduled for {str(date)} at {str(timeframe[0])}')
+                    self.send_notification(patient, doctor, 'Appointment Scheduled', 'Appointment', f'Your appointment with Dr. {self.doctors[doctor].get_protected_attribute("surname")} has been scheduled for {str(date)} at {str(timeframe[0])} at room {room.get("number")}. To view your appointments, please visit the appointments page.')
                     return
                 else:
                     continue
@@ -491,7 +491,7 @@ class Hospital:
         if room_number:
             appointment.change_room(room_number)
         
-        self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Rescheduled', 'Appointment', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been rescheduled for {str(date)} at {str(timeframe[0])}')
+        self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Rescheduled', 'Appointment', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been rescheduled for {str(date)} at {str(timeframe[0])} at room {room_number}. To view your appointments, please visit the appointments page.')
         return
 
     def cancel_appointment(self, appointment_id: int, sender: str) -> str:
@@ -521,13 +521,14 @@ class Hospital:
         appointment.change_status('Cancelled')
         
         if sender == 'doctor':
-            self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been cancelled.')
+            self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment at {appointment.get("date")} at {appointment.get("timeframe")[0]} in room {appointment.get("room_number")} with Dr. {doctor.get_protected_attribute("surname")} has been cancelled.')
             return
         elif sender == 'patient':
-            self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
+            self.send_notification(doctor.get_protected_attribute('hospital_id'), patient.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment (ID: {appointment_id}) with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
             return
         elif sender == 'admin':
-            self.send_notification(patient.get_protected_attribute('hospital_id'), doctor.get_protected_attribute('hospital_id'), 'Appointment Cancelled', 'Cancellation', f'Your appointment with Dr. {doctor.get_protected_attribute("surname")} has been cancelled.')
+            self.send_notification(patient.get_protected_attribute('hospital_id'), "Administration", 'Appointment Cancelled', 'Cancellation', f'Your appointment at {appointment.get("date")} at {appointment.get("timeframe")[0]} in room {appointment.get("room_number")} with Dr. {doctor.get_protected_attribute("surname")} has been cancelled.')
+            self.send_notification(doctor.get_protected_attribute('hospital_id'), "Administration", 'Appointment Cancelled', 'Cancellation', f'Your appointment with {patient.get_protected_attribute("name")} {patient.get_protected_attribute("surname")} has been cancelled.')
             return
         else:
             raise ValueError('Sender not found')
@@ -598,25 +599,23 @@ class Hospital:
         #     print(f"Error creating diagnosis: {e}")
         #     raise
     
-    def prescribe_medication(self, patient_hid, doctor_hid, diagnosis_id, medication, appointment_id) -> None:
+    def prescribe_medication(self, patient_hid, doctor_hid, diagnosis_id, drug_id, dosage, appointment_id) -> None:
         try:
-            # Create a prescription for each medication
-            for drug_id, dosage in medication.items():
-                # Generate a new prescription ID
-                prescription_id = max(self.prescriptions.keys(), default=0) + 1
-                
-                # Create prescription
-                new_prescription = Prescription(prescription_id, drug_id, dosage, doctor_hid, patient_hid, appointment_id, diagnosis_id)
-                
-                # Add to hospital prescriptions
-                self.prescriptions[prescription_id] = new_prescription
-                
-                # Add prescription to patient's record
-                patient = self.patients[patient_hid]
-                patient.add_prescription(prescription_id)
-                
-                doctor = self.doctors[doctor_hid]
-                doctor.add_prescription(prescription_id)
+            # Generate a new prescription ID
+            prescription_id = max(self.prescriptions.keys(), default=0) + 1
+            
+            # Create prescription
+            new_prescription = Prescription(prescription_id, drug_id, dosage, doctor_hid, patient_hid, appointment_id, diagnosis_id)
+            
+            # Add to hospital prescriptions
+            self.prescriptions[prescription_id] = new_prescription
+
+            # Add prescription to patient's record
+            patient = self.patients[patient_hid]
+            patient.add_prescription(prescription_id)
+            
+            doctor = self.doctors[doctor_hid]
+            doctor.add_prescription(prescription_id)
                 
         except Exception as e:
             print(f"Error creating prescriptions: {e}")

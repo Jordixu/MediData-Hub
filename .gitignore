@@ -12,6 +12,7 @@ database/notifications.csv
 random_datas.py
 pruebapruebaui.py
 database/prescriptions.csv
+userguide.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

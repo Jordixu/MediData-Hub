@@ -1,5 +1,6 @@
 from tkinter import messagebox
 import customtkinter as ctk
+
 class PatientMainScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -21,20 +22,17 @@ class PatientMainScreen(ctk.CTkFrame):
         
         menu_frame = ctk.CTkFrame(self, fg_color="transparent")
         menu_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
-        
-        # Configure grid for button layout
+
         menu_frame.grid_columnconfigure((0, 1), weight=1, uniform="column")
-        menu_frame.grid_rowconfigure((0, 1, 2), weight=1, uniform="row")
+        menu_frame.grid_rowconfigure((0, 1), weight=1, uniform="row")
         
         button_font = ctk.CTkFont(size=22, weight="bold")
         button_height = 80
-        
-        # Create buttons
-        button1 = self.create_button(menu_frame, "Personal Data", "PatientInformation", 0, 0, button_font, button_height)
-        self.create_button(menu_frame, "Prescriptions", "PatientPrescriptions", 0, 1, button_font, button_height)
+
+        self.create_button(menu_frame, "Personal Data", "PatientInformation", 0, 0, button_font, button_height)
+        self.create_button(menu_frame, "Prescriptions", "PatientMedicalRecords", 0, 1, button_font, button_height)
         self.create_button(menu_frame, "Appointments", "PatientAppointments", 1, 0, button_font, button_height)
         self.create_button(menu_frame, "Notifications", "PatientNotifications", 1, 1, button_font, button_height)
-        self.create_button(menu_frame, "Diagnoses", "PatientDiagnoses", 2, 0, button_font, button_height)
         
         sign_out_frame = ctk.CTkFrame(self, fg_color="transparent")
         sign_out_frame.grid(row=2, column=0, pady=(20, 30))

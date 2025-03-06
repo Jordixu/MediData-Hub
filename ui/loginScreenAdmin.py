@@ -7,6 +7,8 @@ class LoginScreenAdmin(ctk.CTkFrame):
         super().__init__(parent)
         self.controller = controller
         self.title = "Login Screen"
+
+        self.bind("<Return>", lambda e: self.login_action())
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=2)

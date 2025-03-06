@@ -246,12 +246,12 @@ class PatientInformation(ctk.CTkFrame):
             if not (dt.date(1900, 1, 1) <= self.birthday_entry.get_date() <= dt.date.today()):
                 raise ValueError("I don't think you were born in the future or in the 19th century...")
             patient.set_protected_info("birthday", self.birthday_entry.get_date(), 'date')
-            patient.set("weight", self.controller.hospital.validate_value(
+            patient.set("weight", self.controller.utility.validate_and_cast_value(
                 self.weight_entry.get(), float, 0, 1000,
                 custom_message_incorrect_type="The weight must be a number...",
                 custom_message_lower="The weight must be a positive number.",
                 custom_message_upper="Did you know that the heaviest person ever recorded was 635 kg?"), 'float')
-            patient.set("height", self.controller.hospital.validate_value(
+            patient.set("height", self.controller.utility.validate_and_cast_value(
                 self.height_entry.get(), float, 0, 300,
                 custom_message_incorrect_type="The height must be a number...",
                 custom_message_lower="The height must be a positive number.",

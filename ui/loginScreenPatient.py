@@ -13,6 +13,8 @@ class LoginScreenPatient(ctk.CTkFrame):
         self.grid_rowconfigure(1, weight=6)
         self.grid_rowconfigure(2, weight=2)
         
+        self.bind("<Return>", lambda: self.login_action())
+        
         header_label = ctk.CTkLabel(
             self, 
             text="Patient Login", 

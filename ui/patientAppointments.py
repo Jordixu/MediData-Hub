@@ -248,7 +248,8 @@ class PatientAppointments(ctk.CTkFrame):
                 else:
                     time = "N/A"
                 
-                doc = appointment.get("doctor_hid", "N/A")
+                doc_id = appointment.get("doctor_hid", "N/A")
+                doc = self.controller.hospital.doctors.get(doc_id).__name__()
                 room = appointment.get("room_number", "N/A")
                 status = appointment.get("status", "N/A")
                 

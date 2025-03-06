@@ -300,9 +300,9 @@ class PrescriptionDetails(ctk.CTkFrame):
         
         user_role = self.controller.selected_role
         if user_role == "doctor":
-            self.controller.show_frame("DoctorPrescriptions")
+            self.controller.show_frame("DoctorConsultation")
         elif user_role == "patient":
-            self.controller.show_frame("PatientPrescriptions")
+            self.controller.show_frame("PatientMedicalRecords")
         elif user_role == "admin":
             self.controller.show_frame("AdminPrescriptions")
         else:

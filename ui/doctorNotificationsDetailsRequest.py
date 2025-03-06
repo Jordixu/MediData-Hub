@@ -93,22 +93,24 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
         )
         time_selection_header.pack(anchor="w", padx=20, pady=(20, 15))
         
-        # Date and time selection with better spacing
         selection_container = ctk.CTkFrame(time_selection_section, fg_color="transparent")
         selection_container.pack(fill="x", padx=20, pady=(0, 20))
-        
-        # Date selection with improved appearance
+        selection_container.columnconfigure(0, weight=1)  # Left margin
+        selection_container.columnconfigure(1, weight=0)  # Date column
+        selection_container.columnconfigure(2, weight=0)  # Time column
+        selection_container.columnconfigure(3, weight=1)  # Right margin
+
         date_frame = ctk.CTkFrame(selection_container, fg_color="transparent")
-        date_frame.pack(side="left", fill="y", padx=(0, 20))
-        
+        date_frame.grid(row=0, column=1, padx=10)
+
         date_label = ctk.CTkLabel(
             date_frame, 
             text="Available Date",
             font=ctk.CTkFont(size=16),
-            anchor="w"
+            anchor="center"
         )
-        date_label.pack(anchor="w", pady=(0, 8))
-        
+        date_label.pack(anchor="center", pady=(0, 8))
+
         self.date_select = ctk.CTkComboBox(
             date_frame, 
             values=["Select Date"], 
@@ -122,19 +124,18 @@ class DoctorNotificationsDetailsRequest(ctk.CTkFrame):
             button_hover_color=("#3a5bbc", "#2a4bac")
         )
         self.date_select.pack()
-        
-        # Time selection with improved appearance
+
         time_frame = ctk.CTkFrame(selection_container, fg_color="transparent")
-        time_frame.pack(side="left", fill="y")
-        
+        time_frame.grid(row=0, column=2, padx=10)
+
         time_label = ctk.CTkLabel(
             time_frame, 
             text="Available Time",
             font=ctk.CTkFont(size=16),
-            anchor="w"
+            anchor="center"
         )
-        time_label.pack(anchor="w", pady=(0, 8))
-        
+        time_label.pack(anchor="center", pady=(0, 8))
+
         self.time_select = ctk.CTkComboBox(
             time_frame, 
             values=["Select Time"], 

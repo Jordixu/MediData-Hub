@@ -823,15 +823,13 @@ class DoctorConsultationCreate(ctk.CTkFrame):
         # Create individual prescriptions for each medication
         if self.selected_drugs:
             for drug in self.selected_drugs:
-                # Create a single-drug medication dictionary
-                individual_medication = {drug["id"]: drug["dosage"]}
-                
                 # Create prescription for this specific drug
                 self.controller.hospital.prescribe_medication(
                     patient_hid=patient_id,
                     doctor_hid=doctor_id,
                     diagnosis_id=diagnosis_id,
-                    medication=individual_medication,
+                    drug_id=drug["id"],
+                    dosage=drug["dosage"],
                     appointment_id=appointment_id
                 )
 

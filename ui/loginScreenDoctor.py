@@ -7,7 +7,9 @@ class LoginScreenDoctor(ctk.CTkFrame):
         super().__init__(parent)
         self.controller = controller
         self.title = "Login Screen"
-        
+
+        self.bind("<Return>", lambda e: self.login_action())
+
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=2)
         self.grid_rowconfigure(1, weight=6)
@@ -56,21 +58,17 @@ class LoginScreenDoctor(ctk.CTkFrame):
         )
         self.pass_entry.grid(row=3, column=0, pady=(0, 35))
         
-        buttons_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
-        buttons_frame.grid(row=4, column=0)
-        buttons_frame.grid_columnconfigure(0, weight=1)
-        
         login_btn = ctk.CTkButton(
-            buttons_frame, 
+            content_frame, 
             text="Login", 
             command=self.login_action, 
-            width=190,
+            width=400,
             height=45,
             fg_color="#003366",
             hover_color="#004080",
             font=ctk.CTkFont(size=16, weight="bold")
         )
-        login_btn.grid(row=0, column=0, padx=5)
+        login_btn.grid(row=4, column=0)
         
         content_frame.grid_rowconfigure(5, minsize=40)
         

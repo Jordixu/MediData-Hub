@@ -193,7 +193,8 @@ class PatientNotifications(ctk.CTkFrame):
                     
                 # Extract notification details
                 id = notification.get("notification_id")
-                sender = notification.get("sender_hid")
+                doctor_id = notification.get("sender_hid")
+                sender = self.controller.hospital.doctors.get(doctor_id).__name__()
                 
                 # Format datetime
                 sent_at = notification.get("datetime")

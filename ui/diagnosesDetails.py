@@ -7,6 +7,19 @@ class DiagnosesDetails(ctk.CTkFrame):
         super().__init__(parent)
         self.controller = controller
         self.title = "Diagnosis Details"
+        
+        top_button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        top_button_frame.pack(fill="x", padx=30, pady=(15, 0), anchor="nw")
+        
+        self.top_back_btn = ctk.CTkButton(
+            top_button_frame,
+            text="Back",
+            command=self.go_back,
+            width=100,
+            height=32,
+            font=ctk.CTkFont(size=14)
+        )
+        self.top_back_btn.pack(side="left")
 
         # Main container with scrollable frame
         self.container_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
@@ -218,19 +231,19 @@ class DiagnosesDetails(ctk.CTkFrame):
         
         self.medications_tree.pack(fill="x", expand=True)
         
-        # Back button
-        button_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
-        button_frame.pack(fill="x", padx=10, pady=(0, 20))
+        # # Back button
+        # button_frame = ctk.CTkFrame(self.container_frame, fg_color="transparent")
+        # button_frame.pack(fill="x", padx=10, pady=(0, 20))
         
-        self.back_btn = ctk.CTkButton(
-            button_frame,
-            text="Back",
-            command=self.go_back,
-            width=120,
-            height=40,
-            font=ctk.CTkFont(size=16)
-        )
-        self.back_btn.pack(side="left")
+        # self.back_btn = ctk.CTkButton(
+        #     button_frame,
+        #     text="Back",
+        #     command=self.go_back,
+        #     width=120,
+        #     height=40,
+        #     font=ctk.CTkFont(size=16)
+        # )
+        # self.back_btn.pack(side="left")
 
     def load_diagnosis_data(self):
         """Load the selected diagnosis data into the UI"""
@@ -312,9 +325,9 @@ class DiagnosesDetails(ctk.CTkFrame):
         """Return to the previous screen"""
         self.controller.selected_diagnosis = None
         if self.controller.selected_role == "doctor":
-            self.controller.show_frame("DoctorDiagnoses")
+            self.controller.show_frame("DoctorConsultation")
         elif self.controller.selected_role == "patient":
-            self.controller.show_frame("PatientDiagnoses")
+            self.controller.show_frame("PatientMedicalRecords")
         else:
             self.controller.show_frame("roleSelectionScreen")
 
